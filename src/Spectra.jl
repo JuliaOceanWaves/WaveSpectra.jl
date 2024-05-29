@@ -8,6 +8,7 @@ using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 using Distributions: Chisq, quantile
 using Interpolations: interpolate, extrapolate, scale, Gridded, Linear
 using Plots
+
 # Write your package code here.
 struct spectra
     spectra_func::Union{Nothing, Function}
@@ -15,42 +16,45 @@ struct spectra
     values::Union{Nothing, AbstractVector{<:Real}}
 end
 
-spectra(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real}) = spectra(nothing, freqs, vals)
+spectra(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real}) = 
+            (size(freqs) == size(vals)) ? 
+            spectra(nothing, freqs, vals) : 
+            error("Frequencies and Value Arrays are not same size!")
 spectra(func::Function) = spectra(func, nothing, nothing)
 spectra(func::Function, freqs::AbstractVector{<:Real}) = spectra(func, freqs, func(freqs))
+
+# https://docs.juliaplots.org/latest/recipes/#series-recipes
+# @recipe f(S::spectra) = (S.frequencies, S.values)
+# @recipe f(S::spectra, freq::AbstractVector) = (freq, S(freq))
 
 @recipe function f(S::spectra)
     marker := :circle
     (S.frequencies, S.values)
 end
-@recipe function f(S::spectra, freq::AbstractVector)
+@recipe function f(S::spectra, freq::AbstractVector{<:Real})
     marker := :circle
     (freq, S(freq))
 end
 
 function (S::spectra)(freq::Real)
-    if freq in S.frequencies 
-        return S.values[findfirst(S.frequencies .== freq)]
-    else
-        b = findfirst(S.frequencies .> freq)
-        if (b == 1 || isnothing(b))
-            return 0
-        else
-            itp = interpolate((S.frequencies[b-1: b],), S.values[b-1:b], Gridded(Linear()))
-            return itp(freq)
-        end
-    end
+    if freq in S.frequencies return S.values[findfirst(S.frequencies .== freq)] end
+
+    b = findfirst(S.frequencies .> freq)
+    if (b == 1 || isnothing(b)) return 0 end
+
+    itp = interpolate((S.frequencies[b-1: b],), S.values[b-1:b], Gridded(Linear()))
+    return itp(freq)
+end
+
+function (S::spectra)(freqs::AbstractVecOrMat{<:Real})
+    extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
+    return map(extp, freqs)
 end
 
 function (S::spectra)(freqs...)
     !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type <: Real!")
     extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
-    return extp(collect(freqs))
-end
-
-function (S::spectra)(freqs::AbstractVector{<:Real})
-    extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
-    return extp(collect(freqs))
+    return map(extp, freqs)
 end
 
 # spectral statistics
