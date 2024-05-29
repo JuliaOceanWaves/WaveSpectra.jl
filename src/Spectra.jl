@@ -23,7 +23,8 @@ end
 
 function spectrum(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real})
     (size(freqs) == size(vals)) || error("Frequencies and Value Arrays are not same size!")
-    return spectrum(nothing, freqs, vals) # TODO: add interpolation function
+    extp_func = extrapolate(interpolate((freqs,), vals, Gridded(Linear())), 0)
+    return spectrum(x->extp_func(x), freqs, vals) # TODO: add interpolation function
 end
 spectrum(func::Function) = spectrum(func, nothing, nothing)
 spectrum(func::Function, freqs::AbstractVector{<:Real}) = spectrum(func, freqs, func(freqs))
@@ -34,8 +35,8 @@ spectrum(func::Function, freqs::AbstractVector{<:Real}) = spectrum(func, freqs, 
 
 @recipe function f(S::spectrum)
     # marker := :circle
-    # (S.frequencies, S.values)
-    S.func
+    (S.frequency, S.spectrum)
+    
     # TODO: 2 options if vectors exist or not
 end
 @recipe function f(S::spectrum, freq::AbstractVector{<:Real})
@@ -57,16 +58,16 @@ end
 
 # TODO: move to struct def
 function (S::spectrum)(freqs::AbstractVecOrMat{<:Real})
-    extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
-    return map(extp, freqs)
+    #extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
+    return map(S.func, freqs)
 end
 
 # TODO: Remove and check dot notation
-function (S::spectrum)(freqs...)
-    !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type <: Real!")
-    extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
-    return map(extp, freqs)
-end
+# function (S::spectrum)(freqs...)
+#     !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type <: Real!")
+#     extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
+#     return map(extp, freqs)
+# end
 
 include("statistics.jl")
 
