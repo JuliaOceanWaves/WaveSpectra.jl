@@ -17,8 +17,8 @@ using Plots
 # Write your package code here.
 struct spectrum
     func::Union{Nothing, Function}
-    frequency::Union{Nothing, AbstractVector{<:Real}} # TODO fix for Units
-    spectrum::Union{Nothing, AbstractVector{<:Real}}
+    frequency::Union{Nothing, AbstractVector{<:Number}} # TODO fix for Units
+    spectrum::Union{Nothing, AbstractVector{<:Number}}
 end
 
 function spectrum(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real})
