@@ -7,34 +7,24 @@ using Integrals: SampledIntegralProblem, TrapezoidalRule, IntegralProblem, QuadG
 using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 using Distributions: Chisq, quantile
 using Interpolations: interpolate, extrapolate, scale, Gridded, Linear
-
+using Plots
 # Write your package code here.
 struct spectra
-    # spectra_func::callable
-    frequencies::Union{Nothing, AbstractVector{Real}}
-    values::Union{Nothing, AbstractVector{Real}}
+    spectra_func::Union{Nothing, Function}
+    frequencies::Union{Nothing, AbstractVector{<:Real}}
+    values::Union{Nothing, AbstractVector{<:Real}}
 end
 
-# spectra(vec1, vec2) = spectra(vec1, vec2)
-# spectra(func) = spectra(func)
-# spectra(func, freq) = spectra(func, freq, func(freq))
+spectra(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real}) = spectra(nothing, freqs, vals)
+spectra(func::Function) = spectra(func, nothing, nothing)
+spectra(func::Function, freqs::AbstractVector{<:Real}) = spectra(func, freqs, func(freqs))
 
-# Base.getindex(S::spectra, freq::Real) = begin
-#     return S.values[freq]
-# end
+@recipe function f(::Type{spectra}, S::spectra) 
+    [(S.frequencies, S.values)] 
+end
 
-# Base.getindex(S::spectra, freq::Number) = begin
-#     if freq in S.frequencies 
-#         return S.values[findfirst(S.frequencies .== freq)]
-#     else
-#         b = findfirst(S.frequencies .> freq)
-#         if (b == 1 || isnothing(b))
-#             return 0
-#         else
-#             itp = interpolate((S.frequencies[b-1: b],), S.values[b-1:b], Gridded(Linear()))
-#             return itp(freq)
-#         end
-#     end
+# @recipe function f(::Type{Val{:plot}}, S::spectra, freqs::AbstractVector{<:Real}) 
+#     [(S.frequencies, S(freqs))] 
 # end
 
 function (S::spectra)(freq::Real)
@@ -51,24 +41,14 @@ function (S::spectra)(freq::Real)
     end
 end
 
-# Base.getindex(S::spectra, freqs...) = begin
-#     !(typeof(freqs) <: Tuple{Vararg{Number}}) && error("Must pass arguments of type Integer or Float!")
-#     itp = interpolate((S.frequencies,), S.values, Gridded(Linear()))
-#     extp = extrapolate(itp, 0)
-#     return extp(collect(freqs))
-# end
-
 function (S::spectra)(freqs...)
-    !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type Integer or Float!")
-    itp = interpolate((S.frequencies,), S.values, Gridded(Linear()))
-    extp = extrapolate(itp, 0)
+    !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type <: Real!")
+    extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
     return extp(collect(freqs))
 end
 
-function (S::spectra)(freqs::AbstractVector{Real})
-    # !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type Integer or Float!")
-    itp = interpolate((S.frequencies,), S.values, Gridded(Linear()))
-    extp = extrapolate(itp, 0)
+function (S::spectra)(freqs::AbstractVector{<:Real})
+    extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
     return extp(collect(freqs))
 end
 
