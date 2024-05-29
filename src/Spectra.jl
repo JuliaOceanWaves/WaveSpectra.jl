@@ -19,13 +19,14 @@ spectra(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real}) = spectra(n
 spectra(func::Function) = spectra(func, nothing, nothing)
 spectra(func::Function, freqs::AbstractVector{<:Real}) = spectra(func, freqs, func(freqs))
 
-@recipe function f(::Type{spectra}, S::spectra) 
-    [(S.frequencies, S.values)] 
+@recipe function f(S::spectra)
+    marker := :circle
+    (S.frequencies, S.values)
 end
-
-# @recipe function f(::Type{Val{:plot}}, S::spectra, freqs::AbstractVector{<:Real}) 
-#     [(S.frequencies, S(freqs))] 
-# end
+@recipe function f(S::spectra, freq::AbstractVector)
+    marker := :circle
+    (freq, S(freq))
+end
 
 function (S::spectra)(freq::Real)
     if freq in S.frequencies 
