@@ -17,57 +17,50 @@ using Plots
 # Write your package code here.
 struct spectrum
     func::Union{Nothing, Function}
-    frequency::Union{Nothing, AbstractVector{<:Number}} # TODO fix for Units
+    frequency::Union{Nothing, AbstractVector{<:Number}}
     spectrum::Union{Nothing, AbstractVector{<:Number}}
 end
 
-function spectrum(freqs::AbstractVector{<:Real}, vals::AbstractVector{<:Real})
+function spectrum(freqs::AbstractVector{<:Number}, vals::AbstractVector{<:Number})
     (size(freqs) == size(vals)) || error("Frequencies and Value Arrays are not same size!")
     extp_func = extrapolate(interpolate((freqs,), vals, Gridded(Linear())), 0)
     return spectrum(x->extp_func(x), freqs, vals) # TODO: add interpolation function
 end
 spectrum(func::Function) = spectrum(func, nothing, nothing)
-spectrum(func::Function, freqs::AbstractVector{<:Real}) = spectrum(func, freqs, func(freqs))
+spectrum(func::Function, freqs::AbstractVector{<:Number}) = spectrum(func, freqs, func(freqs))
 
 # https://docs.juliaplots.org/latest/recipes/#series-recipes
 # @recipe f(S::spectrum) = (S.frequencies, S.values)
 # @recipe f(S::spectrum, freq::AbstractVector) = (freq, S(freq))
 
 @recipe function f(S::spectrum)
-    # marker := :circle
-    (S.frequency, S.spectrum)
-    
-    # TODO: 2 options if vectors exist or not
+    if !isnothing(S.frequency) && !isnothing(S.spectrum)
+        marker := :circle
+        (S.frequency, S.spectrum)
+    else
+        (S.func, 0, 10)
+    end
 end
+@recipe function f(S::spectrum, args...)
+    if !isnothing(S.frequency) && !isnothing(S.spectrum)
+        marker := :circle
+        (S.frequency, S.spectrum, args...)
+    else
+        (S.func, args...)
+    end
+end
+
 @recipe function f(S::spectrum, freq::AbstractVector{<:Real})
     marker := :circle
     (freq, S(freq))
 end
-
-(S::spectrum)(freq::Real) =  S.func(freq)
-# function (S::spectrum)(freq::Real)
-#     if freq in S.frequencies return S.values[findfirst(S.frequencies .== freq)] end
-
-#     b = findfirst(S.frequencies .> freq)
-#     if (b == 1 || isnothing(b)) return 0 end
-
-#     itp = interpolate((S.frequencies[b-1: b],), S.values[b-1:b], Gridded(Linear()))
-#     return itp(freq)
-
-# end
-
-# TODO: move to struct def
-function (S::spectrum)(freqs::AbstractVecOrMat{<:Real})
-    #extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
-    return map(S.func, freqs)
+@recipe function f(S::spectrum, freq::AbstractVector{<:Real}, args...)
+    marker := :circle
+    (freq, S(freq), args...)
 end
 
-# TODO: Remove and check dot notation
-# function (S::spectrum)(freqs...)
-#     !(typeof(freqs) <: Tuple{Vararg{Real}}) && error("Must pass arguments of type <: Real!")
-#     extp = extrapolate(interpolate((S.frequencies,), S.values, Gridded(Linear())), 0)
-#     return map(extp, freqs)
-# end
+(S::spectrum)(freq::Real) =  S.func(freq)
+(S::spectrum)(freqs::AbstractVecOrMat{<:Real}) = map(S.func, freqs)
 
 include("statistics.jl")
 
