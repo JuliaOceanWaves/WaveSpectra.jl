@@ -5,6 +5,7 @@ export WaveSpectrum, isdiscrete
 using Interpolations: interpolate, extrapolate, Gridded, Linear, InterpolationType #, scale
 using Plots: @recipe
 using Unitful: Quantity, Frequency, unit, Hz
+import Base: Exception, showerror
 
 # Struct definition
 struct WaveSpectrum
@@ -36,28 +37,29 @@ isunitful(S::WaveSpectrum) = hasmethod(S.func, (Frequency,))
 (S::WaveSpectrum)(freq::Number) =  S.func(freq)
 (S::WaveSpectrum)(freqs::AbstractVecOrMat{<:Number}) = map(S.func, freqs)
 
-# TODO: Add costum error for discrete spectra interfaces if Spectrum has no vectors
-_firststate() = 1
-Base.getindex(S::WaveSpectrum, i::Int) = S.density[i]
-Base.firstindex(S::WaveSpectrum) = _firststate()
-Base.lastindex(S::WaveSpectrum) = length(S.density)
-Base.length(S::WaveSpectrum) = length(S.density)
-Base.size(S::WaveSpectrum) = size(S.density)
-Base.iterate(S::WaveSpectrum) = (S.density[firstindex(S)], _firststate()+1)
-function Base.iterate(S::WaveSpectrum, state::Int)
-    return (state<=length(S)) ? (S.density[state], state+1) : nothing
+mutable struct DiscreteError <: Exception
+    message::String
+    DiscreteError() = new("WaveSpectrum instance was treated as discrete when it is continuous!")
 end
-Base.eltype(S::WaveSpectrum) = eltype(S.density)
+
+_firststate() = 1
+Base.showerror(io::IO, e::DiscreteError) = print(io, "DiscreteError: $(e.message)")
+Base.getindex(S::WaveSpectrum, i::Int) = isdiscrete(S) ? S.density[i] : throw(DiscreteError()) 
+Base.firstindex(S::WaveSpectrum) = isdiscrete(S) ? _firststate() : throw(DiscreteError()) 
+Base.lastindex(S::WaveSpectrum) = isdiscrete(S) ? length(S.density) : throw(DiscreteError()) 
+Base.length(S::WaveSpectrum) = isdiscrete(S) ? length(S.density) : throw(DiscreteError()) 
+Base.size(S::WaveSpectrum) = isdiscrete(S) ? size(S.density) : throw(DiscreteError()) 
+Base.iterate(S::WaveSpectrum) = isdiscrete(S) ? (S.density[firstindex(S)], _firststate()+1) : throw(DiscreteError()) 
+Base.eltype(S::WaveSpectrum) = isdiscrete(S) ? eltype(S.density) : throw(DiscreteError())
+function Base.iterate(S::WaveSpectrum, state::Int)
+    isdiscrete(S) || throw(DiscreteError())
+    return (state<=length(S)) ? (S.density[state], state+1) : nothing
+end 
 
 # Plots recipes
-function _labels(S::WaveSpectrum)
-    xlabel = "Frequency"
-    ylabel = "Spectral density"
-    return (xlabel, ylabel)
-end
-
+_labels() = ("Frequency", "Spectral density")
 @recipe function f(S::WaveSpectrum, args...)
-    _xlabel, _ylabel = _labels(S)
+    _xlabel, _ylabel = _labels()
     xlabel --> _xlabel
     ylabel --> _ylabel
     if isdiscrete(S)
@@ -72,11 +74,11 @@ end
 end
 
 @recipe function f(S::WaveSpectrum, freq::AbstractVector{<:Number}, args...)
-    _xlabel, _ylabel = _labels(S)
+    _xlabel, _ylabel = _labels()
     xlabel --> _xlabel
     ylabel --> _ylabel
     marker := :auto
     (freq, S(freq), args...)
 end
 
-end
+end #Module end
