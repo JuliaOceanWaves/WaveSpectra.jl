@@ -32,7 +32,7 @@ WaveSpectrum(func::Function, freqs::AbstractVector{<:Number}) = WaveSpectrum(fun
 
 # Interface
 isdiscrete(S::WaveSpectrum) = !isnothing(S.density) && !isnothing(S.frequency)
-isunitful(S::WaveSpectrum) = hasmethod(S.func, (Frequency,))
+isunitful(S::WaveSpectrum) = hasmethod(S.func, (Frequency,)) && !(hasmethod(S.func, (Any,)))
 
 (S::WaveSpectrum)(freq::Number) =  S.func(freq)
 (S::WaveSpectrum)(freqs::AbstractVecOrMat{<:Number}) = map(S.func, freqs)
