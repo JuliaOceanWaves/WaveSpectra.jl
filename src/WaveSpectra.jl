@@ -4,6 +4,7 @@ export WaveSpectrum, isdiscrete
 
 using Interpolations: interpolate, extrapolate, Gridded, Linear, InterpolationType #, scale
 using Plots: @recipe
+using Unitful: Quantity, Frequency, unit, Hz
 
 # Struct definition
 struct WaveSpectrum
@@ -29,36 +30,51 @@ WaveSpectrum(func::Function) = WaveSpectrum(func, nothing, nothing)
 WaveSpectrum(func::Function, freqs::AbstractVector{<:Number}) = WaveSpectrum(func, freqs, func(freqs))
 
 # Interface
-# TODO: Add costum error for discrete spectra interfaces if Spectrum has no vectors
-(S::WaveSpectrum)(freq::Real) =  S.func(freq)
-(S::WaveSpectrum)(freqs::AbstractVecOrMat{<:Real}) = map(S.func, freqs)
+isdiscrete(S::WaveSpectrum) = !isnothing(S.density) && !isnothing(S.frequency)
+isunitful(S::WaveSpectrum) = hasmethod(S.func, (Frequency,))
 
+(S::WaveSpectrum)(freq::Number) =  S.func(freq)
+(S::WaveSpectrum)(freqs::AbstractVecOrMat{<:Number}) = map(S.func, freqs)
+
+# TODO: Add costum error for discrete spectra interfaces if Spectrum has no vectors
+_firststate() = 1
 Base.getindex(S::WaveSpectrum, i::Int) = S.density[i]
-Base.firstindex(S::WaveSpectrum) = 1
+Base.firstindex(S::WaveSpectrum) = _firststate()
 Base.lastindex(S::WaveSpectrum) = length(S.density)
 Base.length(S::WaveSpectrum) = length(S.density)
 Base.size(S::WaveSpectrum) = size(S.density)
-
-Base.iterate(S::WaveSpectrum) = (S.density[firstindex(S)], 2)
+Base.iterate(S::WaveSpectrum) = (S.density[firstindex(S)], _firststate()+1)
 function Base.iterate(S::WaveSpectrum, state::Int)
     return (state<=length(S)) ? (S.density[state], state+1) : nothing
 end
-
-isdiscrete(S::WaveSpectrum) = !isnothing(S.density) && !isnothing(S.frequency)
+Base.eltype(S::WaveSpectrum) = eltype(S.density)
 
 # Plots recipes
-# TODO: add xlabel and ylabel
+function _labels(S::WaveSpectrum)
+    xlabel = "Frequency"
+    ylabel = "Spectral density"
+    return (xlabel, ylabel)
+end
+
 @recipe function f(S::WaveSpectrum, args...)
+    _xlabel, _ylabel = _labels(S)
+    xlabel --> _xlabel
+    ylabel --> _ylabel
     if isdiscrete(S)
         marker := :auto
         (S.frequency, S.density, args...)
     else
-        isempty(args) && (args=(0, 10))
+        if isempty(args)
+            isunitful(S) ? (args=(0Hz, 10Hz)) : (args=(0, 10))
+        end
         (S.func, args...)
     end
 end
 
-@recipe function f(S::WaveSpectrum, freq::AbstractVector{<:Real}, args...)
+@recipe function f(S::WaveSpectrum, freq::AbstractVector{<:Number}, args...)
+    _xlabel, _ylabel = _labels(S)
+    xlabel --> _xlabel
+    ylabel --> _ylabel
     marker := :auto
     (freq, S(freq), args...)
 end
