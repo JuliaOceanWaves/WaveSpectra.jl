@@ -2,7 +2,7 @@ module WaveSpectra
 
 export WaveSpectrum, isdiscrete
 
-using Interpolations: interpolate, extrapolate, Gridded, BSpline, Linear, InterpolationType, scale
+using Interpolations: interpolate, extrapolate, AbstractExtrapolation, linear_interpolation, cubic_spline_interpolation
 using Plots: @recipe
 using Unitful: Quantity, Frequency, unit, Hz
 import Base: Exception, showerror
@@ -22,15 +22,25 @@ struct WaveSpectrum
 end
 
 # Constructors
-function WaveSpectrum(freqs::AbstractVector{<:Number}, vals::AbstractVector{<:Number}; interpmode::InterpolationType=Gridded(Linear()))
-    if (typeof(interpmode) <: Gridded) 
-        extrap_func = extrapolate(interpolate((freqs,), vals, interpmode), 0)
-    elseif (typeof(interpmode) <: BSpline)
-        (typeof(freqs) <: AbstractRange) || error("If using Bspline, frequencies must be <:AbstractRange")
-        extrap_func = extrapolate(scale(interpolate(vals, interpmode), freqs), 0)
-    else
-        error("Unrecognized interpolation mode! Please use Gridded or Bspline.")
+# function WaveSpectrum(freqs::AbstractVector{<:Number}, vals::AbstractVector{<:Number}; interpmode::InterpolationType=Gridded(Linear()))
+#     if (typeof(interpmode) <: Gridded) 
+#         extrap_func = extrapolate(interpolate((freqs,), vals, interpmode), 0)
+#     elseif (typeof(interpmode) <: BSpline)
+#         (typeof(freqs) <: AbstractRange) || error("If using Bspline, frequencies must be <:AbstractRange")
+#         extrap_func = extrapolate(scale(interpolate(vals, interpmode), freqs), 0)
+#     else
+#         error("Unrecognized interpolation mode! Please use Gridded or Bspline.")
+#     end
+#     return WaveSpectrum(x->extrap_func(x), freqs, vals)
+# end
+function WaveSpectrum(freqs::AbstractVector{<:Number}, vals::AbstractVector{<:Number}; interpmode::Function=linear_interpolation)
+    if !(hasmethod(interpmode, (AbstractVector, AbstractVector)) || hasmethod(interpmode, (AbstractRange, AbstractVector)))
+        error("Must be a proper interpolation function whose positional arguments are (AbstractVector, AbstractVector) or (AbstractRange, AbstractVector)")
     end
+    if (interpmode == cubic_spline_interpolation) 
+        (typeof(freqs) <: AbstractRange) || error("If using cubic spline, frequencies must be <:AbstractRange")  
+    end
+    extrap_func = interpmode(freqs, vals; extrapolation_bc = 0)
     return WaveSpectrum(x->extrap_func(x), freqs, vals)
 end
 
