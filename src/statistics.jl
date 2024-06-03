@@ -69,9 +69,9 @@ function energy_period(S::AbstractVecOrMat, f::AbstractVector; method::AbstractI
     return upreferred.(m_n1./m_0)
 end
 
-function energy_period(S::spectrum; method::AbstractIntegralAlgorithm=TrapezoidalRule())
-    m_n1 = spectral_moment(S.values, S.frequencies, -1; method)
-    m_0 = spectral_moment(S.values, S.frequencies, 0; method)
+function energy_period(S::WaveSpectrum; method::AbstractIntegralAlgorithm=TrapezoidalRule())
+    m_n1 = spectral_moment(S.density, S.frequency, -1; method)
+    m_0 = spectral_moment(S.density, S.frequency, 0; method)
     return upreferred.(m_n1./m_0)
 end
 
@@ -80,7 +80,7 @@ function significant_waveheight(S::AbstractVecOrMat, f::AbstractVector; method::
     return 4(.√m_0)
 end
 
-function significant_waveheight(S::spectrum; method::AbstractIntegralAlgorithm=TrapezoidalRule())
-    m_0 = spectral_moment(S.values, S.frequencies, 0; method)
+function significant_waveheight(S::WaveSpectrum; method::AbstractIntegralAlgorithm=TrapezoidalRule())
+    m_0 = spectral_moment(S.density, S.frequency, 0; method)
     return 4(.√m_0)
 end
