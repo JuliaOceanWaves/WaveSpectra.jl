@@ -1,15 +1,14 @@
 # WaveSpectra.jl Documentation
 
-```
-@contents
+```@contents
 ```
 
 ## Functions
-
-
+```@docs
+isdiscrete(spectrum::OmnidirectionalSpectrum)
+```
 
 ## Index
 
-```
-@index
+```@index
 ```
