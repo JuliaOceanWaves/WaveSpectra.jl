@@ -13,6 +13,6 @@ using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 
 include("omnidirectional_spectra.jl")
 # include("spreading_functions.jl")
-# include("direction_spectra.jl")
+# include("directional_spectra.jl")
 
 end

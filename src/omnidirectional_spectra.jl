@@ -44,7 +44,7 @@ end
 
 function OmnidirectionalSpectrum(func::Function, freqs::AbstractVector{<:Number}; density=true)
     dims_frequency = dimension(eltype(freqs))
-    dims_value = dimension(func(0*unit(eltype(freqs))))
+    dims_value = dimension(func(0*upreferred(eltype(freqs))))
     discrete = (
         frequency = freqs,
         value = func.(frequency)
@@ -56,7 +56,7 @@ function OmnidirectionalSpectrum(spectrum::OmnidirectionalSpectrum, freqs::Abstr
     Ts, Tf, density = typeof(spectrum).parameters
     discrete = (
             frequency = freqs,
-            value = spectrum.func.(freqs)
+            value = spectrum.func.(frequency)
         )
     return OmnidirectionalSpectrum{Ts, Tf, density}(spectrum.func, discrete)
 end
@@ -77,7 +77,7 @@ end
 isdiscrete(spectrum::OmnidirectionalSpectrum) = !isnothing(spectrum.discrete)
 isdensity(spectrum::OmnidirectionalSpectrum) = typeof(spectrum) <: OmnidirectionalSpectrum{S, F, true} where {S,F}
 isunitful(spectrum::OmnidirectionalSpectrum{Ts, Tf, D})  where {Ts, Tf, D} = isa(1*upreferred(Tf()), Frequency)
-Unitful.unit(spectrum::OmnidirectionalSpectrum{Ts, Tf, D})  where {Ts, Tf, D} = isdiscrete(spectrum) ? unit(eltype(speectrum.discrete.value)) : unit(spectrum(0*upreferred(Tf())))
+Unitful.unit(spectrum::OmnidirectionalSpectrum{Ts, Tf, D})  where {Ts, Tf, D} = isdiscrete(spectrum) ? unit(eltype(spectrum.discrete.value)) : unit(spectrum(0*upreferred(Tf())))
 Unitful.dimension(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}) where {Ts, Tf, D} = Ts()
 function quantity(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}) where {Ts, Tf, D}
     dims = Ts()*Tf()
