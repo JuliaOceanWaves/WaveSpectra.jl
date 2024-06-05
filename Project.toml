@@ -1,7 +1,7 @@
 name = "WaveSpectra"
 uuid = "178f5eb6-e7f4-4031-b23d-dc6d09256e9a"
 authors = ["Rafael Baez", "Carlos M. Strofer"]
-version = "1.0.0-DEV"
+version = "0.1-DEV"
 
 [deps]
 Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
