@@ -156,7 +156,7 @@ end
     (freq, spectrum.(freq), args...)
 end
 
-# integral/statistics
+# integrals/statistics
 function _integrate(func::Function, f_begin::Union{Number, Nothing}=nothing,
         f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL();
         kwargs...
@@ -172,7 +172,20 @@ function _update_domain(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, f_begin::U
     return (f_begin, f_end)
 end
 
-# TODO: add methods for vectors & matrix (not Spectrum objects)
+function integrate(y::AbstractVector{<:Number}, x::AbstractVector{<:Number},
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
+    )
+    sol = solve(SampledIntegralProblem(y, x), method; kwargs...)
+    sol.retcode ≠ ReturnCode.Success && error("solution unsuccessful with code: $(sol.retcode)")
+    return upreferred(sol.u)
+end
+
+function integrate(y::AbstractMatrix{<:Number}, x::AbstractVector{<:Number},
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
+    )
+    return [integrate(i_y, x, method; kwargs...) for i_y in eachrow(y)]
+end
+
 function integrate(
     spectrum::OmnidirectionalSpectrum{Ts, Tf, D},
         f_begin::Union{Number, Nothing}=nothing,
@@ -188,6 +201,20 @@ function integrate(
     return _integrate(spectrum.func, f_begin, f_end, alg; kwargs...)
 end
 
+function spectral_moment(
+        spectrum::AbstractVector{<:Number}, frequency::AbstractVector{<:Number}, n::Integer,
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
+    )
+    return integrate(spectrum.*frequency.^n, frequency, method; kwargs...)
+end
+
+function spectral_moment(
+    spectrum::AbstractMatrix{<:Number}, frequency::AbstractVector{<:Number}, n::Integer,
+    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
+)
+return integrate(spectrum.*(frequency.^n)', frequency, method; kwargs...)
+end
+
 function spectral_moment(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, n::Int, f_begin::Union{Number, Nothing}=nothing,
         f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL();
         kwargs...
@@ -200,10 +227,27 @@ function spectral_moment(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, n::Int, f
     return _integrate(f -> spectrum(f)*f^n, f_begin, f_end, alg; kwargs...)
 end
 
+function energy_period(
+        spectrum::AbstractVecOrMat{<:Number}, frequency::AbstractVector{<:Number},
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
+    )
+    m_n1 = spectral_moment(spectrum, frequency, -1, method; kwargs...)
+    m_0 = spectral_moment(spectrum, frequency, 0, method; kwargs...)
+    return m_n1./m_0
+end
+
 function energy_period(spectrum::OmnidirectionalSpectrum, f_begin::Union{Number, Nothing}=nothing, f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL(); kwargs...)
     m_n1 = spectral_moment(spectrum, -1, f_begin, f_end, alg; kwargs...)
     m_0 = spectral_moment(spectrum, 0, f_begin, f_end, alg; kwargs...)
     return m_n1/m_0
+end
+
+function significant_waveheight(
+        spectrum::AbstractVecOrMat{<:Number}, frequency::AbstractVector{<:Number},
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
+    )
+    m_0 = spectral_moment(spectrum, frequency, 0, method; kwargs...)
+    return 4*.√m_0
 end
 
 function significant_waveheight(spectrum::OmnidirectionalSpectrum, f_begin::Union{Number, Nothing}=nothing, f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL(); kwargs...)
