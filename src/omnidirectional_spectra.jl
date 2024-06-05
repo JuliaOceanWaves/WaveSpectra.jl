@@ -147,10 +147,11 @@ end
 
 function _update_domain(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, f_begin::Union{Number, Nothing}=nothing, f_end::Union{Number, Nothing}=nothing) where {Ts, Tf, D}
     isnothing(f_begin) && (f_begin = 0*upreferred(Tf()))
-    isnothing(f_end) && (f_end = 10*upreferred(Tf()))
+    isnothing(f_end) && (f_end = Inf*upreferred(Tf()))
     return (f_begin, f_end)
 end
 
+# TODO: add methods for vectors & matrix (not Spectrum objects)
 function integrate(
     spectrum::OmnidirectionalSpectrum{Ts, Tf, D},
         f_begin::Union{Number, Nothing}=nothing,
@@ -188,3 +189,6 @@ function significant_waveheight(spectrum::OmnidirectionalSpectrum, f_begin::Unio
 	m_0 = spectral_moment(spectrum, 0, f_begin, f_end, alg; kwargs...)
     return 4√m_0
 end
+
+# parametric
+# TODO: JONSWAP, PM, Etc
