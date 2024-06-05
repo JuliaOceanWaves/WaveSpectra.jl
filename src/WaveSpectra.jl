@@ -8,7 +8,7 @@ using Unitful: Unitful # extend: unit, dimension
 using Interpolations: linear_interpolation
 using Plots: @recipe
 using Unitful: Dimensions, Frequency, NoDims, Quantity, Hz, dimension, unit, upreferred, 𝐓, 𝐋
-using Integrals: IntegralProblem, QuadGKJL, solve
+using Integrals: AbstractSampledIntegralAlgorithm, IntegralProblem, SampledIntegralProblem, TrapezoidalRule, QuadGKJL, solve
 using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 
 include("omnidirectional_spectra.jl")
