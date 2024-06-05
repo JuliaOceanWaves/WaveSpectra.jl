@@ -74,6 +74,27 @@ function OmnidirectionalSpectrum(freqs::AbstractVector{<:Number}, vals::Abstract
 end
 
 # Interface
+"""
+    isdiscrete(spectrum::OmnidirectionalSpectrum)
+
+Return whether the OmnidirectionalSpectrum uses discrete vectors.
+
+# Examples
+```jldoctest
+x=y=0:3
+S_discrete=OmnidirectionalSpectrum(x,y)
+func(x)=
+S_continuous=OmnidirectionalSpectrum(func)
+println(isdiscrete(S_discrete))
+println(isdiscrete(S_continuous))
+
+#Output
+
+true
+false
+
+```
+"""
 isdiscrete(spectrum::OmnidirectionalSpectrum) = !isnothing(spectrum.discrete)
 isdensity(spectrum::OmnidirectionalSpectrum) = typeof(spectrum) <: OmnidirectionalSpectrum{S, F, true} where {S,F}
 isunitful(spectrum::OmnidirectionalSpectrum{Ts, Tf, D})  where {Ts, Tf, D} = isa(1*upreferred(Tf()), Frequency)
