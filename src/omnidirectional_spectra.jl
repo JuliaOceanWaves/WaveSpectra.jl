@@ -83,7 +83,7 @@ Return whether the OmnidirectionalSpectrum uses discrete vectors.
 ```jldoctest
 x=y=0:3
 S_discrete=OmnidirectionalSpectrum(x,y)
-func(x)=
+func(x)=x
 S_continuous=OmnidirectionalSpectrum(func)
 println(isdiscrete(S_discrete))
 println(isdiscrete(S_continuous))
