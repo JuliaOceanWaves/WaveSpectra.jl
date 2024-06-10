@@ -5,7 +5,6 @@
 
 ## Functions
 ```@docs
-isdiscrete(spectrum::OmnidirectionalSpectrum)
 ```
 
 ## Index
