@@ -1,7 +1,7 @@
 module WaveSpectra
 
 export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
-export integrate, frequency_dimension, frequency_unit, quantity, spectral_moment
+export integrate, frequency_dimension, frequency_unit, pm_spectrum, quantity, spectral_moment
 # export energy_period, significant_waveheight
 
 # using Base: Base # extend: showerror
@@ -12,8 +12,8 @@ using Integrals: AbstractSampledIntegralAlgorithm, IntegralProblem, SampledInteg
 using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 
 
-using Unitful: 𝐓, 𝐋, Hz
-using Unitful: dimension, unit, upreferred
+using Unitful: 𝐓, 𝐋, gn as g, Hz, m
+using Unitful: dimension, unit, uconvert, upreferred
 using Unitful: Frequency, Length, Time, Wavenumber
 using Unitful: Dimensions, Frequency, NoDims, Quantity, Hz
 using DimensionfulAngles: 𝐀
