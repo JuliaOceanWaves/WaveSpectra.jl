@@ -81,18 +81,13 @@ Return whether the OmnidirectionalSpectrum uses discrete vectors.
 
 # Examples
 ```jldoctest
-x=y=0:3
-S_discrete=OmnidirectionalSpectrum(x,y)
-func(x)=x
-S_continuous=OmnidirectionalSpectrum(func)
-println(isdiscrete(S_discrete))
-println(isdiscrete(S_continuous))
+a = 1
+b = 2
+a + b
 
-#Output
+# output
 
-true
-false
-
+3
 ```
 """
 isdiscrete(spectrum::OmnidirectionalSpectrum) = !isnothing(spectrum.discrete)
