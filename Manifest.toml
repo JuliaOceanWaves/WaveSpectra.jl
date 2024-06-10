@@ -2,7 +2,7 @@
 
 julia_version = "1.10.3"
 manifest_format = "2.0"
-project_hash = "6e1c11b07ee3cfc4f2fb27f2021141cbc6eacc6d"
+project_hash = "870b326eb110c2f9376cfbdc052359138ae89dee"
 
 [[deps.ADTypes]]
 git-tree-sha1 = "daf26bbdec60d9ca1c0003b70f389d821ddb4224"
@@ -254,6 +254,12 @@ deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
+
+[[deps.DimensionfulAngles]]
+deps = ["Unitful", "UnitfulAngles", "UnitfulEquivalences"]
+git-tree-sha1 = "d499b76df55165b1950bb5f0b7e60ce1c6085964"
+uuid = "2d4b8d7a-02d9-40f9-9abe-9c695b77de0d"
+version = "0.2.1"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -1243,6 +1249,18 @@ weakdeps = ["ConstructionBase", "InverseFunctions"]
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"
     InverseFunctionsUnitfulExt = "InverseFunctions"
+
+[[deps.UnitfulAngles]]
+deps = ["Dates", "Unitful"]
+git-tree-sha1 = "79875b1f2e4bf918f0702a5980816955066d9ae2"
+uuid = "6fb2a4bd-7999-5318-a3b2-8ad61056cd98"
+version = "0.7.2"
+
+[[deps.UnitfulEquivalences]]
+deps = ["Unitful"]
+git-tree-sha1 = "76fc2f7fdc87531a1018eb7d647df7c29daf36b7"
+uuid = "da9c4bc3-91c8-4f02-8a40-6b990d2a7e0c"
+version = "0.2.0"
 
 [[deps.UnitfulLatexify]]
 deps = ["LaTeXStrings", "Latexify", "Unitful"]
