@@ -1,40 +1,12 @@
-# Struct definition
-struct OmnidirectionalSpectrum{S, F, D}
-    func::Function
-    discrete::Union{Nothing, @NamedTuple begin
-        frequency::AbstractVector
-        value::AbstractVector
-    end}
 
-    function OmnidirectionalSpectrum{S, F, D}(func, discrete) where {S<:Dimensions, F<:Dimensions, D}
-        # check parameters
-        !isa(D, Bool) && error("parameter `D` must be a boolean")
-        if !(isa(1*upreferred(F()), Frequency) || (F == typeof(NoDims)))
-            error("parameter `F` must be a `Unitful.Frequency` or `Unitful.NoDims`")
-        end
-        if (F == typeof(NoDims)) && !(S == typeof(NoDims))
-            error("if `F` is dimensionless `S` must be too")
-        end
-        # check arguments
-        if !(isnothing(discrete))
-            if (length(discrete.frequency) !== length(discrete.value))
-                error("`frequency` and `value` arrays must have same size")
-            end
-            if func.(discrete.frequency) ≉ discrete.value
-                error("provided function and values do not agree")
-            end
-            ftype = eltype(discrete.frequency)
-            stype = eltype(discrete.value)
-            if !(ftype<:Frequency || dimension(ftype)==NoDims)
-                error("`discrete.frequency` must have a frequency dimension or no dimension")
-            end
-            if dimension(ftype)==NoDims && !(dimension(stype)==NoDims)
-                error("if `discrete.frequency` is dimensionless, `discrete.value` must be too")
-            end
-        end
-        # create parametric object
-        return new{S, F, D}(func, discrete)
+function _check_omnidirectional_dimensions(TS, TF)
+    if !(isa(1*upreferred(TF()), Frequency) || (TF == typeof(NoDims)))
+        error("parameter `TF` must be a `Unitful.Frequency` or `Unitful.NoDims`")
     end
+<<<<<<< HEAD
+    if (TF == typeof(NoDims)) && !(TS == typeof(NoDims))
+        error("if `TF` is dimensionless `TS` must be too")
+=======
 end
 
 # Constructors
@@ -140,115 +112,9 @@ end
     else
         isempty(args) && (args=(0*upreferred(Tf()), 10*upreferred(Tf())))
         (spectrum.func, args...)
+>>>>>>> 08475a6c916900be849ac17d7e2b1d6f60e97cb5
     end
+    return nothing
 end
 
-@recipe function f(spectrum::OmnidirectionalSpectrum, freq::AbstractVector{<:Number}, args...)
-    _xlabel, _ylabel = _labels(spectrum)
-    xlabel --> _xlabel
-    ylabel --> _ylabel
-    marker := :auto
-    (freq, spectrum.(freq), args...)
-end
-
-# integrals/statistics
-function _integrate(func::Function, f_begin::Union{Number, Nothing}=nothing,
-        f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL();
-        kwargs...
-    )
-    sol = solve(IntegralProblem((x,p)->func(x), (f_begin, f_end), nothing), alg; kwargs...)
-    sol.retcode ≠ ReturnCode.Success && error("solution unsuccessful with code: $(sol.retcode)")
-    return upreferred(sol.u)
-end
-
-function _update_domain(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, f_begin::Union{Number, Nothing}=nothing, f_end::Union{Number, Nothing}=nothing) where {Ts, Tf, D}
-    isnothing(f_begin) && (f_begin = 0*upreferred(Tf()))
-    isnothing(f_end) && (f_end = Inf*upreferred(Tf()))
-    return (f_begin, f_end)
-end
-
-function integrate(y::AbstractVector{<:Number}, x::AbstractVector{<:Number},
-        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
-    )
-    sol = solve(SampledIntegralProblem(y, x), method; kwargs...)
-    sol.retcode ≠ ReturnCode.Success && error("solution unsuccessful with code: $(sol.retcode)")
-    return upreferred(sol.u)
-end
-
-function integrate(y::AbstractMatrix{<:Number}, x::AbstractVector{<:Number},
-        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
-    )
-    return [integrate(i_y, x, method; kwargs...) for i_y in eachrow(y)]
-end
-
-function integrate(
-    spectrum::OmnidirectionalSpectrum{Ts, Tf, D},
-        f_begin::Union{Number, Nothing}=nothing,
-        f_end::Union{Number, Nothing}=nothing;
-        alg::AbstractIntegralAlgorithm=QuadGKJL(),
-        kwargs...
-    ) where {Ts, Tf, D}
-    f_begin, f_end = _update_domain(spectrum, f_begin, f_end)
-    if :abstol ∉ keys(kwargs)
-        abstol = 1e-8*upreferred(Ts()*Tf())
-        kwargs = merge(values(kwargs), (abstol=abstol,))
-    end
-    return _integrate(spectrum.func, f_begin, f_end, alg; kwargs...)
-end
-
-function spectral_moment(
-        spectrum::AbstractVector{<:Number}, frequency::AbstractVector{<:Number}, n::Integer,
-        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
-    )
-    return integrate(spectrum.*frequency.^n, frequency, method; kwargs...)
-end
-
-function spectral_moment(
-    spectrum::AbstractMatrix{<:Number}, frequency::AbstractVector{<:Number}, n::Integer,
-    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
-)
-return integrate(spectrum.*(frequency.^n)', frequency, method; kwargs...)
-end
-
-function spectral_moment(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, n::Int, f_begin::Union{Number, Nothing}=nothing,
-        f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL();
-        kwargs...
-    ) where {Ts, Tf, D}
-    f_begin, f_end = _update_domain(spectrum, f_begin, f_end)
-    if :abstol ∉ keys(kwargs)
-        abstol = 1e-8*upreferred(Ts()*Tf()^(n+1))
-        kwargs = merge(values(kwargs), (abstol=abstol,))
-    end
-    return _integrate(f -> spectrum(f)*f^n, f_begin, f_end, alg; kwargs...)
-end
-
-function energy_period(
-        spectrum::AbstractVecOrMat{<:Number}, frequency::AbstractVector{<:Number},
-        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
-    )
-    m_n1 = spectral_moment(spectrum, frequency, -1, method; kwargs...)
-    m_0 = spectral_moment(spectrum, frequency, 0, method; kwargs...)
-    return m_n1./m_0
-end
-
-function energy_period(spectrum::OmnidirectionalSpectrum, f_begin::Union{Number, Nothing}=nothing, f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL(); kwargs...)
-    m_n1 = spectral_moment(spectrum, -1, f_begin, f_end, alg; kwargs...)
-    m_0 = spectral_moment(spectrum, 0, f_begin, f_end, alg; kwargs...)
-    return m_n1/m_0
-end
-
-function significant_waveheight(
-        spectrum::AbstractVecOrMat{<:Number}, frequency::AbstractVector{<:Number},
-        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule(); kwargs...
-    )
-    m_0 = spectral_moment(spectrum, frequency, 0, method; kwargs...)
-    return 4*.√m_0
-end
-
-function significant_waveheight(spectrum::OmnidirectionalSpectrum, f_begin::Union{Number, Nothing}=nothing, f_end::Union{Number, Nothing}=nothing, alg::AbstractIntegralAlgorithm=QuadGKJL(); kwargs...)
-	m_0 = spectral_moment(spectrum, 0, f_begin, f_end, alg; kwargs...)
-    return 4√m_0
-end
-
-# parametric
-# TODO: JONSWAP, PM, Etc
+include("omnidirectional_spectra/continuous.jl")
