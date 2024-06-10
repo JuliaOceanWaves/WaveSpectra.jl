@@ -33,28 +33,79 @@ function (spectrum::OmnidirectionalSpectrum{TS,TF})(frequency::Quantity) where {
 end
 
 # Unitful interface
-Unitful.unit(spectrum::OmnidirectionalSpectrum{TS, TF})  where {TS, TF} = unit(TS)
-Unitful.dimension(spectrum::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TS)
-frequency_unit(spectrum::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
-frequency_dimension(spectrum::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
+Unitful.unit(::OmnidirectionalSpectrum{TS, TF})  where {TS, TF} = unit(TS)
+Unitful.dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TS)
+frequency_unit(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
+frequency_dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
 
-function quantity(spectrum::OmnidirectionalSpectrum{TS, TF}) where {TS, TF}
+function quantity(::OmnidirectionalSpectrum{TS, TF}) where {TS, TF}
     dimensions = dimension(TS) * dimension(TF)
     units = unit(TS) * unit(TF)
     return dimensions, units
 end
 
 # Plots recipe
-@recipe function f(spectrum::OmnidirectionalSpectrum{Ts, Tf, D}, args...) where {Ts, Tf, D}
-    _xlabel, _ylabel = _labels(spectrum)
-    xlabel --> _xlabel
-    ylabel --> _ylabel
-    if isdiscrete(spectrum)
-        marker := :auto
-        (spectrum.discrete.frequency, spectrum.discrete.value, args...)
-    else
-        isempty(args) && (args=(0*upreferred(Tf()), 10*upreferred(Tf())))
-        (spectrum.func, args...)
+@recipe function f(spectrum::OmnidirectionalSpectrum{TS, TF}, kwargs...) where {TS, TF}
+    xlabel --> "frequency"
+    ylabel --> "spectral density"
+    return (spectrum.func, 0unit(TF), 10unit(TF), kwargs...)
+end
+
+@recipe function f(
+        spectrum::OmnidirectionalSpectrum{TS,TF}, xmin::Quantity, xmax::Quantity, kwargs...
+    ) where {TS,TF}
+    xlabel --> "frequency"
+    ylabel --> "spectral density"
+    return (spectrum.func, xmin, xmax, kwargs...)
+end
+
+# Spectral moments
+function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
+        f_begin::Union{Quantity, Nothing}=nothing, f_end::Union{Quantity, Nothing}=nothing;
+        alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
+    isnothing(f_begin) && (f_begin = 0 * unit(TF))
+    isnothing(f_end) && (f_end = Inf * unit(TF))
+    if :abstol ∉ keys(kwargs)
+        abstol = 1e-8 * unit(TS) * unit(TF)^(n+1)
+        kwargs = merge(values(kwargs), (abstol=abstol,))
     end
-    return nothing
+    sol = solve(IntegralProblem((f, _) -> spectrum(f)*f^n, (f_begin, f_end), nothing);
+        alg, kwargs...)
+    if sol.retcode ≠ ReturnCode.Success
+        error("solution unsuccessful with code: $(sol.retcode)")
+    end
+    return upreferred(sol.u)
+end
+
+function integrate(
+        spectrum::OmnidirectionalSpectrum{TS, TF},
+        f_begin::Union{Quantity, Nothing}=nothing,
+        f_end::Union{Quantity, Nothing}=nothing;
+        alg::AbstractIntegralAlgorithm=QuadGKJL(),
+        kwargs...
+    ) where {TS, TF}
+    return spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+end
+
+function energy_period(
+    spectrum::OmnidirectionalSpectrum{TS,TF},
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
+) where {TS,TF}
+    m_n1 = spectral_moment(spectrum, -1, f_begin, f_end; alg, kwargs...)
+    m_0 = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+    return m_n1 / m_0
+end
+
+function significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
+    m_0 = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+    return 4√m_0
+end
+
+function normalize(S::AbstractVecOrMat, f::AbstractVector; method::AbstractIntegralAlgorithm=TrapezoidalRule())
+    hs = significant_waveheight(spectrum, f_begin, f_end; alg, kwargs...)
+    te = energy_period(spectrum, f_begin, f_end; alg, kwargs...)
+    return (f * te), (spectrum / (hs^2 * te))
 end
