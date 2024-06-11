@@ -1,4 +1,20 @@
 # Struct
+"""
+    DiscreteOmnidirectionalSpectrum(value, frequency; [density=true])
+
+Struct to handle discrete spectra.
+
+# Example
+```jldoctest;
+julia> using WaveSpectra, Unitful
+
+julia> f=v=range(1,3).*u"Hz"
+(1:3) Hz
+
+julia> s1 = DiscreteOmnidirectionalSpectrum(v,f); true
+true
+```
+"""
 struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: AbstractArray{TS, N}
     value::AbstractVecOrMat{<:Quantity}
     frequency::AbstractVector{<:Quantity}
@@ -62,6 +78,19 @@ end
     (spectrum.frequency, spectrum.value, args...)
 end
 
+"""
+    spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+
+Calculate the spectral moment
+
+# Example
+```jldoctest;
+julia> using WaveSpectra, Unitful
+
+julia> println("Wow")
+Wow
+```
+"""
 function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; 
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     # There are no keyword arguments used to solve SampledIntegralProblems
