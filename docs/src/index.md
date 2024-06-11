@@ -5,7 +5,7 @@
 
 ## Functions
 ```@docs
-isdiscrete(spectrum::OmnidirectionalSpectrum)
+WaveSpectra.spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
 ```
 
 ## Index

@@ -10,6 +10,10 @@ module _NoUnit
 end
 
 export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
+export integrate, frequency_dimension, frequency_unit, pm_spectrum, quantity, spectral_moment
+export energy_period, significant_waveheight
+
+export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
 export convert_frequency, frequency_dimension, frequency_unit, quantity, spectral_moment
 export energy_period, significant_waveheight, ∅
 export normalize, scale, slope_spectrum, deepwater, pierson_moskowitz_spectrum

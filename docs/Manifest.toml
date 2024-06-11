@@ -2,12 +2,20 @@
 
 julia_version = "1.10.3"
 manifest_format = "2.0"
-project_hash = "594066d0256b17ff09ad05052df842bb0f888b9f"
+project_hash = "042c79bf05bb4065c28aa3df0e13953ee3ad89b2"
 
 [[deps.ADTypes]]
-git-tree-sha1 = "016833eb52ba2d6bea9fcb50ca295980e728ee24"
+git-tree-sha1 = "fc02d55798c1af91123d07915a990fbb9a10d146"
 uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
-version = "0.2.7"
+version = "1.3.0"
+
+    [deps.ADTypes.extensions]
+    ADTypesChainRulesCoreExt = "ChainRulesCore"
+    ADTypesEnzymeCoreExt = "EnzymeCore"
+
+    [deps.ADTypes.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    EnzymeCore = "f151be2c-9106-41f4-ab19-57ee4f262869"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -256,6 +264,12 @@ deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
+
+[[deps.DimensionfulAngles]]
+deps = ["Unitful", "UnitfulAngles", "UnitfulEquivalences"]
+git-tree-sha1 = "d499b76df55165b1950bb5f0b7e60ce1c6085964"
+uuid = "2d4b8d7a-02d9-40f9-9abe-9c695b77de0d"
+version = "0.2.1"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -1024,9 +1038,9 @@ version = "0.6.12"
 
 [[deps.RecursiveArrayTools]]
 deps = ["Adapt", "ArrayInterface", "DocStringExtensions", "GPUArraysCore", "IteratorInterfaceExtensions", "LinearAlgebra", "RecipesBase", "SparseArrays", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables"]
-git-tree-sha1 = "2cea01606a852c2431ded77293eb533b511b19e6"
+git-tree-sha1 = "5232d8d580a579ded0fc25d6899c42946566793c"
 uuid = "731186ca-8d62-57ce-b412-fbd966d074cd"
-version = "3.22.0"
+version = "3.23.0"
 
     [deps.RecursiveArrayTools.extensions]
     RecursiveArrayToolsFastBroadcastExt = "FastBroadcast"
@@ -1098,10 +1112,10 @@ uuid = "322a6be2-4ae8-5d68-aaf1-3e960788d1d9"
 version = "0.2.0"
 
 [[deps.SciMLBase]]
-deps = ["ADTypes", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PrecompileTools", "Preferences", "Printf", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "SciMLStructures", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables"]
-git-tree-sha1 = "9f59654e2a85017ee27b0f59c7fac5a57aa10ced"
+deps = ["ADTypes", "Accessors", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PrecompileTools", "Preferences", "Printf", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "SciMLStructures", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables"]
+git-tree-sha1 = "1d1d1ff37d2917cad263fa186cbc19ce4b587ccf"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "2.39.0"
+version = "2.40.0"
 
     [deps.SciMLBase.extensions]
     SciMLBaseChainRulesCoreExt = "ChainRulesCore"
@@ -1195,9 +1209,9 @@ weakdeps = ["ChainRulesCore"]
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore"]
-git-tree-sha1 = "9ae599cd7529cfce7fea36cf00a62cfc56f0f37c"
+git-tree-sha1 = "6e00379a24597be4ae1ee6b2d882e15392040132"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.9.4"
+version = "1.9.5"
 weakdeps = ["ChainRulesCore", "Statistics"]
 
     [deps.StaticArrays.extensions]
@@ -1205,9 +1219,9 @@ weakdeps = ["ChainRulesCore", "Statistics"]
     StaticArraysStatisticsExt = "Statistics"
 
 [[deps.StaticArraysCore]]
-git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
+git-tree-sha1 = "192954ef1208c7019899fbf8049e717f92959682"
 uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
-version = "1.4.2"
+version = "1.4.3"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -1322,6 +1336,18 @@ weakdeps = ["ConstructionBase", "InverseFunctions"]
     ConstructionBaseUnitfulExt = "ConstructionBase"
     InverseFunctionsUnitfulExt = "InverseFunctions"
 
+[[deps.UnitfulAngles]]
+deps = ["Dates", "Unitful"]
+git-tree-sha1 = "79875b1f2e4bf918f0702a5980816955066d9ae2"
+uuid = "6fb2a4bd-7999-5318-a3b2-8ad61056cd98"
+version = "0.7.2"
+
+[[deps.UnitfulEquivalences]]
+deps = ["Unitful"]
+git-tree-sha1 = "76fc2f7fdc87531a1018eb7d647df7c29daf36b7"
+uuid = "da9c4bc3-91c8-4f02-8a40-6b990d2a7e0c"
+version = "0.2.0"
+
 [[deps.UnitfulLatexify]]
 deps = ["LaTeXStrings", "Latexify", "Unitful"]
 git-tree-sha1 = "e2d817cc500e960fdbafcf988ac8436ba3208bfd"
@@ -1340,8 +1366,10 @@ uuid = "a44049a8-05dd-5a78-86c9-5fde0876e88c"
 version = "1.3.243+0"
 
 [[deps.WaveSpectra]]
-deps = ["Integrals", "Interpolations", "Plots", "SciMLBase", "Unitful"]
-path = ".."
+deps = ["DimensionfulAngles", "Integrals", "Interpolations", "Plots", "SciMLBase", "Unitful"]
+git-tree-sha1 = "a259a491b976a33bb784f8b329b024f74f5869ee"
+repo-rev = "main"
+repo-url = ".."
 uuid = "178f5eb6-e7f4-4031-b23d-dc6d09256e9a"
 version = "0.1.0-DEV"
 
