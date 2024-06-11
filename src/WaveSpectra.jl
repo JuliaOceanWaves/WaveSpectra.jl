@@ -2,7 +2,7 @@ module WaveSpectra
 
 export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
 export integrate, frequency_dimension, frequency_unit, pm_spectrum, quantity, spectral_moment
-# export energy_period, significant_waveheight
+export energy_period, significant_waveheight
 
 # using Base: Base # extend: showerror
 using Unitful: Unitful # extend: unit, dimension

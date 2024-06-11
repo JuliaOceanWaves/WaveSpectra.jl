@@ -63,25 +63,28 @@ end
 end
 
 function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; 
-                        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     # There are no keyword arguments used to solve SampledIntegralProblems
     # https://docs.sciml.ai/Integrals/stable/basics/SampledIntegralProblem/
     sol = solve(SampledIntegralProblem(spectrum.value.*(spectrum.frequency .^float(n)), spectrum.frequency; dim=1), alg)
-    sol.retcode != ReturnCode.Success && error("Solution unsuccessful with code $(sol.retcode)")
+    (sol.retcode != ReturnCode.Success) && error("Solution unsuccessful with code $(sol.retcode)")
     return upreferred.(sol.u)
 end
 
-function integrate(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+function integrate(spectrum::DiscreteOmnidirectionalSpectrum; 
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     return spectral_moment(spectrum, 0; alg)
 end
 
-function energy_period(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+function energy_period(spectrum::DiscreteOmnidirectionalSpectrum; 
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     m_n1 = spectral_moment(spectrum, -1; alg)
     m_0 = spectral_moment(spectrum, 0; alg)
     return m_n1 ./ m_0
 end
 
-function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; 
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     m_0 = spectral_moment(spectrum, 0; alg)
     return @. 4*√m_0
 end
