@@ -80,8 +80,7 @@ function scale(spectrum::OmnidirectionalSpectrum{TS,TF}, significant_waveheight:
     return OmnidirectionalSpectrum(func, TFnew)
 end
 
-
-# Slope spectrum
+# Slope spectrum #TODO: check
 function slope_spectrum(spectrum::OmnidirectionalSpectrum{TS,TF}) where {TS,TF<:AngularWavenumber}
     func(k::AngularWavenumber) = k^2 * spectrum(k)
     return OmnidirectionalSpectrum(func, TF)
