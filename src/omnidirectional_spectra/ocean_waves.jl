@@ -1,50 +1,95 @@
 
-# Deep water waves
-# module DeepWater
-#     function steepness(spectrum::OmnidirectionalSpectrum{TS,TF},
-#             f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
-#             alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
-#         hs = significant_waveheight(spectrum, f_begin, f_end; alg, kwargs...)
-#         te = energy_period(spectrum, f_begin, f_end; alg, kwargs...)
-#         return 2π * hs / (g * te ^ 2)
-#     end
-# end
-
-
-
 # Parametric spectra
-# te_to_tp(Te::Time, γ::Number) = Te / (0.8255 + 0.03852*γ - 0.005537*γ^2 + 0.0003154*γ^3)
-# te_to_tp(Te::Time) = Te / 0.858
-
-function pm_spectrum(significant_waveheight::Length, energy_period::Time)
-    fp = uconvert(Hz, 0.858/energy_period)
-    hs = significant_waveheight
+function pierson_moskowitz_spectrum(significant_waveheight::Length, energy_period::Time)
+    fₚ = uconvert(Hz, 0.858/energy_period)
+    hₛ = significant_waveheight
 
     function spectrum(f::Frequency)
         if f==0Hz
             value = 0m^2/Hz
         else
-            value = (hs^2 / 4) * (1.057 * fp)^4 * (f)^(-5) * exp((-5 / 4) * (fp / f)^4)
+            value = (hₛ^2 / 4) * (1.057 * fₚ)^4 * (f)^(-5) * exp((-5 / 4) * (fₚ / f)^4)
         end
         return value
     end
     return OmnidirectionalSpectrum(spectrum)
 end
 
-# pm_spectrum(Hs, Tp) = f -> pm_spectrum(Hs, Tp, f)
+# Deep water dispersion relation
+deepwater = Dispersion(
+    dispersion=(k -> √(g * k * θ₀)),
+    dispersion_inverse=(ω -> ω^2 / (g * θ₀))
+);
 
-# function jonswap_spectrum(Hs, Tp, f; γ=nothing)
-#     fp = 1 / Tp
-#     σ = f <= fp ? 0.07 : 0.09
-#     α = exp(-((f / fp - 1) / (√(2) * σ))^2)
-#     isnothing(γ) && (
-#         γ = (Tp / √Hs ≤ 3.6) ? 5 : (
-#             (Tp / √Hs > 5) ? 1 : (
-#                 exp(5.75 - 1.15(Tp / √Hs))
-#             )))
-#     Cws = 1 - 0.287 * log(γ)
-#     spectrum = f == 0 ? 0 : Cws * pm_spectrum(Hs, Tp, f) * (γ^α)
-#     return spectrum
-# end
+# Spread function
 
-# jonswap_spectrum(Hs, Tp; γ=nothing) = f -> jonswap_spectrum(Hs, Tp, f; γ)
+
+# Statistics (some useful ones, not comprehensive)
+function energy_period(
+        spectrum::OmnidirectionalSpectrum{TS,TF},
+        f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+        alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
+    ) where {TS,TF<:Frequency}
+    m₋₁ = spectral_moment(spectrum, -1, f_begin, f_end; alg, kwargs...)
+    m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+    return m₋₁ / m₀
+end
+
+function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
+        dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
+        f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
+        kwargs...) where {TS,TF}
+    spectrum_hz = convert_frequency(spectrum, typeof(one(TF) * Hz), dispersion)
+    return energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
+end
+
+function significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
+    @assert quantity(spectrum)[1] == 𝐋^2
+    m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+    return 4√m₀
+end
+
+function steepness(spectrum::OmnidirectionalSpectrum{TS,TF}, dispersion::Dispersion,
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
+    hₛ = significant_waveheight(spectrum, args...; alg, kwargs...)
+    tₑ = energy_period(spectrum, f_begin, f_end; alg, kwargs...)
+    λₑ = uconvert(m, tₑ, dispersion)
+    return hₛ / λₑ
+end
+
+# normalize/shape
+function normalize(spectrum::OmnidirectionalSpectrum{TS,TF},
+        f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+        alg::AbstractIntegralAlgorithm=QuadGKJL(), dispersion::Dispersion=Dispersion(),
+        kwargs...) where {TS, TF}
+    spectrum_hz = convert_frequency(spectrum, typeof(one(TF) * Hz), dispersion)
+    hₛ = significant_waveheight(spectrum_hz, f_begin, f_end; alg, kwargs...)
+    tₑ = energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
+    func(f::DimensionlessQuantity) = uconvert(∅, spectrum(f / tₑ) / (hₛ^2 * tₑ))
+    return OmnidirectionalSpectrum(func, typeof(1.0∅))
+end
+
+function scale(spectrum::OmnidirectionalSpectrum{TS,TF}, significant_waveheight::Length,
+        energy_period::Time) where {TS<:DimensionlessQuantity, TF<:DimensionlessQuantity}
+    hₛ, tₑ = (significant_waveheight, energy_period)
+    func(f::Frequency) = uconvert(m^2/Hz, spectrum.func(f*tₑ) * (hₛ^2 * tₑ))
+    TFnew = typeof(one(typeof(tₑ))*Hz)
+    return OmnidirectionalSpectrum(func, TFnew)
+end
+
+
+# Slope spectrum
+function slope_spectrum(spectrum::OmnidirectionalSpectrum{TS,TF}) where {TS,TF<:AngularWavenumber}
+    func(k::AngularWavenumber) = k^2 * spectrum(k)
+    return OmnidirectionalSpectrum(func, TF)
+end
+
+function slope_spectrum(spectrum::OmnidirectionalSpectrum{TS,TF},
+    dispersion::Dispersion=Dispersion()) where {TS,TF}
+    spectrum_rad_m = convert_frequency(spectrum, typeof(one(TF) * rad / m), dispersion)
+    slope_rad_m = slope_spectrum(spectrum_rad_m)
+    return convert_frequency(slope_rad_m, TF, dispersion)
+end

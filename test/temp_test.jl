@@ -9,7 +9,7 @@ func = x -> (0.1Hz < x < 1.5Hz) ? 1m^2/Hz : 0m^2/Hz
 
 S = OmnidirectionalSpectrum(func, typeof(1.0Hz))
 
-plot(S; legend=false)
+plot(S)
 plot(S, 0Hz, 3Hz; legend=false)
 
 

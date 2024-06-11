@@ -69,43 +69,21 @@ function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
         abstol = 1e-8 * unit(TS) * unit(TF)^(n+1)
         kwargs = merge(values(kwargs), (abstol=abstol,))
     end
-    sol = solve(IntegralProblem((f, _) -> spectrum(f)*f^n, (f_begin, f_end), nothing);
-        alg, kwargs...)
+    sol = solve(IntegralProblem((f, _) -> spectrum(f)*f^n, (f_begin, f_end), nothing),
+        alg; kwargs...)
     if sol.retcode ≠ ReturnCode.Success
         error("solution unsuccessful with code: $(sol.retcode)")
     end
     return upreferred(sol.u)
 end
 
-function integrate(
-        spectrum::OmnidirectionalSpectrum{TS, TF},
-        f_begin::Union{Quantity, Nothing}=nothing,
-        f_end::Union{Quantity, Nothing}=nothing;
-        alg::AbstractIntegralAlgorithm=QuadGKJL(),
-        kwargs...
-    ) where {TS, TF}
-    return spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
-end
-
-function energy_period(
-    spectrum::OmnidirectionalSpectrum{TS,TF},
-    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
-    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
-) where {TS,TF}
-    m_n1 = spectral_moment(spectrum, -1, f_begin, f_end; alg, kwargs...)
-    m_0 = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
-    return m_n1 / m_0
-end
-
-function significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
-    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
-    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
-    m_0 = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
-    return 4√m_0
-end
-
-function normalize(S::AbstractVecOrMat, f::AbstractVector; method::AbstractIntegralAlgorithm=TrapezoidalRule())
-    hs = significant_waveheight(spectrum, f_begin, f_end; alg, kwargs...)
-    te = energy_period(spectrum, f_begin, f_end; alg, kwargs...)
-    return (f * te), (spectrum / (hs^2 * te))
+# Convert frequency
+function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new,
+    dispersion::Dispersion=Dispersion()) where {TS,TF}
+    grad = _grad[(dimension(TF), dimension(TF_new))]
+    function func(f)
+        f_org = uconvert(unit(TF), f, dispersion)
+        return upreferred(spectrum.func(f_org) / grad(f_org))
+    end
+    return OmnidirectionalSpectrum(func, TF_new)
 end
