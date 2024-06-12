@@ -5,7 +5,13 @@
 
 ## Functions
 ```@docs
-WaveSpectra.spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+DiscreteOmnidirectionalSpectrum
+spectral_moment
+energy_period
+significant_waveheight
+frequency_unit
+frequency_dimension
+quantity
 ```
 
 ## Index

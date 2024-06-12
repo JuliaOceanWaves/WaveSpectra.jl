@@ -1,5 +1,5 @@
 using Documenter, Example
-using WaveSpectra
+using WaveSpectra, Unitful
 
 #ENV["JULIA_DEBUG"]=Documenter
 makedocs(sitename="WaveSpectra")

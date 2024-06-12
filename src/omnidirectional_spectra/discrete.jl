@@ -1,18 +1,48 @@
 # Struct
 """
-    DiscreteOmnidirectionalSpectrum(value, frequency; [density=true])
+    DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}; [density::Bool=true])
 
-Struct to handle discrete spectra.
+Create discrete omnidirectional spectrum Struct using two Unitful vectors, or vector and matrix.
 
 # Example
 ```jldoctest;
 julia> using WaveSpectra, Unitful
 
-julia> f=v=range(1,3).*u"Hz"
-(1:3) Hz
+julia> v1=f=range(1u"Hz", 3u"Hz", 3)
+(1.0:1.0:3.0) Hz
 
-julia> s1 = DiscreteOmnidirectionalSpectrum(v,f); true
-true
+julia> s1 = DiscreteOmnidirectionalSpectrum(v1,f)
+PARAMS: {Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+        Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+        Density=true, Value Dims=1}
+FREQUENCY       {Hz}:   1.0:1.0:3.0
+VALUES (3,)     {Hz}:   1.0:1.0:3.0
+
+julia> v2 = ones(typeof(1u"Hz"), 3, 3)
+3×3 Matrix{Quantity{Int64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}}:
+1 Hz  1 Hz  1 Hz
+1 Hz  1 Hz  1 Hz
+1 Hz  1 Hz  1 Hz
+
+julia> s2 = DiscreteOmnidirectionalSpectrum(v2, f)
+PARAMS: {Quantity{Int64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+        Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+        Density=true, Value Dims=2}
+FREQUENCY       {Hz}:   1.0:1.0:3.0
+VALUES (3, 3)   {Hz}:   1.0 … 1.0
+                        ⋮   ⋱   ⋮
+                        1.0 … 1.0
+
+julia> func(x) = x
+func (generic function with 1 method)
+
+julia> s3 = DiscreteOmnidirectionalSpectrum(func, f)
+PARAMS: {Unitful.Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+        Unitful.Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+        Density=true, Value Dims=1}
+FREQUENCY       {Hz}:   1.0:1.0:3.0
+VALUES (3,)     {Hz}:   [1.0, 2.0, 3.0]
+```
 ```
 """
 struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: AbstractArray{TS, N}
@@ -51,12 +81,45 @@ Base.firstindex(::DiscreteOmnidirectionalSpectrum) = _firstState()
 Base.lastindex(spectrum::DiscreteOmnidirectionalSpectrum) = length(spectrum.value)
 Base.eltype(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = TS
 
+using Unitful:ustrip
+function Base.show(io::IO, spectrum::DiscreteOmnidirectionalSpectrum{TS,TF,D,N}) where {TS,TF,D,N}
+    print(io, "\nPARAMS: {$TS,\n\t $TF,\n\t Density=$D, Value Dims=$N}\nFREQUENCY {$(unit(TF))}, VALUES $(size(spectrum))\t{$(unit(TS))}")
+end
+
+function Base.show(io::IO, ::MIME"text/plain", spectrum::DiscreteOmnidirectionalSpectrum{TS,TF,D,N}) where {TS,TF,D,N}
+    af = ustrip.(spectrum.frequency)
+    if N < 2
+        av = ustrip.(spectrum.value)
+    else
+        lrow_str = "\n\t\t\t⋮   ⋱   ⋮\n\t\t\t"
+        erow = [round.(r,digits=3) for r in eachrow(ustrip.(spectrum.value))]
+        rows = [length(r) > 2 ? join([r[begin], r[end]], " … ") : join(r, ", ") for r in erow]
+        av = length(rows) > 2 ? join([rows[begin], rows[end]], lrow_str) : join(rows, ", \n")
+    end
+    print(io, "PARAMS: {$TS,\n\t $TF,\n\t Density=$D, Value Dims=$N}\nFREQUENCY\t{$(unit(TF))}: \t$(af)\nVALUES $(size(spectrum))\t{$(unit(TS))}: \t$(av)")
+end
+
 # Unitful Interface
 Unitful.unit(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = unit(TS)
 Unitful.dimension(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = dimension(TS)
+"""
+    frequency_unit(::DiscreteOmnidirectionalSpectrum)
+
+Return the units of the frequency vector in the struct
+"""
 frequency_unit(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = unit(TF)
+"""
+    frequency_dimension(::DiscreteOmnidirectionalSpectrum)
+
+Return the dimension of the frequency vector in the struct
+"""
 frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = dimension(TF)
 
+"""
+    quantity(::DiscreteOmnidirectionalSpectrum)
+
+Return the dimensions and units of the product between spectra and frequency.
+"""
 function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D}) where {TS, TF, D}
     dimensions = dimension(TS) * dimension(TF)
     units = unit(TS) * unit(TF)
@@ -81,14 +144,20 @@ end
 """
     spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
 
-Calculate the spectral moment
+Calculate the spectral moment of a discrete spectra struct.
 
 # Example
 ```jldoctest;
 julia> using WaveSpectra, Unitful
 
-julia> println("Wow")
-Wow
+julia> v=f=range(1u"Hz", 5u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> spectral_moment(s, 0)
+12.0 s⁻²
+
 ```
 """
 function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; 
@@ -100,20 +169,3 @@ function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0;
     return upreferred.(sol.u)
 end
 
-function integrate(spectrum::DiscreteOmnidirectionalSpectrum; 
-        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
-    return spectral_moment(spectrum, 0; alg)
-end
-
-function energy_period(spectrum::DiscreteOmnidirectionalSpectrum; 
-        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
-    m_n1 = spectral_moment(spectrum, -1; alg)
-    m_0 = spectral_moment(spectrum, 0; alg)
-    return m_n1 ./ m_0
-end
-
-function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; 
-        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
-    m_0 = spectral_moment(spectrum, 0; alg)
-    return @. 4*√m_0
-end
