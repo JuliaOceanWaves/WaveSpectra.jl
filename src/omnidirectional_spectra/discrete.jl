@@ -3,7 +3,7 @@
     DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}; density::Bool=true)
     DiscreteOmnidirectionalSpectrum(func::Function, frequency::AbstractVector{<:Quantity}; density::Bool=true)
 
-Create discrete omnidirectional spectrum Struct using two Unitful vectors, matrix and vector, or function and vector.
+Create discrete omnidirectional spectrum using two Unitful vectors, matrix and vector, or function and vector.
 
 # Example
 ```jldoctest
@@ -178,7 +178,7 @@ julia> frequency_dimension(s)
 frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = dimension(TF)
 
 """
-    quantity(::DiscreteOmnidirectionalSpectrum)
+    quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D})
 
 Return the dimensions and units of the product between spectra and frequency.
 
