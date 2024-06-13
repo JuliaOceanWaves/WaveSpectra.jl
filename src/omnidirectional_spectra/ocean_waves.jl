@@ -41,7 +41,7 @@ end
 Calculate the energy period of a discrete spectra struct.
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=f=range(1u"Hz", 5u"Hz", 5)
@@ -83,7 +83,7 @@ end
 Calculate the significant waveheight of a discrete spectra struct.
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=f=range(1u"Hz", 5u"Hz", 5)

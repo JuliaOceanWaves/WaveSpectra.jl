@@ -14,21 +14,21 @@ julia> v1=f=range(1u"Hz", 3u"Hz", 3)
 
 julia> s1 = DiscreteOmnidirectionalSpectrum(v1,f)
 PARAMS: {Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-        Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-        Density=true, Value Dims=1}
+         Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+         Density=true, Value Dims=1}
 FREQUENCY       {Hz}:   1.0:1.0:3.0
 VALUES (3,)     {Hz}:   1.0:1.0:3.0
 
 julia> v2 = ones(typeof(1u"Hz"), 3, 3)
-3×3 Matrix{Quantity{Int64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}}:
-1 Hz  1 Hz  1 Hz
-1 Hz  1 Hz  1 Hz
-1 Hz  1 Hz  1 Hz
+3×3 Matrix{Quantity{Int64, 𝐓 ⁻¹, Unitful.FreeUnits{(Hz,), 𝐓 ⁻¹, nothing}}}:
+ 1 Hz  1 Hz  1 Hz
+ 1 Hz  1 Hz  1 Hz
+ 1 Hz  1 Hz  1 Hz
 
 julia> s2 = DiscreteOmnidirectionalSpectrum(v2, f)
 PARAMS: {Quantity{Int64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-        Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-        Density=true, Value Dims=2}
+         Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+         Density=true, Value Dims=2}
 FREQUENCY       {Hz}:   1.0:1.0:3.0
 VALUES (3, 3)   {Hz}:   1.0 … 1.0
                         ⋮   ⋱   ⋮
@@ -38,9 +38,9 @@ julia> func(x) = x
 func (generic function with 1 method)
 
 julia> s3 = DiscreteOmnidirectionalSpectrum(func, f)
-PARAMS: {Unitful.Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-        Unitful.Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-        Density=true, Value Dims=1}
+PARAMS: {Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+         Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
+         Density=true, Value Dims=1}
 FREQUENCY       {Hz}:   1.0:1.0:3.0
 VALUES (3,)     {Hz}:   [1.0, 2.0, 3.0]
 ```
@@ -248,12 +248,7 @@ julia> using WaveSpectra, Unitful
 julia> v=f=range(1u"Hz", 5u"Hz", 5)
 (1.0:1.0:5.0) Hz
 
-julia> s = DiscreteOmnidirectionalSpectrum(v,f)
-PARAMS: {Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-         Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}},
-         Density=true, Value Dims=1}
-FREQUENCY       {Hz}:   1.0:1.0:5.0
-VALUES (5,)     {Hz}:   1.0:1.0:5.0
+julia> s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia> spectral_moment(s, -1)
 4.0 s⁻¹
@@ -302,7 +297,6 @@ PARAMS: {Quantity{Float64, 𝐓⁻³, Unitful.FreeUnits{(s⁻³,), 𝐓⁻³, no
          Density=true, Value Dims=1}
 FREQUENCY       {Hz⁻¹}:         [1.0, 0.5, 0.3333333333333333, 0.25, 0.2]
 VALUES (5,)     {s⁻³}:  [1.0, 8.0, 27.0, 64.0, 125.0]
-
 ```
 """
 function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new,
