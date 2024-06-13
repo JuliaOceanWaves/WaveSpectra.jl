@@ -6,12 +6,15 @@
 ## Functions
 ```@docs
 DiscreteOmnidirectionalSpectrum
-spectral_moment
-energy_period
-significant_waveheight
+unit(::DiscreteOmnidirectionalSpectrum)
+dimension(::DiscreteOmnidirectionalSpectrum)
 frequency_unit
 frequency_dimension
 quantity
+spectral_moment
+energy_period
+significant_waveheight
+convert_frequency
 ```
 
 ## Index

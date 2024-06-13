@@ -26,6 +26,11 @@ function OmnidirectionalSpectrum(
     return OmnidirectionalSpectrum(func, TS, TF)
 end
 
+function OmnidirectionalSpectrum(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, true, 1}; 
+        interpolation::Function=linear_interpolation) where {TS, TF}
+    return OmnidirectionalSpectrum(spectrum.value, spectrum.frequency; interpolation)
+end
+
 # Call Methods
 function (spectrum::OmnidirectionalSpectrum{TS,TF})(frequency::Quantity) where {TS,TF}
     (typeof(frequency) ≠ TF) && (frequency=convert(TF, frequency))
