@@ -6,7 +6,7 @@
 Create discrete omnidirectional spectrum Struct using two Unitful vectors, matrix and vector, or function and vector.
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v1=f=range(1u"Hz", 3u"Hz", 3)
@@ -106,7 +106,7 @@ end
 Extends from Unitful, returns the units of the spectra vector/matrix in the struct
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
@@ -129,7 +129,7 @@ Unitful.unit(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = unit(TS)
 Extends from Unitful, returns the dimension of the spectra vector/matrix in the struct
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
@@ -152,7 +152,7 @@ Unitful.dimension(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = dimension(
 Return the units of the frequency vector in the struct
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
@@ -175,7 +175,7 @@ frequency_unit(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = unit(
 Return the dimension of the frequency vector in the struct
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
@@ -199,7 +199,7 @@ frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = 
 Return the dimensions and units of the product between spectra and frequency.
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
@@ -242,7 +242,7 @@ end
 Calculate the n-th spectral moment of a discrete spectra struct.
 
 # Example
-```jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=f=range(1u"Hz", 5u"Hz", 5)
@@ -283,7 +283,7 @@ and returns a new struct with updated spectrum and frequency.
 See also [`DimensionfulAngles.Dispersion`](@extref)
 
 # Example
-``` jldoctest;
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> v=f=range(1u"Hz", 5u"Hz", 5)

@@ -1,7 +1,7 @@
-using Spectra
-using Test
+using Test, Documenter
 
-@testset "Spectra.jl" begin
+
+@time @testset verbose=true "WaveSpectra.jl" begin
     # Write your tests here.
-    print(spectra)
+    @time @testset "Doc Tests" begin include("test_doctest.jl") end
 end
