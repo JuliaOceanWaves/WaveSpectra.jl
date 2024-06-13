@@ -78,9 +78,19 @@ function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
 end
 
 # Convert frequency
+function phase_velocity(frequency::Quantity, dispersion::Dispersion)
+    wavelength = uconvert(m, frequency, dispersion)
+    period = uconvert(s, frequency, dispersion)
+    return wavelength/period
+end
+
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new,
     dispersion::Dispersion=Dispersion()) where {TS,TF}
-    grad = _grad[(dimension(TF), dimension(TF_new))]
+    # grad = _get_grad(dimension(TF), dimension(TF_new), dispersion)
+    f -> phase_velocity(f, dispersion)
+
+
+
     function func(f)
         f_org = uconvert(unit(TF), f, dispersion)
         return upreferred(spectrum.func(f_org) / grad(f_org))
