@@ -35,6 +35,32 @@ function energy_period(
     return m₋₁ / m₀
 end
 
+"""
+    energy_period(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+
+Calculate the energy period of a discrete spectra struct.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> v=f=range(1u"Hz", 5u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> energy_period(s)
+0.3333333333333333 s
+
+```
+"""
+function energy_period(spectrum::DiscreteOmnidirectionalSpectrum; 
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+    m_n1 = spectral_moment(spectrum, -1; alg)
+    m_0 = spectral_moment(spectrum, 0; alg)
+    return m_n1 ./ m_0
+end
+
 function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
         dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
         f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
@@ -49,6 +75,31 @@ function significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
     @assert quantity(spectrum)[1] == 𝐋^2
     m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
     return 4√m₀
+end
+
+"""
+    significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+
+Calculate the significant waveheight of a discrete spectra struct.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> v=f=range(1u"Hz", 5u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> significant_waveheight(s)
+13.856406460551018 s⁻¹
+
+```
+"""
+function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; 
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+    m_0 = spectral_moment(spectrum, 0; alg)
+    return @. 4*√m_0
 end
 
 function steepness(spectrum::OmnidirectionalSpectrum{TS,TF}, dispersion::Dispersion,
