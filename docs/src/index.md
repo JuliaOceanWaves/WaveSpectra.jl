@@ -6,8 +6,7 @@
 ## Functions
 ```@docs
 DiscreteOmnidirectionalSpectrum
-Unitful.unit(::DiscreteOmnidirectionalSpectrum)
-Unitful.dimension(::DiscreteOmnidirectionalSpectrum)
+OmnidirectionalSpectrum
 frequency_unit
 frequency_dimension
 quantity

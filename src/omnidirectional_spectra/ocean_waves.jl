@@ -25,6 +25,29 @@ deepwater = Dispersion(
 
 
 # Statistics (some useful ones, not comprehensive)
+"""
+    energy_period(
+        spectrum::OmnidirectionalSpectrum{TS,TF},
+        f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+        alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
+    ) where {TS,TF<:Frequency}
+
+Calculate the energy period of an omnidirectional spectra between a range if given.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> func(x) = x
+func (generic function with 1 method)
+
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+
+julia> energy_period(s, 1u"Hz", 5u"Hz")
+0.3333333333333333 s
+
+```
+"""
 function energy_period(
         spectrum::OmnidirectionalSpectrum{TS,TF},
         f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
@@ -36,9 +59,42 @@ function energy_period(
 end
 
 """
+    energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
+        dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
+        f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
+        kwargs...
+    ) where {TS,TF}
+
+Calculate the energy period of an omnidirectional spectra in Hz.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, DimensionfulAngles
+
+julia> using Unitful:@u_str
+
+julia> func(x) = x
+func (generic function with 1 method)
+
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz^-1"));
+
+julia> energy_period(s, Dispersion(), 1u"Hz", 5u"Hz")
+0.688888888888889 s
+
+```
+"""
+function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
+    dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
+    f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
+    kwargs...) where {TS,TF}
+spectrum_hz = convert_frequency(spectrum, typeof(one(TF) * Hz), dispersion)
+return energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
+end
+
+"""
     energy_period(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
 
-Calculate the energy period of a discrete spectra struct.
+Calculate the energy period of a discrete spectra.
 
 # Example
 ```jldoctest
@@ -61,14 +117,28 @@ function energy_period(spectrum::DiscreteOmnidirectionalSpectrum;
     return m_n1 ./ m_0
 end
 
-function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
-        dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
-        f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
-        kwargs...) where {TS,TF}
-    spectrum_hz = convert_frequency(spectrum, typeof(one(TF) * Hz), dispersion)
-    return energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
-end
+"""
+    significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
+        f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+        alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
+    ) where {TS,TF}
 
+Calculate the significant waveheight of an omnidirectional spectra.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> v=f=range(1u"Hz", 5u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> significant_waveheight(s)
+13.856406460551018 s⁻¹
+
+```
+"""
 function significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
     f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
     alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
@@ -80,7 +150,7 @@ end
 """
     significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
 
-Calculate the significant waveheight of a discrete spectra struct.
+Calculate the significant waveheight of a discrete spectra.
 
 # Example
 ```jldoctest
