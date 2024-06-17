@@ -21,6 +21,12 @@ deepwater = Dispersion(
     dispersion_inverse=(ω -> ω^2 / (g * θ₀))
 );
 
+const deepwater_gradient = DispersionGradient(
+    deepwater;
+    gradient=(k -> √(gθ₀ / 4k)),
+    gradient_inverse=(ω -> 2ω / (g * θ₀))
+);
+
 # Spread function
 
 
@@ -110,7 +116,7 @@ julia> energy_period(s)
 
 ```
 """
-function energy_period(spectrum::DiscreteOmnidirectionalSpectrum; 
+function energy_period(spectrum::DiscreteOmnidirectionalSpectrum;
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     m_n1 = spectral_moment(spectrum, -1; alg)
     m_0 = spectral_moment(spectrum, 0; alg)
@@ -166,7 +172,7 @@ julia> significant_waveheight(s)
 
 ```
 """
-function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; 
+function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum;
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     m_0 = spectral_moment(spectrum, 0; alg)
     return @. 4*√m_0
@@ -212,4 +218,14 @@ function slope_spectrum(spectrum::OmnidirectionalSpectrum{TS,TF},
     spectrum_rad_m = convert_frequency(spectrum, typeof(one(TF) * rad / m), dispersion)
     slope_rad_m = slope_spectrum(spectrum_rad_m)
     return convert_frequency(slope_rad_m, TF, dispersion)
+end
+
+function phase_velocity(frequency::Quantity, dispersion::Dispersion)
+    wavelength = uconvert(m, frequency, dispersion)
+    period = uconvert(s, frequency, dispersion)
+    return wavelength / period
+end
+
+function phase_velocity(frequency::Quantity, dispersion::DispersionGradient)
+    return phase_velocity(frequency, dispersion.dispersion)
 end

@@ -287,14 +287,51 @@ julia> s2 = convert_frequency(s1, typeof(1.0u"Hz^-1"));
 
 ```
 """
-function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new,
-    dispersion::Dispersion=Dispersion()) where {TS,TF}
-    # grad = _get_grad(dimension(TF), dimension(TF_new), dispersion)
-    f -> phase_velocity(f, dispersion)
+function convert_frequency end
 
-    function func(f)
-        f_org = uconvert(unit(TF), f, dispersion)
-        return upreferred(spectrum.func(f_org) / grad(f_org))
+for T1 in [_Temporal, _Spatial]
+    @eval begin
+        function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::$T1,
+                dispersion::Dispersion=Dispersion()) where {TS,TF<:$T1}
+            grad = _get_grad(dimension(TF), dimension(TF_new))
+            function func(f)
+                f_org = uconvert(unit(TF), f, dispersion)
+                return upreferred(spectrum.func(f_org) / grad(f_org))
+            end
+            return OmnidirectionalSpectrum(func, TF_new)
+        end
     end
-    return OmnidirectionalSpectrum(func, TF_new)
+end
+
+function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::_Temporal,
+            dispersion::Dispersion=Dispersion()) where {TS,TF<:_Spatial}
+    TF_int_spatial = one(spectrum)*rad/m
+    spectrum_int_spatial = convert_frequency(spectrum, TF_int_spatial, dispersion)
+
+    grad = dispersion.gradient
+    function func(f)
+        f_org = uconvert(unit(TF_int_spatial), f, dispersion)
+        return upreferred(spectrum_int_spatial.func(f_org) / grad(f_org))
+    end
+
+    TF_int_temporal = one(spectrum) * rad / s
+    spectrum_int_temporal = OmnidirectionalSpectrum(func, TF_int_temporal)
+    return convert_frequency(spectrum_int_temporal, TF_new, dispersion)
+end
+
+function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new:: _Spatial,
+    dispersion::Dispersion=Dispersion()) where {TS,TF<:_Temporal}
+
+    TF_int_temporal = one(spectrum) * rad / s
+    spectrum_int_temporal = convert_frequency(spectrum, TF_int_temporal, dispersion)
+
+    grad = dispersion.gradient_inverse
+    function func(f)
+        f_org = uconvert(unit(TF_int_temporal), f, dispersion)
+        return upreferred(spectrum_int_temporal.func(f_org) / grad(f_org))
+    end
+
+    TF_int_spatial = one(spectrum) * rad / m
+    spectrum_int_spatial = OmnidirectionalSpectrum(func, TF_int_spatial)
+    return convert_frequency(spectrum_int_spatial, TF_new, dispersion)
 end
