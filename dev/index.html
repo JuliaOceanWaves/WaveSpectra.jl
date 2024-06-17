@@ -13,68 +13,12 @@ julia&gt; v2 = ones(typeof(1u&quot;Hz&quot;), 3, 3)
  1 Hz  1 Hz  1 Hz
 
 julia&gt; s2 = DiscreteOmnidirectionalSpectrum(v2, f);
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L2-L25">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Unitful.unit-Tuple{DiscreteOmnidirectionalSpectrum}" href="#Unitful.unit-Tuple{DiscreteOmnidirectionalSpectrum}"><code>Unitful.unit</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">unit(x::Quantity{T,D,U}) where {T,D,U}
-unit(x::Type{Quantity{T,D,U}}) where {T,D,U}</code></pre><p>Returns the units associated with a <code>Quantity</code> or <code>Quantity</code> type.</p><p>Examples:</p><pre><code class="language-julia-repl hljs">julia&gt; unit(1.0u&quot;m&quot;) == u&quot;m&quot;
-true
-
-julia&gt; unit(typeof(1.0u&quot;m&quot;)) == u&quot;m&quot;
-true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/PainterQubits/Unitful.jl/blob/v1.20.0/src/utils.jl#L103-L117">source</a></section><section><div><pre><code class="language-julia hljs">Unitful.unit(::DiscreteOmnidirectionalSpectrum)</code></pre><p>Extends from Unitful, returns the units of the spectra vector/matrix in the struct</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
-
-julia&gt; v=range(1u&quot;m/Hz&quot;, 3u&quot;m/Hz&quot;, 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia&gt; f=range(1u&quot;Hz&quot;, 3u&quot;Hz&quot;, 3)
-(1.0:1.0:3.0) Hz
-
-julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia&gt; unit(s)
-m Hz⁻¹
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L100-L121">source</a></section><section><div><pre><code class="language-julia hljs">Unitful.unit(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Extends from Unitful, returns the units of the spectra values.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/discrete.jl#L2-L25">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.OmnidirectionalSpectrum" href="#WaveSpectra.OmnidirectionalSpectrum"><code>WaveSpectra.OmnidirectionalSpectrum</code></a> — <span class="docstring-category">Type</span></header><section><div><pre><code class="language-julia hljs">OmnidirectionalSpectrum(func::Function, TS::DataType, TF::DataType)</code></pre><p>Create an omnidirectional spectrum using a a function with the appropriate data types.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; func(x) = x
 func (generic function with 1 method)
 
-julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
-
-julia&gt; unit(s)
-Hz
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/continuous.jl#L104-L123">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Unitful.dimension-Tuple{DiscreteOmnidirectionalSpectrum}" href="#Unitful.dimension-Tuple{DiscreteOmnidirectionalSpectrum}"><code>Unitful.dimension</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia hljs">dimension(x::Unit)</code></pre><p>Returns a <a href="https://painterqubits.github.io/Unitful.jl/stable/types/#Unitful.Dimensions"><code>Unitful.Dimensions</code></a> object describing the given unit <code>x</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/PainterQubits/Unitful.jl/blob/v1.20.0/src/types.jl#L57-L60">source</a></section><section><div><pre><code class="language-julia hljs">dimension(u::Units{U,D}) where {U,D}</code></pre><p>Returns a <a href="https://painterqubits.github.io/Unitful.jl/stable/types/#Unitful.Dimensions"><code>Unitful.Dimensions</code></a> object corresponding to the dimensions of the units, <code>D</code>. For a dimensionless combination of units, a <code>Unitful.Dimensions{()}</code> object is returned (<code>NoDims</code>).</p><p>Examples:</p><pre><code class="language-julia-repl hljs">julia&gt; dimension(u&quot;m&quot;)
-𝐋
-
-julia&gt; typeof(dimension(u&quot;m&quot;))
-Unitful.Dimensions{(Unitful.Dimension{:Length}(1//1),)}
-
-julia&gt; dimension(u&quot;m/km&quot;)
-NoDims</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/PainterQubits/Unitful.jl/blob/v1.20.0/src/utils.jl#L193-L211">source</a></section><section><div><pre><code class="language-julia hljs">dimension(x::Quantity{T,D}) where {T,D}
-dimension(::Type{Quantity{T,D,U}}) where {T,D,U}</code></pre><p>Returns a <a href="https://painterqubits.github.io/Unitful.jl/stable/types/#Unitful.Dimensions"><code>Unitful.Dimensions</code></a> object <code>D</code> corresponding to the dimensions of quantity <code>x</code>. For a dimensionless <a href="https://painterqubits.github.io/Unitful.jl/stable/dates/#Unitful.Quantity-Tuple%7BUnion%7BDay%2C%20Hour%2C%20Microsecond%2C%20Millisecond%2C%20Minute%2C%20Nanosecond%2C%20Second%2C%20Week%7D%7D"><code>Unitful.Quantity</code></a>, a <code>Unitful.Dimensions{()}</code> object is returned (<code>NoDims</code>).</p><p>Examples:</p><pre><code class="language-julia-repl hljs">julia&gt; dimension(1.0u&quot;m&quot;)
-𝐋
-
-julia&gt; typeof(dimension(1.0u&quot;m/μm&quot;))
-Unitful.Dimensions{()}</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/PainterQubits/Unitful.jl/blob/v1.20.0/src/utils.jl#L214-L230">source</a></section><section><div><pre><code class="language-julia hljs">Unitful.dimension(::DiscreteOmnidirectionalSpectrum)</code></pre><p>Extends from Unitful, returns the dimension of the spectra vector/matrix in the struct</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
-
-julia&gt; v=range(1u&quot;m/Hz&quot;, 3u&quot;m/Hz&quot;, 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia&gt; f=range(1u&quot;Hz&quot;, 3u&quot;Hz&quot;, 3)
-(1.0:1.0:3.0) Hz
-
-julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia&gt; dimension(s)
-𝐋 𝐓
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L123-L144">source</a></section><section><div><pre><code class="language-julia hljs">Unitful.unit(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Extends from Unitful, returns the dimension of the spectra values.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
-
-julia&gt; func(x) = x
-func (generic function with 1 method)
-
-julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
-
-julia&gt; dimension(s)
-𝐓⁻¹
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/continuous.jl#L125-L144">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.frequency_unit" href="#WaveSpectra.frequency_unit"><code>WaveSpectra.frequency_unit</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">frequency_unit(::DiscreteOmnidirectionalSpectrum)</code></pre><p>Return the units of the frequency vector in the struct</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+julia&gt; s1 = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;), typeof(1.0u&quot;Hz&quot;));</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/continuous.jl#L2-L16">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.frequency_unit" href="#WaveSpectra.frequency_unit"><code>WaveSpectra.frequency_unit</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">frequency_unit(::DiscreteOmnidirectionalSpectrum)</code></pre><p>Return the units of the frequency vector.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=range(1u&quot;m/Hz&quot;, 3u&quot;m/Hz&quot;, 3)
 (1.0:1.0:3.0) m Hz⁻¹
@@ -86,17 +30,16 @@ julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia&gt; frequency_unit(s)
 Hz
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L146-L167">source</a></section><section><div><pre><code class="language-julia hljs">Unitful.unit(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Extends from Unitful, returns the units of the expected frequency.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/discrete.jl#L146-L167">source</a></section><section><div><pre><code class="language-julia hljs">frequency_unit(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Return the units of the expected frequency vector.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; func(x) = x
 func (generic function with 1 method)
 
-julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;));
 
 julia&gt; unit(s)
 Hz
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/continuous.jl#L146-L165">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.frequency_dimension" href="#WaveSpectra.frequency_dimension"><code>WaveSpectra.frequency_dimension</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">frequency_dimension(::DiscreteOmnidirectionalSpectrum)</code></pre><p>Return the dimension of the frequency vector in the struct</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/continuous.jl#L144-L162">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.frequency_dimension" href="#WaveSpectra.frequency_dimension"><code>WaveSpectra.frequency_dimension</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">frequency_dimension(::DiscreteOmnidirectionalSpectrum)</code></pre><p>Return the dimension of the frequency vector.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=range(1u&quot;m/Hz&quot;, 3u&quot;m/Hz&quot;, 3)
 (1.0:1.0:3.0) m Hz⁻¹
@@ -108,17 +51,16 @@ julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia&gt; frequency_dimension(s)
 𝐓⁻¹
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L169-L190">source</a></section><section><div><pre><code class="language-julia hljs">Unitful.unit(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Extends from Unitful, returns the dimension of the expected frequency.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/discrete.jl#L169-L190">source</a></section><section><div><pre><code class="language-julia hljs">frequency_dimension(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Return the dimension of the expected frequency vector.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; func(x) = x
 func (generic function with 1 method)
 
-julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;));
 
 julia&gt; dimension(s)
 𝐓⁻¹
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/continuous.jl#L167-L186">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.quantity" href="#WaveSpectra.quantity"><code>WaveSpectra.quantity</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D})</code></pre><p>Return the dimensions and units of the product between spectra and frequency.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/continuous.jl#L164-L182">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.quantity" href="#WaveSpectra.quantity"><code>WaveSpectra.quantity</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D})</code></pre><p>Return the dimensions and units of the product between spectra and frequency.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=range(1u&quot;m/Hz&quot;, 3u&quot;m/Hz&quot;, 3)
 (1.0:1.0:3.0) m Hz⁻¹
@@ -130,17 +72,16 @@ julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia&gt; quantity(s)
 (𝐋, m)
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L193-L214">source</a></section><section><div><pre><code class="language-julia hljs">quantity(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Return the dimensions and units of the product between spectra and frequency.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/discrete.jl#L193-L214">source</a></section><section><div><pre><code class="language-julia hljs">quantity(::OmnidirectionalSpectrum{TS, TF})</code></pre><p>Return the dimensions and units of the product between spectra and frequency.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; func(x) = x
 func (generic function with 1 method)
 
-julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;));
 
 julia&gt; quantity(s)
 (𝐓⁻², Hz²)
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/continuous.jl#L189-L208">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.spectral_moment" href="#WaveSpectra.spectral_moment"><code>WaveSpectra.spectral_moment</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())</code></pre><p>Calculate the n-th spectral moment of a discrete spectra struct.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/continuous.jl#L185-L203">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.spectral_moment" href="#WaveSpectra.spectral_moment"><code>WaveSpectra.spectral_moment</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())</code></pre><p>Calculate the n-th spectral moment of a discrete spectra.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=f=range(1u&quot;Hz&quot;, 5u&quot;Hz&quot;, 5)
 (1.0:1.0:5.0) Hz
@@ -154,8 +95,9 @@ julia&gt; spectral_moment(s, 0)
 12.0 s⁻²
 
 julia&gt; spectral_moment(s, 1)
-42.0 s⁻³</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L236-L259">source</a></section><section><div><pre><code class="language-julia hljs">spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int, f_begin::Union{Quantity, Nothing}=nothing, 
-    f_end::Union{Quantity, Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...</code></pre><p>Calculate the n-th spectral moment of a discrete spectra struct, use given range if specified.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+42.0 s⁻³</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/discrete.jl#L236-L259">source</a></section><section><div><pre><code class="language-julia hljs">spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
+f_begin::Union{Quantity, Nothing}=nothing, f_end::Union{Quantity, Nothing}=nothing;
+alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...)</code></pre><p>Calculate the n-th spectral moment of a spectra, use range if given.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; func(x) = x
 func (generic function with 1 method)
@@ -169,7 +111,35 @@ julia&gt; spectral_moment(s, 0, 1u&quot;Hz&quot;, 5u&quot;Hz&quot;)
 12.0 s⁻²
 
 julia&gt; spectral_moment(s, 1, 1u&quot;Hz&quot;, 5u&quot;Hz&quot;)
-41.333333333333336 s⁻³</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/continuous.jl#L231-L255">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.energy_period" href="#WaveSpectra.energy_period"><code>WaveSpectra.energy_period</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">energy_period(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())</code></pre><p>Calculate the energy period of a discrete spectra struct.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+41.333333333333336 s⁻³</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/continuous.jl#L226-L250">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.energy_period" href="#WaveSpectra.energy_period"><code>WaveSpectra.energy_period</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">energy_period(
+    spectrum::OmnidirectionalSpectrum{TS,TF},
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
+) where {TS,TF&lt;:Frequency}</code></pre><p>Calculate the energy period of an omnidirectional spectra between a range if given.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+
+julia&gt; func(x) = x
+func (generic function with 1 method)
+
+julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;));
+
+julia&gt; energy_period(s, 1u&quot;Hz&quot;, 5u&quot;Hz&quot;)
+0.3333333333333333 s
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/ocean_waves.jl#L28-L50">source</a></section><section><div><pre><code class="language-julia hljs">energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
+    dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
+    f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
+    kwargs...
+) where {TS,TF}</code></pre><p>Calculate the energy period of an omnidirectional spectra in Hz.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, DimensionfulAngles
+
+julia&gt; using Unitful:@u_str
+
+julia&gt; func(x) = x
+func (generic function with 1 method)
+
+julia&gt; s = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz^-1&quot;));
+
+julia&gt; energy_period(s, Dispersion(), 1u&quot;Hz&quot;, 5u&quot;Hz&quot;)
+0.688888888888889 s
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/ocean_waves.jl#L61-L85">source</a></section><section><div><pre><code class="language-julia hljs">energy_period(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())</code></pre><p>Calculate the energy period of a discrete spectra.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=f=range(1u&quot;Hz&quot;, 5u&quot;Hz&quot;, 5)
 (1.0:1.0:5.0) Hz
@@ -178,7 +148,10 @@ julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia&gt; energy_period(s)
 0.3333333333333333 s
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/ocean_waves.jl#L38-L56">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.significant_waveheight" href="#WaveSpectra.significant_waveheight"><code>WaveSpectra.significant_waveheight</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())</code></pre><p>Calculate the significant waveheight of a discrete spectra struct.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/ocean_waves.jl#L94-L112">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.significant_waveheight" href="#WaveSpectra.significant_waveheight"><code>WaveSpectra.significant_waveheight</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
+) where {TS,TF}</code></pre><p>Calculate the significant waveheight of an omnidirectional spectra.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=f=range(1u&quot;Hz&quot;, 5u&quot;Hz&quot;, 5)
 (1.0:1.0:5.0) Hz
@@ -187,7 +160,16 @@ julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia&gt; significant_waveheight(s)
 13.856406460551018 s⁻¹
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/ocean_waves.jl#L80-L98">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.convert_frequency" href="#WaveSpectra.convert_frequency"><code>WaveSpectra.convert_frequency</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=Dispersion()) where {TS, TF}</code></pre><p>Converts the spectra into the new frequency units using the <a href="https://cmichelenstrofer.github.io/DimensionfulAngles.jl/stable/guide/derived/#DimensionfulAngles.Dispersion"><code>DimensionfulAngles.Dispersion</code></a> relation  and returns a new struct with updated spectrum and frequency.</p><p>See also <a href="https://cmichelenstrofer.github.io/DimensionfulAngles.jl/stable/guide/derived/#DimensionfulAngles.Dispersion"><code>DimensionfulAngles.Dispersion</code></a></p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/ocean_waves.jl#L120-L141">source</a></section><section><div><pre><code class="language-julia hljs">significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum; alg::AbstractIntegralAlgorithm=TrapezoidalRule())</code></pre><p>Calculate the significant waveheight of a discrete spectra.</p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+
+julia&gt; v=f=range(1u&quot;Hz&quot;, 5u&quot;Hz&quot;, 5)
+(1.0:1.0:5.0) Hz
+
+julia&gt; s = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia&gt; significant_waveheight(s)
+13.856406460551018 s⁻¹
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/ocean_waves.jl#L150-L168">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="WaveSpectra.convert_frequency" href="#WaveSpectra.convert_frequency"><code>WaveSpectra.convert_frequency</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=Dispersion())</code></pre><p>Converts the spectra into the new frequency units using the <a href="https://cmichelenstrofer.github.io/DimensionfulAngles.jl/stable/guide/derived/#DimensionfulAngles.Dispersion"><code>DimensionfulAngles.Dispersion</code></a> relation  and returns a new struct with updated spectrum and frequency.</p><p>See also <a href="https://cmichelenstrofer.github.io/DimensionfulAngles.jl/stable/guide/derived/#DimensionfulAngles.Dispersion"><code>DimensionfulAngles.Dispersion</code></a></p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
 
 julia&gt; v=f=range(1u&quot;Hz&quot;, 5u&quot;Hz&quot;, 5)
 (1.0:1.0:5.0) Hz
@@ -195,4 +177,12 @@ julia&gt; v=f=range(1u&quot;Hz&quot;, 5u&quot;Hz&quot;, 5)
 julia&gt; s1 = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia&gt; s2 = convert_frequency(s1, typeof(1u&quot;Hz^-1&quot;));
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/d16f02bfc0fdea2046a31a8fe7fcd8aeee6b87f0/src/omnidirectional_spectra/discrete.jl#L269-L289">source</a></section></article><h2 id="Index"><a class="docs-heading-anchor" href="#Index">Index</a><a id="Index-1"></a><a class="docs-heading-anchor-permalink" href="#Index" title="Permalink"></a></h2><ul><li><a href="#WaveSpectra.DiscreteOmnidirectionalSpectrum"><code>WaveSpectra.DiscreteOmnidirectionalSpectrum</code></a></li><li><a href="#Unitful.dimension-Tuple{DiscreteOmnidirectionalSpectrum}"><code>Unitful.dimension</code></a></li><li><a href="#Unitful.unit-Tuple{DiscreteOmnidirectionalSpectrum}"><code>Unitful.unit</code></a></li><li><a href="#WaveSpectra.convert_frequency"><code>WaveSpectra.convert_frequency</code></a></li><li><a href="#WaveSpectra.energy_period"><code>WaveSpectra.energy_period</code></a></li><li><a href="#WaveSpectra.frequency_dimension"><code>WaveSpectra.frequency_dimension</code></a></li><li><a href="#WaveSpectra.frequency_unit"><code>WaveSpectra.frequency_unit</code></a></li><li><a href="#WaveSpectra.quantity"><code>WaveSpectra.quantity</code></a></li><li><a href="#WaveSpectra.significant_waveheight"><code>WaveSpectra.significant_waveheight</code></a></li><li><a href="#WaveSpectra.spectral_moment"><code>WaveSpectra.spectral_moment</code></a></li></ul></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Friday 14 June 2024 18:11">Friday 14 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/discrete.jl#L269-L289">source</a></section><section><div><pre><code class="language-julia hljs">convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new, dispersion::Dispersion=Dispersion())</code></pre><p>Converts the spectra into the new frequency units using the <a href="https://cmichelenstrofer.github.io/DimensionfulAngles.jl/stable/guide/derived/#DimensionfulAngles.Dispersion"><code>DimensionfulAngles.Dispersion</code></a> relation  and returns a new struct with an updated function.</p><p>See also <a href="https://cmichelenstrofer.github.io/DimensionfulAngles.jl/stable/guide/derived/#DimensionfulAngles.Dispersion"><code>DimensionfulAngles.Dispersion</code></a></p><p><strong>Example</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using WaveSpectra, Unitful
+
+julia&gt; func(x) = x
+func (generic function with 1 method)
+
+julia&gt; s1 = OmnidirectionalSpectrum(func, typeof(1.0u&quot;Hz&quot;));
+
+julia&gt; s2 = convert_frequency(s1, typeof(1.0u&quot;Hz^-1&quot;));
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/23a708ef219f2e51fee7f195bc1f9c0e5861a1ab/src/omnidirectional_spectra/continuous.jl#L269-L289">source</a></section></article><h2 id="Index"><a class="docs-heading-anchor" href="#Index">Index</a><a id="Index-1"></a><a class="docs-heading-anchor-permalink" href="#Index" title="Permalink"></a></h2><ul><li><a href="#WaveSpectra.DiscreteOmnidirectionalSpectrum"><code>WaveSpectra.DiscreteOmnidirectionalSpectrum</code></a></li><li><a href="#WaveSpectra.OmnidirectionalSpectrum"><code>WaveSpectra.OmnidirectionalSpectrum</code></a></li><li><a href="#WaveSpectra.convert_frequency"><code>WaveSpectra.convert_frequency</code></a></li><li><a href="#WaveSpectra.energy_period"><code>WaveSpectra.energy_period</code></a></li><li><a href="#WaveSpectra.frequency_dimension"><code>WaveSpectra.frequency_dimension</code></a></li><li><a href="#WaveSpectra.frequency_unit"><code>WaveSpectra.frequency_unit</code></a></li><li><a href="#WaveSpectra.quantity"><code>WaveSpectra.quantity</code></a></li><li><a href="#WaveSpectra.significant_waveheight"><code>WaveSpectra.significant_waveheight</code></a></li><li><a href="#WaveSpectra.spectral_moment"><code>WaveSpectra.spectral_moment</code></a></li></ul></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Monday 17 June 2024 15:04">Monday 17 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
