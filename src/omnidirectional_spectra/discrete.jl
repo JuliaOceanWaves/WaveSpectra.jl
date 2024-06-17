@@ -1,9 +1,8 @@
 # Struct
 """
     DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}; density::Bool=true)
-    DiscreteOmnidirectionalSpectrum(func::Function, frequency::AbstractVector{<:Quantity}; density::Bool=true)
 
-Create discrete omnidirectional spectrum using two Unitful vectors, matrix and vector, or function and vector.
+Create discrete omnidirectional spectrum using two Unitful vectors, or matrix and vector.
 
 # Example
 ```jldoctest
@@ -21,11 +20,6 @@ julia> v2 = ones(typeof(1u"Hz"), 3, 3)
  1 Hz  1 Hz  1 Hz
 
 julia> s2 = DiscreteOmnidirectionalSpectrum(v2, f);
-
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s3 = DiscreteOmnidirectionalSpectrum(func, f);
 
 ```
 """
@@ -46,7 +40,26 @@ struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: Abst
     end
 end
 
-# Call Methods
+# Constructor
+"""
+    DiscreteOmnidirectionalSpectrum(func::Function, frequency::AbstractVector{<:Quantity}; density::Bool=true)
+
+Create discrete omnidirectional spectrum using a function and frequency vector.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> f=range(1u"Hz", 3u"Hz", 3)
+(1.0:1.0:3.0) Hz
+
+julia> func(x) = x
+func (generic function with 1 method)
+
+julia> s = DiscreteOmnidirectionalSpectrum(func, f);
+
+```
+"""
 function DiscreteOmnidirectionalSpectrum(func::Function, frequency::AbstractVector{<:Quantity}; density::Bool=true)
     value = func.(frequency)
     return DiscreteOmnidirectionalSpectrum(value, frequency; density)
@@ -87,7 +100,7 @@ end
 """
     Unitful.unit(::DiscreteOmnidirectionalSpectrum)
 
-Extends from Unitful, returns the units of the spectra vector/matrix in the struct
+Extends from Unitful, returns the units of the spectra vector/matrix.
 
 # Example
 ```jldoctest
@@ -110,7 +123,7 @@ Unitful.unit(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = unit(TS)
 """
     Unitful.dimension(::DiscreteOmnidirectionalSpectrum)
 
-Extends from Unitful, returns the dimension of the spectra vector/matrix in the struct
+Extends from Unitful, returns the dimension of the spectra vector/matrix.
 
 # Example
 ```jldoctest
@@ -133,7 +146,7 @@ Unitful.dimension(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = dimension(
 """
     frequency_unit(::DiscreteOmnidirectionalSpectrum)
 
-Return the units of the frequency vector in the struct
+Return the units of the frequency vector.
 
 # Example
 ```jldoctest
@@ -156,7 +169,7 @@ frequency_unit(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = unit(
 """
     frequency_dimension(::DiscreteOmnidirectionalSpectrum)
 
-Return the dimension of the frequency vector in the struct
+Return the dimension of the frequency vector.
 
 # Example
 ```jldoctest
@@ -223,7 +236,7 @@ end
 """
     spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; alg::AbstractIntegralAlgorithm=TrapezoidalRule())
 
-Calculate the n-th spectral moment of a discrete spectra struct.
+Calculate the n-th spectral moment of a discrete spectra.
 
 # Example
 ```jldoctest
@@ -254,7 +267,7 @@ function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0;
 end
 
 """
-    convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=Dispersion()) where {TS, TF}
+    convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=Dispersion())
 
 Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation 
 and returns a new struct with updated spectrum and frequency.

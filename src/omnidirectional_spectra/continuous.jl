@@ -1,13 +1,8 @@
-
 # Struct
 """
     OmnidirectionalSpectrum(func::Function, TS::DataType, TF::DataType)
-    OmnidirectionalSpectrum(func::Function, TF::DataType=typeof(1.0Hz))
-    OmnidirectionalSpectrum(value::AbstractVector{<:Quantity}, frequency::AbstractVector{<:Quantity}; interpolation::Function=linear_interpolation)
-    OmnidirectionalSpectrum(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, true, 1}; interpolation::Function=linear_interpolation) where {TS, TF}
 
-Create an omnidirectional spectrum using a combination of a function with the appropriate 
-data types, two vectors, or an existing DiscreteOmnidirectionalSpectrum.
+Create an omnidirectional spectrum using a a function with the appropriate data types.
 
 # Example
 ```jldoctest
@@ -16,24 +11,11 @@ julia> using WaveSpectra, Unitful
 julia> func(x) = x
 func (generic function with 1 method)
 
-julia> s1 = OmnidirectionalSpectrum(func, typeof(1u"Hz"), typeof(1u"Hz"));
-
-julia> s2 = OmnidirectionalSpectrum(func, typeof(1u"Hz"));
-
-julia> v=f=range(1u"Hz", 5u"Hz", 5)
-(1.0:1.0:5.0) Hz
-
-julia> s3 = OmnidirectionalSpectrum(v,f);
-
-julia> sd = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia> s4 = OmnidirectionalSpectrum(sd);
-
+julia> s1 = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"), typeof(1.0u"Hz"));
 ```
 """
 struct OmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity} <: Function
     func :: Function
-
     function OmnidirectionalSpectrum(func::Function, TS::DataType, TF::DataType)
         (dimension(TF) ∉ _frequency_dims) && error("invalid frequency dimensions")
         (typeof(func(ones(TF)[])) ≠ TS) && error("invalid spectrum dimensions")
@@ -42,11 +24,43 @@ struct OmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity} <: Function
 end
 
 # Constructors
+"""
+    OmnidirectionalSpectrum(func::Function, TF::DataType=typeof(1.0Hz))
+
+Create an omnidirectional spectrum using a function with the appropriate input data type.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> func(x) = x
+func (generic function with 1 method)
+
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+
+```
+"""
 function OmnidirectionalSpectrum(func::Function, TF::DataType=typeof(1.0Hz))
     TS = typeof(func(ones(TF)[]))
     return OmnidirectionalSpectrum(func, TS, TF)
 end
 
+"""
+    OmnidirectionalSpectrum(value::AbstractVector{<:Quantity}, frequency::AbstractVector{<:Quantity}; interpolation::Function=linear_interpolation)
+
+Create an omnidirectional spectrum using a two vectors.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> v=f=range(1u"Hz", 5u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> # TODO fix deprecation s = OmnidirectionalSpectrum(v,f);
+
+```
+"""
 function OmnidirectionalSpectrum(
         value::AbstractVector{<:Quantity}, frequency::AbstractVector{<:Quantity};
         interpolation::Function=linear_interpolation
@@ -57,7 +71,25 @@ function OmnidirectionalSpectrum(
     return OmnidirectionalSpectrum(func, TS, TF)
 end
 
-function OmnidirectionalSpectrum(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, true, 1}; 
+"""
+    OmnidirectionalSpectrum(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, true, 1}; interpolation::Function=linear_interpolation)
+
+Create an omnidirectional spectrum using an existing [`DiscreteOmnidirectionalSpectrum`](@ref).
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> v=f=range(1u"Hz", 5u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> sd = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> # TODO fix deprecation s = OmnidirectionalSpectrum(sd);
+
+```
+"""
+function OmnidirectionalSpectrum(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, true, 1};
         interpolation::Function=linear_interpolation) where {TS, TF}
     return OmnidirectionalSpectrum(spectrum.value, spectrum.frequency; interpolation)
 end
@@ -81,8 +113,7 @@ julia> using WaveSpectra, Unitful
 julia> func(x) = x
 func (generic function with 1 method)
 
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
 
 julia> unit(s)
 Hz
@@ -91,7 +122,7 @@ Hz
 """
 Unitful.unit(::OmnidirectionalSpectrum{TS, TF})  where {TS, TF} = unit(TS)
 """
-    Unitful.unit(::OmnidirectionalSpectrum{TS, TF})
+    Unitful.dimension(::OmnidirectionalSpectrum{TS, TF})
 
 Extends from Unitful, returns the dimension of the spectra values.
 
@@ -102,19 +133,18 @@ julia> using WaveSpectra, Unitful
 julia> func(x) = x
 func (generic function with 1 method)
 
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
 
 julia> dimension(s)
 𝐓⁻¹
 
 ```
 """
-Unitful.dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TS)
+Unitful.dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS, TF} = dimension(TS)
 """
-    Unitful.unit(::OmnidirectionalSpectrum{TS, TF})
+    frequency_unit(::OmnidirectionalSpectrum{TS, TF})
 
-Extends from Unitful, returns the units of the expected frequency.
+Return the units of the expected frequency vector.
 
 # Example
 ```jldoctest
@@ -123,8 +153,7 @@ julia> using WaveSpectra, Unitful
 julia> func(x) = x
 func (generic function with 1 method)
 
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
 
 julia> unit(s)
 Hz
@@ -133,9 +162,9 @@ Hz
 """
 frequency_unit(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
 """
-    Unitful.unit(::OmnidirectionalSpectrum{TS, TF})
+    frequency_dimension(::OmnidirectionalSpectrum{TS, TF})
 
-Extends from Unitful, returns the dimension of the expected frequency.
+Return the dimension of the expected frequency vector.
 
 # Example
 ```jldoctest
@@ -144,8 +173,7 @@ julia> using WaveSpectra, Unitful
 julia> func(x) = x
 func (generic function with 1 method)
 
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
 
 julia> dimension(s)
 𝐓⁻¹
@@ -166,8 +194,7 @@ julia> using WaveSpectra, Unitful
 julia> func(x) = x
 func (generic function with 1 method)
 
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"))
-(::OmnidirectionalSpectrum{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}, Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}})     (generic function with 1 method)
+julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
 
 julia> quantity(s)
 (𝐓⁻², Hz²)
@@ -197,10 +224,10 @@ end
 
 # Spectral moments
 """
-    spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int, f_begin::Union{Quantity, Nothing}=nothing, 
-        f_end::Union{Quantity, Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
-
-Calculate the n-th spectral moment of a discrete spectra struct, use given range if specified.
+    spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
+    f_begin::Union{Quantity, Nothing}=nothing, f_end::Union{Quantity, Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...)
+Calculate the n-th spectral moment of a spectra, use range if given.
 
 # Example
 ```jldoctest
@@ -239,18 +266,31 @@ function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
 end
 
 # Convert frequency
-function phase_velocity(frequency::Quantity, dispersion::Dispersion)
-    wavelength = uconvert(m, frequency, dispersion)
-    period = uconvert(s, frequency, dispersion)
-    return wavelength/period
-end
+"""
+    convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new, dispersion::Dispersion=Dispersion())
 
+Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation
+and returns a new struct with an updated function.
+
+See also [`DimensionfulAngles.Dispersion`](@extref)
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> func(x) = x
+func (generic function with 1 method)
+
+julia> s1 = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+
+julia> s2 = convert_frequency(s1, typeof(1.0u"Hz^-1"));
+
+```
+"""
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new,
     dispersion::Dispersion=Dispersion()) where {TS,TF}
     # grad = _get_grad(dimension(TF), dimension(TF_new), dispersion)
     f -> phase_velocity(f, dispersion)
-
-
 
     function func(f)
         f_org = uconvert(unit(TF), f, dispersion)
