@@ -27,7 +27,7 @@ using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 using Unitful: 𝐓, 𝐋, gn as g, Hz, m
 using Unitful: dimension, register, unit, uconvert, upreferred
 using Unitful: Frequency, Length, Time, Wavenumber
-using Unitful: Dimensions, DimensionlessQuantity, Frequency, NoDims, Quantity, Hz
+using Unitful: Dimensions, DimensionlessQuantity, Frequency, NoDims, Quantity, Hz, s
 using UnitfulEquivalences: UnitfulEquivalences # extend: edconvert
 using UnitfulEquivalences: Equivalence, edconvert, dimtype
 using DimensionfulAngles: 𝐀, radᵃ as rad, θ₀
