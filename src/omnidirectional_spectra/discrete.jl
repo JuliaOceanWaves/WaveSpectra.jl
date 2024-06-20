@@ -78,7 +78,6 @@ Base.firstindex(::DiscreteOmnidirectionalSpectrum) = _firstState()
 Base.lastindex(spectrum::DiscreteOmnidirectionalSpectrum) = length(spectrum.value)
 Base.eltype(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = TS
 
-using Unitful:ustrip
 function Base.show(io::IO, spectrum::DiscreteOmnidirectionalSpectrum{TS,TF,D,N}) where {TS,TF,D,N}
     print(io, "\nPARAMS: {$TS,\n\t $TF,\n\t Density=$D, Value Dims=$N}\nFREQUENCY {$(unit(TF))}, VALUES $(size(spectrum))\t{$(unit(TS))}")
 end
@@ -257,7 +256,7 @@ julia> spectral_moment(s, 1)
 42.0 s⁻³
 ```
 """
-function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0; 
+function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0, args...; 
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     # There are no keyword arguments used to solve SampledIntegralProblems
     # https://docs.sciml.ai/Integrals/stable/basics/SampledIntegralProblem/
@@ -266,8 +265,34 @@ function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0;
     return upreferred.(sol.u)
 end
 
+for T1 in [_Temporal, _Spatial]
+    @eval begin
+        function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
+                dispersion::Equivalence=deepwater_gradient) where {TS,TF<:$T1, T<:$T1}
+            # println("Both Temporal/Spatial")
+            grad = _get_grad(dimension(TF), dimension(T))
+            new_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
+            new_freq = uconvert.(unit(T), spectrum.frequency, dispersion)
+            return DiscreteOmnidirectionalSpectrum(new_value, new_freq)
+        end
+    end
+end
+
+function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
+            dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
+    
+    spectrum_int_spatial = convert_frequency(spectrum, _TF_int_spatial, dispersion)
+
+    grad = _get_grad(dimension(TF), dimension(T))
+    inter_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
+    inter_freq = uconvert.(unit(T), spectrum.frequency, dispersion)
+
+    spectrum_int_temporal = DiscreteOmnidirectionalSpectrum(inter_value, inter_freq)
+    return convert_frequency(spectrum_int_temporal, TF_new, dispersion)
+end
+
 """
-    convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=Dispersion())
+    convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=deepwater_gradient)
 
 Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation 
 and returns a new struct with updated spectrum and frequency.
@@ -278,19 +303,24 @@ See also [`DimensionfulAngles.Dispersion`](@extref)
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> v=f=range(1u"Hz", 5u"Hz", 5)
+julia> v=f=range(1.0u"Hz", 5.0u"Hz", 5)
 (1.0:1.0:5.0) Hz
 
 julia> s1 = DiscreteOmnidirectionalSpectrum(v,f);
 
-julia> s2 = convert_frequency(s1, typeof(1u"Hz^-1"));
+julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
 
 ```
 """
-function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new,
-    dispersion::Dispersion=Dispersion()) where {TS, TF}
-    grad = _get_grad(dimension(TF), dimension(TF_new))
-    new_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
-    new_freq = uconvert.(unit(TF_new), spectrum.frequency, dispersion)
-    return DiscreteOmnidirectionalSpectrum(new_value, new_freq)
+function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
+    dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
+
+    spectrum_int_temporal = convert_frequency(spectrum, _TF_int_temporal, dispersion)
+
+    grad = _get_grad(dimension(TF), dimension(T))
+    inter_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
+    inter_freq = uconvert.(unit(T), spectrum.frequency, dispersion)
+
+    spectrum_int_spatial = DiscreteOmnidirectionalSpectrum(inter_value, inter_freq)
+    return convert_frequency(spectrum_int_spatial, TF_new, dispersion)
 end

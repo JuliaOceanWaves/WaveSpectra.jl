@@ -10,10 +10,6 @@ module _NoUnit
 end
 
 export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
-export frequency_dimension, frequency_unit, pm_spectrum, quantity, spectral_moment
-export energy_period, significant_waveheight
-
-export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
 export convert_frequency, frequency_dimension, frequency_unit, quantity, spectral_moment
 export energy_period, significant_waveheight, ∅
 export normalize, scale, slope_spectrum, deepwater, pierson_moskowitz_spectrum
@@ -25,7 +21,7 @@ using Plots: @recipe
 using Integrals: AbstractSampledIntegralAlgorithm, IntegralProblem, SampledIntegralProblem, TrapezoidalRule, QuadGKJL, solve
 using SciMLBase: AbstractIntegralAlgorithm, ReturnCode
 using Unitful: 𝐓, 𝐋, gn as g, Hz, m
-using Unitful: dimension, register, unit, uconvert, upreferred
+using Unitful: dimension, register, unit, uconvert, upreferred, ustrip
 using Unitful: Frequency, Length, Time, Wavenumber
 using Unitful: Dimensions, DimensionlessQuantity, Frequency, NoDims, Quantity, Hz, s
 using UnitfulEquivalences: UnitfulEquivalences # extend: edconvert

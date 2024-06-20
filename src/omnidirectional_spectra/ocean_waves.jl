@@ -54,11 +54,9 @@ julia> energy_period(s, 1u"Hz", 5u"Hz")
 
 ```
 """
-function energy_period(
-        spectrum::OmnidirectionalSpectrum{TS,TF},
-        f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
-        alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...
-    ) where {TS,TF<:Frequency}
+function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
+    f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF<:Frequency}
     m₋₁ = spectral_moment(spectrum, -1, f_begin, f_end; alg, kwargs...)
     m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
     return m₋₁ / m₀
@@ -116,7 +114,7 @@ julia> energy_period(s)
 
 ```
 """
-function energy_period(spectrum::DiscreteOmnidirectionalSpectrum;
+function energy_period(spectrum::DiscreteOmnidirectionalSpectrum, args...;
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     m_n1 = spectral_moment(spectrum, -1; alg)
     m_0 = spectral_moment(spectrum, 0; alg)
@@ -178,7 +176,7 @@ julia> significant_waveheight(s)
 
 ```
 """
-function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum;
+function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum, args...;
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     m_0 = spectral_moment(spectrum, 0; alg)
     return @. 4*√m_0

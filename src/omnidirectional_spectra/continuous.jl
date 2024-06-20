@@ -241,27 +241,6 @@ function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
     return upreferred(sol.u)
 end
 
-# Convert frequency
-"""
-    convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new, dispersion::Dispersion=Dispersion())
-
-Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation
-and returns a new struct with an updated function.
-
-See also [`DimensionfulAngles.Dispersion`](@extref)
-
-# Example
-```jldoctest
-julia> using WaveSpectra, Unitful
-
-julia> s1 = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
-
-julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
-
-```
-"""
-function convert_frequency end
-
 for T1 in [_Temporal, _Spatial]
     @eval begin
         function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
@@ -276,9 +255,6 @@ for T1 in [_Temporal, _Spatial]
         end
     end
 end
-
-_TF_int_spatial = 1.0 * rad/m
-_TF_int_temporal = 1.0 * rad / s
 
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
             dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
@@ -295,6 +271,24 @@ function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
     return convert_frequency(spectrum_int_temporal, TF_new, dispersion)
 end
 
+"""
+    convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new, dispersion::Dispersion=deepwater_gradient)
+
+Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation
+and returns a new struct with an updated function.
+
+See also [`DimensionfulAngles.Dispersion`](@extref)
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> s1 = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
+
+julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
+
+```
+"""
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
     dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
 

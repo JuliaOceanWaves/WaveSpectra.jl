@@ -4,6 +4,8 @@ const _spatial_frequency_types = [Length, Wavenumber, AngularWavelength, Angular
 const _frequency_types = vcat(_temporal_frequency_types, _spatial_frequency_types)
 const _Temporal = Union{Time,Frequency,AngularPeriod,AngularVelocity}
 const _Spatial = Union{Length,Wavenumber,AngularWavelength,AngularWavenumber}
+const _TF_int_spatial = 1.0 * rad / m
+const _TF_int_temporal = 1.0 * rad / s
 
 # dispersion gradient struct
 struct DispersionGradient <: Equivalence
