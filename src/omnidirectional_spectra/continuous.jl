@@ -8,10 +8,7 @@ Create an omnidirectional spectrum using a a function with the appropriate data 
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s1 = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"), typeof(1.0u"Hz"));
+julia> s1 = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"), typeof(1.0u"Hz"));
 ```
 """
 struct OmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity} <: Function
@@ -33,10 +30,7 @@ Create an omnidirectional spectrum using a function with the appropriate input d
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 ```
 """
@@ -57,7 +51,7 @@ julia> using WaveSpectra, Unitful
 julia> v=f=range(1u"Hz", 5u"Hz", 5)
 (1.0:1.0:5.0) Hz
 
-julia> # TODO fix deprecation s = OmnidirectionalSpectrum(v,f);
+julia> s = OmnidirectionalSpectrum(v,f);
 
 ```
 """
@@ -85,7 +79,7 @@ julia> v=f=range(1u"Hz", 5u"Hz", 5)
 
 julia> sd = DiscreteOmnidirectionalSpectrum(v,f);
 
-julia> # TODO fix deprecation s = OmnidirectionalSpectrum(sd);
+julia> s = OmnidirectionalSpectrum(sd);
 
 ```
 """
@@ -110,10 +104,7 @@ Extends from Unitful, returns the units of the spectra values.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> unit(s)
 Hz
@@ -130,10 +121,7 @@ Extends from Unitful, returns the dimension of the spectra values.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> dimension(s)
 𝐓⁻¹
@@ -150,10 +138,7 @@ Return the units of the expected frequency vector.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> unit(s)
 Hz
@@ -170,10 +155,7 @@ Return the dimension of the expected frequency vector.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> dimension(s)
 𝐓⁻¹
@@ -191,10 +173,7 @@ Return the dimensions and units of the product between spectra and frequency.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> quantity(s)
 (𝐓⁻², Hz²)
@@ -233,10 +212,7 @@ Calculate the n-th spectral moment of a spectra, use range if given.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> spectral_moment(s, -1, 1u"Hz", 5u"Hz")
 4.0 s⁻¹
@@ -278,12 +254,9 @@ See also [`DimensionfulAngles.Dispersion`](@extref)
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
+julia> s1 = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
-julia> s1 = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
-
-julia> s2 = convert_frequency(s1, typeof(1.0u"Hz^-1"));
+julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
 
 ```
 """
@@ -291,47 +264,48 @@ function convert_frequency end
 
 for T1 in [_Temporal, _Spatial]
     @eval begin
-        function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::$T1,
-                dispersion::Dispersion=Dispersion()) where {TS,TF<:$T1}
-            grad = _get_grad(dimension(TF), dimension(TF_new))
+        function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
+                dispersion::Equivalence=deepwater_gradient) where {TS,TF<:$T1, T<:$T1}
+            # println("Both Temporal/Spatial")
+            grad = _get_grad(dimension(TF), dimension(T))
             function func(f)
                 f_org = uconvert(unit(TF), f, dispersion)
                 return upreferred(spectrum.func(f_org) / grad(f_org))
             end
-            return OmnidirectionalSpectrum(func, TF_new)
+            return OmnidirectionalSpectrum(func, T)
         end
     end
 end
 
-function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::_Temporal,
-            dispersion::Dispersion=Dispersion()) where {TS,TF<:_Spatial}
-    TF_int_spatial = one(spectrum)*rad/m
-    spectrum_int_spatial = convert_frequency(spectrum, TF_int_spatial, dispersion)
+_TF_int_spatial = 1.0 * rad/m
+_TF_int_temporal = 1.0 * rad / s
+
+function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
+            dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
+    
+    spectrum_int_spatial = convert_frequency(spectrum, _TF_int_spatial, dispersion)
 
     grad = dispersion.gradient
     function func(f)
-        f_org = uconvert(unit(TF_int_spatial), f, dispersion)
+        f_org = uconvert(unit(_TF_int_spatial), f, dispersion)
         return upreferred(spectrum_int_spatial.func(f_org) / grad(f_org))
     end
 
-    TF_int_temporal = one(spectrum) * rad / s
-    spectrum_int_temporal = OmnidirectionalSpectrum(func, TF_int_temporal)
+    spectrum_int_temporal = OmnidirectionalSpectrum(func, typeof(_TF_int_temporal))
     return convert_frequency(spectrum_int_temporal, TF_new, dispersion)
 end
 
-function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new:: _Spatial,
-    dispersion::Dispersion=Dispersion()) where {TS,TF<:_Temporal}
+function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
+    dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
 
-    TF_int_temporal = one(spectrum) * rad / s
-    spectrum_int_temporal = convert_frequency(spectrum, TF_int_temporal, dispersion)
+    spectrum_int_temporal = convert_frequency(spectrum, _TF_int_temporal, dispersion)
 
     grad = dispersion.gradient_inverse
     function func(f)
-        f_org = uconvert(unit(TF_int_temporal), f, dispersion)
+        f_org = uconvert(unit(_TF_int_temporal), f, dispersion)
         return upreferred(spectrum_int_temporal.func(f_org) / grad(f_org))
     end
 
-    TF_int_spatial = one(spectrum) * rad / m
-    spectrum_int_spatial = OmnidirectionalSpectrum(func, TF_int_spatial)
+    spectrum_int_spatial = OmnidirectionalSpectrum(func, typeof(_TF_int_spatial))
     return convert_frequency(spectrum_int_spatial, TF_new, dispersion)
 end

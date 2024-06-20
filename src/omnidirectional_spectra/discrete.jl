@@ -289,7 +289,7 @@ julia> s2 = convert_frequency(s1, typeof(1u"Hz^-1"));
 """
 function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new,
     dispersion::Dispersion=Dispersion()) where {TS, TF}
-    grad = _grad[(dimension(TF), dimension(TF_new))]
+    grad = _get_grad(dimension(TF), dimension(TF_new))
     new_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
     new_freq = uconvert.(unit(TF_new), spectrum.frequency, dispersion)
     return DiscreteOmnidirectionalSpectrum(new_value, new_freq)

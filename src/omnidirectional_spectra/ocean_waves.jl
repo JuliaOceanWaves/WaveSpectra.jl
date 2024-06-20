@@ -23,7 +23,7 @@ deepwater = Dispersion(
 
 const deepwater_gradient = DispersionGradient(
     deepwater;
-    gradient=(k -> √(gθ₀ / 4k)),
+    gradient=(k -> √(g*θ₀ / 4k)),
     gradient_inverse=(ω -> 2ω / (g * θ₀))
 );
 
@@ -93,7 +93,7 @@ function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
     dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
     f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
     kwargs...) where {TS,TF}
-spectrum_hz = convert_frequency(spectrum, typeof(one(TF) * Hz), dispersion)
+spectrum_hz = convert_frequency(spectrum, one(TF) * Hz, dispersion)
 return energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
 end
 
@@ -135,13 +135,19 @@ Calculate the significant waveheight of an omnidirectional spectra.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> v=f=range(1u"Hz", 5u"Hz", 5)
+julia> v=f=range(1,5,5)
+1.0:1.0:5.0
+
+julia> v = v.*u"m^2/Hz"
+(1.0:1.0:5.0) m² Hz⁻¹
+
+julia> f = f.*u"Hz"
 (1.0:1.0:5.0) Hz
 
-julia> s = DiscreteOmnidirectionalSpectrum(v,f);
+julia> s = OmnidirectionalSpectrum(v,f);
 
 julia> significant_waveheight(s)
-13.856406460551018 s⁻¹
+13.856406451197893 m
 
 ```
 """
@@ -192,7 +198,7 @@ function normalize(spectrum::OmnidirectionalSpectrum{TS,TF},
         f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
         alg::AbstractIntegralAlgorithm=QuadGKJL(), dispersion::Dispersion=Dispersion(),
         kwargs...) where {TS, TF}
-    spectrum_hz = convert_frequency(spectrum, typeof(one(TF) * Hz), dispersion)
+    spectrum_hz = convert_frequency(spectrum, one(TF) * Hz, dispersion)
     hₛ = significant_waveheight(spectrum_hz, f_begin, f_end; alg, kwargs...)
     tₑ = energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
     func(f::DimensionlessQuantity) = uconvert(∅, spectrum(f / tₑ) / (hₛ^2 * tₑ))
@@ -215,7 +221,7 @@ end
 
 function slope_spectrum(spectrum::OmnidirectionalSpectrum{TS,TF},
     dispersion::Dispersion=Dispersion()) where {TS,TF}
-    spectrum_rad_m = convert_frequency(spectrum, typeof(one(TF) * rad / m), dispersion)
+    spectrum_rad_m = convert_frequency(spectrum, one(TF) * rad / m, dispersion)
     slope_rad_m = slope_spectrum(spectrum_rad_m)
     return convert_frequency(slope_rad_m, TF, dispersion)
 end
