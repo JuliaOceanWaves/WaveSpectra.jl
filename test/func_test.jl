@@ -1,4 +1,3 @@
-using DimensionfulAngles: radᵃ as rad
 using Unitful: upreferred, uconvert, unit, dimension
 using Unitful: 𝐓, Hz, s, 𝐋, m
 using WaveSpectra
