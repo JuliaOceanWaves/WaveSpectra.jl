@@ -22,7 +22,7 @@ using Test
 end
 
 ex_units = [upreferred.(r) for r in keys(WaveSpectra._grad_1)]
-@testset "Conversion Equivalences Continous" begin 
+@testset "Conversion Equivalences Continous" begin
     for (old_TF, new_TF) in ex_units
         aux_spec = OmnidirectionalSpectrum(x -> x, typeof(1.0(old_TF)))
         new_spec = convert_frequency(aux_spec, 1.0(new_TF));
@@ -37,7 +37,7 @@ ex_units = [upreferred.(r) for r in keys(WaveSpectra._grad_1)]
     end
 end
 
-@testset "Conversion Equivalences Discrete" begin 
+@testset "Conversion Equivalences Discrete" begin
     for (old_TF, new_TF) in ex_units
 
         v=f=range(1.0, 5.0, 5)

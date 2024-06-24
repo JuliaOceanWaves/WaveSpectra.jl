@@ -258,16 +258,16 @@ end
 
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
             dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
-    
-    spectrum_int_spatial = convert_frequency(spectrum, _TF_int_spatial, dispersion)
+
+    spectrum_int_spatial = convert_frequency(spectrum, _TF_spatial, dispersion)
 
     grad = dispersion.gradient
     function func(f)
-        f_org = uconvert(unit(_TF_int_spatial), f, dispersion)
+        f_org = uconvert(unit(_TF_spatial), f, dispersion)
         return upreferred(spectrum_int_spatial.func(f_org) / grad(f_org))
     end
 
-    spectrum_int_temporal = OmnidirectionalSpectrum(func, typeof(_TF_int_temporal))
+    spectrum_int_temporal = OmnidirectionalSpectrum(func, typeof(_TF_temporal))
     return convert_frequency(spectrum_int_temporal, TF_new, dispersion)
 end
 
@@ -292,14 +292,14 @@ julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
     dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
 
-    spectrum_int_temporal = convert_frequency(spectrum, _TF_int_temporal, dispersion)
+    spectrum_int_temporal = convert_frequency(spectrum, _TF_temporal, dispersion)
 
     grad = dispersion.gradient_inverse
     function func(f)
-        f_org = uconvert(unit(_TF_int_temporal), f, dispersion)
+        f_org = uconvert(unit(_TF_temporal), f, dispersion)
         return upreferred(spectrum_int_temporal.func(f_org) / grad(f_org))
     end
 
-    spectrum_int_spatial = OmnidirectionalSpectrum(func, typeof(_TF_int_spatial))
+    spectrum_int_spatial = OmnidirectionalSpectrum(func, typeof(_TF_spatial))
     return convert_frequency(spectrum_int_spatial, TF_new, dispersion)
 end

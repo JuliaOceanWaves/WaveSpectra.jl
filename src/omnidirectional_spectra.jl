@@ -4,8 +4,8 @@ const _spatial_frequency_types = [Length, Wavenumber, AngularWavelength, Angular
 const _frequency_types = vcat(_temporal_frequency_types, _spatial_frequency_types)
 const _Temporal = Union{Time,Frequency,AngularPeriod,AngularVelocity}
 const _Spatial = Union{Length,Wavenumber,AngularWavelength,AngularWavenumber}
-const _TF_int_spatial = 1.0 * rad / m
-const _TF_int_temporal = 1.0 * rad / s
+const _TF_spatial = 1.0 * rad / m
+const _TF_temporal = 1.0 * rad / s
 
 # dispersion gradient struct
 struct DispersionGradient <: Equivalence
@@ -52,23 +52,23 @@ const _grad_1 = Dict(
     (𝐀^-1 * 𝐋, 𝐀^-1 * 𝐋) => (x -> 1),
     (𝐀 * 𝐋^-1, 𝐀 * 𝐋^-1) => (x -> 1),
     # 1 - temporal
-    (𝐓^-1, 𝐓) => (x -> -1 / x^2), #TODO Check
-    (𝐓, 𝐓^-1) => (x -> -1 / x^2), #TODO Check
-    (𝐓^-1, 𝐀 * 𝐓^-1) => (x -> 2π * rad), 
+    (𝐓^-1, 𝐓) => (x -> -1 / x^2),
+    (𝐓, 𝐓^-1) => (x -> -1 / x^2),
+    (𝐓^-1, 𝐀 * 𝐓^-1) => (x -> 2π * rad),
     (𝐀 * 𝐓^-1, 𝐓^-1) => (x -> 1 / (2π * rad)),
     (𝐓, 𝐓 * 𝐀^-1) => (x -> 1 / (2π * rad)),
     (𝐓 * 𝐀^-1, 𝐓) => (x -> 2π * rad),
-    (𝐀 * 𝐓^-1, 𝐓 * 𝐀^-1) => (x -> -1 / x^2), #TODO Check
-    (𝐓 * 𝐀^-1, 𝐀 * 𝐓^-1) => (x -> -1 / x^2), #TODO Check
+    (𝐀 * 𝐓^-1, 𝐓 * 𝐀^-1) => (x -> -1 / x^2),
+    (𝐓 * 𝐀^-1, 𝐀 * 𝐓^-1) => (x -> -1 / x^2),
     # 1 - spatial
-    (𝐋^-1, 𝐋) => (x -> -1 / x^2), #TODO Check
-    (𝐋, 𝐋^-1) => (x -> -1 / x^2), #TODO Check
+    (𝐋^-1, 𝐋) => (x -> -1 / x^2),
+    (𝐋, 𝐋^-1) => (x -> -1 / x^2),
     (𝐋^-1, 𝐀 * 𝐋^-1) => (x -> 2π * rad),
     (𝐀 * 𝐋^-1, 𝐋^-1) => (x -> 1 / (2π * rad)),
     (𝐋, 𝐋 * 𝐀^-1) => (x -> 1 / (2π * rad)),
     (𝐋 * 𝐀^-1, 𝐋) => (x -> 2π * rad),
-    (𝐀 * 𝐋^-1, 𝐋 * 𝐀^-1) => (x -> -1 / x^2), #TODO Check
-    (𝐋 * 𝐀^-1, 𝐀 * 𝐋^-1) => (x -> -1 / x^2), #TODO Check
+    (𝐀 * 𝐋^-1, 𝐋 * 𝐀^-1) => (x -> -1 / x^2),
+    (𝐋 * 𝐀^-1, 𝐀 * 𝐋^-1) => (x -> -1 / x^2),
 )
 
 _get_grad(dims_from::Dimensions, dims_to::Dimensions) = _grad_1[dims_from, dims_to]

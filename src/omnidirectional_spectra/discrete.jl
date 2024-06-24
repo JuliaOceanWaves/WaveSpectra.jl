@@ -26,6 +26,7 @@ julia> s2 = DiscreteOmnidirectionalSpectrum(v2, f);
 struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: AbstractArray{TS, N}
     value::AbstractVecOrMat{<:Quantity}
     frequency::AbstractVector{<:Quantity}
+    # TODO: Add column_name & metadata
     function DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}; density::Bool=true)
         # Parameters
         N=ndims(value)
@@ -36,6 +37,7 @@ struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: Abst
         (dimension(TF) ∉ _frequency_dims) && error("invalid frequency dimensions")
         # Check Arguments
         (size(value)[1] ≠ length(frequency)) && error("'frequency' and first dimension of 'value' array must be same size")
+        (N ∉ [1,2]) && error("value must be a vector or matrix")  # TODO: Check if this makes sense
         return new{TS,TF,D,N}(value, frequency)
     end
 end
@@ -212,6 +214,7 @@ julia> quantity(s)
 ```
 """
 function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D}) where {TS, TF, D}
+    # TODO: consolidate these documentations for both discrete and continuous
     dimensions = dimension(TS) * dimension(TF)
     units = unit(TS) * unit(TF)
     return dimensions, units
@@ -219,6 +222,7 @@ end
 
 # Plots recipes
 function _labels(::DiscreteOmnidirectionalSpectrum{TS, TF, D}) where {TS, TF, D}
+    # TODO: move into recipe
     x_label = "frequency"
     y_label = D ? "spectral density" : "discrete (integral) spectrum"
     return (x_label, y_label)
@@ -256,7 +260,7 @@ julia> spectral_moment(s, 1)
 42.0 s⁻³
 ```
 """
-function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0, args...; 
+function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0, args...;
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     # There are no keyword arguments used to solve SampledIntegralProblems
     # https://docs.sciml.ai/Integrals/stable/basics/SampledIntegralProblem/
@@ -280,8 +284,8 @@ end
 
 function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
             dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
-    
-    spectrum_int_spatial = convert_frequency(spectrum, _TF_int_spatial, dispersion)
+
+    # spectrum_int_spatial = convert_frequency(spectrum, _TF_spatial, dispersion)  # TODO: Not needed?
 
     grad = _get_grad(dimension(TF), dimension(T))
     inter_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
@@ -294,7 +298,7 @@ end
 """
     convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}, TF_new, dispersion::Dispersion=deepwater_gradient)
 
-Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation 
+Converts the spectra into the new frequency units using the [`DimensionfulAngles.Dispersion`](@extref) relation
 and returns a new struct with updated spectrum and frequency.
 
 See also [`DimensionfulAngles.Dispersion`](@extref)
@@ -315,7 +319,7 @@ julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
 function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
     dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
 
-    spectrum_int_temporal = convert_frequency(spectrum, _TF_int_temporal, dispersion)
+    # spectrum_int_temporal = convert_frequency(spectrum, _TF_temporal, dispersion) # TODO: Not needed?
 
     grad = _get_grad(dimension(TF), dimension(T))
     inter_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
