@@ -285,11 +285,11 @@ end
 function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
             dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
 
-    # spectrum_int_spatial = convert_frequency(spectrum, _TF_spatial, dispersion)  # TODO: Not needed?
+    spectrum_int_spatial = convert_frequency(spectrum, _TF_spatial, dispersion)
 
-    grad = _get_grad(dimension(TF), dimension(T))
-    inter_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
-    inter_freq = uconvert.(unit(T), spectrum.frequency, dispersion)
+    grad = dispersion.gradient
+    inter_value = @. upreferred(spectrum_int_spatial.value / grad(spectrum_int_spatial.frequency))
+    inter_freq = uconvert.(unit(_TF_temporal), spectrum_int_spatial.frequency, dispersion)
 
     spectrum_int_temporal = DiscreteOmnidirectionalSpectrum(inter_value, inter_freq)
     return convert_frequency(spectrum_int_temporal, TF_new, dispersion)
@@ -318,13 +318,14 @@ julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
 """
 function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_new::T,
     dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
+    
+    spectrum_int_temporal = convert_frequency(spectrum, _TF_temporal, dispersion)
 
-    # spectrum_int_temporal = convert_frequency(spectrum, _TF_temporal, dispersion) # TODO: Not needed?
-
-    grad = _get_grad(dimension(TF), dimension(T))
-    inter_value = @. upreferred(spectrum.value / grad(spectrum.frequency))
-    inter_freq = uconvert.(unit(T), spectrum.frequency, dispersion)
+    grad = dispersion.gradient_inverse
+    inter_value = @. upreferred(spectrum_int_temporal.value / grad(spectrum_int_temporal.frequency))
+    inter_freq = uconvert.(unit(_TF_spatial), spectrum_int_temporal.frequency, dispersion)
 
     spectrum_int_spatial = DiscreteOmnidirectionalSpectrum(inter_value, inter_freq)
     return convert_frequency(spectrum_int_spatial, TF_new, dispersion)
 end
+
