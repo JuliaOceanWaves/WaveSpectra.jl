@@ -76,3 +76,85 @@ _get_grad(dims_from::Dimensions, dims_to::Dimensions) = _grad_1[dims_from, dims_
 include("omnidirectional_spectra/discrete.jl")
 include("omnidirectional_spectra/continuous.jl")
 include("omnidirectional_spectra/ocean_waves.jl")
+
+"""
+    frequency_unit(::[Discrete]OmnidirectionalSpectrum{TS, TF})
+
+Return the dimension of the expected frequency vector.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> v=f=range(1.0u"Hz", 5.0u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s1 = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> s2 = OmnidirectionalSpectrum(s1);
+
+julia> unit(s1) == unit(s2) == u"Hz"
+true
+
+```
+"""
+frequency_unit(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
+frequency_unit(::DiscreteOmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
+"""
+    frequency_dimension(::[Discrete]OmnidirectionalSpectrum{TS, TF})
+
+Return the dimension of the expected frequency vector.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> f=v=range(1.0u"Hz", 5.0u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s1 = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> s2 = OmnidirectionalSpectrum(s1);
+
+julia> dimension(s1) == dimension(s2) == dimension(u"Hz")
+true
+
+```
+"""
+frequency_dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
+frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
+
+"""
+    quantity(::[Discrete]OmnidirectionalSpectrum{TS, TF})
+
+Return the dimensions and units of the product between spectra and frequency.
+
+# Example
+```jldoctest
+julia> using WaveSpectra, Unitful
+
+julia> f=v=range(1.0u"Hz", 5.0u"Hz", 5)
+(1.0:1.0:5.0) Hz
+
+julia> s1 = DiscreteOmnidirectionalSpectrum(v,f);
+
+julia> s2 = OmnidirectionalSpectrum(s1);
+
+julia> quantity(s1)
+(𝐓⁻², Hz²)
+
+julia> quantity(s2)
+(𝐓⁻², Hz²)
+
+```
+"""
+function quantity(::OmnidirectionalSpectrum{TS, TF}) where {TS, TF}
+    dimensions = dimension(TS) * dimension(TF)
+    units = unit(TS) * unit(TF)
+    return dimensions, units
+end
+function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF}
+    dimensions = dimension(TS) * dimension(TF)
+    units = unit(TS) * unit(TF)
+    return dimensions, units
+end

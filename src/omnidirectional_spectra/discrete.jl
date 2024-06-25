@@ -26,10 +26,11 @@ julia> s2 = DiscreteOmnidirectionalSpectrum(v2, f);
 struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: AbstractArray{TS, N}
     value::AbstractVecOrMat{<:Quantity}
     frequency::AbstractVector{<:Quantity}
-    # TODO: Add column_name & metadata
+    # colnames::Union{AbstractVector{<:AbstractString}, Nothing}
+    # meta::Any
     function DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}; density::Bool=true)
         # Parameters
-        N=ndims(value)
+        N=ndims(value) # Don't need to check N if AbstractVecOrMat handles 0 dim and 3+ dims
         D=density
         TF=eltype(frequency)
         TS=eltype(value)
@@ -37,7 +38,6 @@ struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: Abst
         (dimension(TF) ∉ _frequency_dims) && error("invalid frequency dimensions")
         # Check Arguments
         (size(value)[1] ≠ length(frequency)) && error("'frequency' and first dimension of 'value' array must be same size")
-        (N ∉ [1,2]) && error("value must be a vector or matrix")  # TODO: Check if this makes sense
         return new{TS,TF,D,N}(value, frequency)
     end
 end
@@ -98,140 +98,13 @@ function Base.show(io::IO, ::MIME"text/plain", spectrum::DiscreteOmnidirectional
 end
 
 # Unitful Interface
-"""
-    Unitful.unit(::DiscreteOmnidirectionalSpectrum)
-
-Extends from Unitful, returns the units of the spectra vector/matrix.
-
-# Example
-```jldoctest
-julia> using WaveSpectra, Unitful
-
-julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia> f=range(1u"Hz", 3u"Hz", 3)
-(1.0:1.0:3.0) Hz
-
-julia> s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia> unit(s)
-m Hz⁻¹
-
-```
-"""
 Unitful.unit(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = unit(TS)
-"""
-    Unitful.dimension(::DiscreteOmnidirectionalSpectrum)
-
-Extends from Unitful, returns the dimension of the spectra vector/matrix.
-
-# Example
-```jldoctest
-julia> using WaveSpectra, Unitful
-
-julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia> f=range(1u"Hz", 3u"Hz", 3)
-(1.0:1.0:3.0) Hz
-
-julia> s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia> dimension(s)
-𝐋 𝐓
-
-```
-"""
 Unitful.dimension(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = dimension(TS)
-"""
-    frequency_unit(::DiscreteOmnidirectionalSpectrum)
-
-Return the units of the frequency vector.
-
-# Example
-```jldoctest
-julia> using WaveSpectra, Unitful
-
-julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia> f=range(1u"Hz", 3u"Hz", 3)
-(1.0:1.0:3.0) Hz
-
-julia> s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia> frequency_unit(s)
-Hz
-
-```
-"""
-frequency_unit(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = unit(TF)
-"""
-    frequency_dimension(::DiscreteOmnidirectionalSpectrum)
-
-Return the dimension of the frequency vector.
-
-# Example
-```jldoctest
-julia> using WaveSpectra, Unitful
-
-julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia> f=range(1u"Hz", 3u"Hz", 3)
-(1.0:1.0:3.0) Hz
-
-julia> s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia> frequency_dimension(s)
-𝐓⁻¹
-
-```
-"""
-frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF} = dimension(TF)
-
-"""
-    quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D})
-
-Return the dimensions and units of the product between spectra and frequency.
-
-# Example
-```jldoctest
-julia> using WaveSpectra, Unitful
-
-julia> v=range(1u"m/Hz", 3u"m/Hz", 3)
-(1.0:1.0:3.0) m Hz⁻¹
-
-julia> f=range(1u"Hz", 3u"Hz", 3)
-(1.0:1.0:3.0) Hz
-
-julia> s = DiscreteOmnidirectionalSpectrum(v,f);
-
-julia> quantity(s)
-(𝐋, m)
-
-```
-"""
-function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF, D}) where {TS, TF, D}
-    # TODO: consolidate these documentations for both discrete and continuous
-    dimensions = dimension(TS) * dimension(TF)
-    units = unit(TS) * unit(TF)
-    return dimensions, units
-end
 
 # Plots recipes
-function _labels(::DiscreteOmnidirectionalSpectrum{TS, TF, D}) where {TS, TF, D}
-    # TODO: move into recipe
-    x_label = "frequency"
-    y_label = D ? "spectral density" : "discrete (integral) spectrum"
-    return (x_label, y_label)
-end
-
 @recipe function f(spectrum::DiscreteOmnidirectionalSpectrum, args...)
-    _xlabel, _ylabel = _labels(spectrum)
-    xlabel --> _xlabel
-    ylabel --> _ylabel
+    xlabel --> "frequency"
+    ylabel --> D ? "spectral density" : "discrete (integral) spectrum"
     marker := :auto
     (spectrum.frequency, spectrum.value, args...)
 end
@@ -260,7 +133,7 @@ julia> spectral_moment(s, 1)
 42.0 s⁻³
 ```
 """
-function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0, args...;
+function spectral_moment(spectrum::DiscreteOmnidirectionalSpectrum, n::Real=0;
         alg::AbstractIntegralAlgorithm=TrapezoidalRule())
     # There are no keyword arguments used to solve SampledIntegralProblems
     # https://docs.sciml.ai/Integrals/stable/basics/SampledIntegralProblem/
