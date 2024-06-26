@@ -113,6 +113,8 @@ end
     return (spectrum.func, xmin, xmax, kwargs...)
 end
 
+
+
 # Spectral moments
 """
     spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
@@ -121,7 +123,7 @@ end
 Calculate the n-th spectral moment of a spectra, use range if given.
 
 # Example
-```jldoctest
+```jldoctest; filter = r"(\\d*).(\\d{3})\\d+"s => s"\\1.\\2"
 julia> using WaveSpectra, Unitful
 
 julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
@@ -133,14 +135,15 @@ julia> spectral_moment(s, 0, 1u"Hz", 5u"Hz")
 12.0 s⁻²
 
 julia> spectral_moment(s, 1, 1u"Hz", 5u"Hz")
-41.333333333333336 s⁻³
+41.333 s⁻³
 ```
 """
 function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
         f_begin::Union{Quantity, Nothing}=nothing, f_end::Union{Quantity, Nothing}=nothing;
-        alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
+        alg::AbstractIntegralAlgorithm=QuadGKJL(), flip::Bool=false, kwargs...) where {TS,TF}
     isnothing(f_begin) && (f_begin = 0 * unit(TF))
     isnothing(f_end) && (f_end = Inf * unit(TF))
+    flip && ((f_begin, f_end) = (f_end, f_begin))
     if :abstol ∉ keys(kwargs)
         abstol = 1e-8 * unit(TS) * unit(TF)^(n+1)
         kwargs = merge(values(kwargs), (abstol=abstol,))
@@ -158,6 +161,7 @@ for T1 in [_Temporal, _Spatial]
         function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
                 dispersion::Equivalence=deepwater_gradient) where {TS,TF<:$T1, T<:$T1}
             # println("Both Temporal/Spatial")
+            (1/upreferred(unit(T)) == 1*upreferred(unit(TF))) && @warn "Conversion contains a reciprocal, please use flip keyword in other functions to avoid errors!"
             grad = _get_grad(dimension(TF), dimension(T))
             function func(f)
                 f_org = uconvert(unit(TF), f, dispersion)
@@ -170,7 +174,7 @@ end
 
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
             dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Spatial,T<:_Temporal}
-
+    (1/upreferred(unit(T)) == 1*upreferred(unit(TF))) && @warn "Conversion contains a reciprocal, please use flip keyword in other functions to avoid errors!"
     spectrum_int_spatial = convert_frequency(spectrum, _TF_spatial, dispersion)
 
     grad = dispersion.gradient
@@ -195,15 +199,17 @@ See also [`DimensionfulAngles.Dispersion`](@extref)
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> s1 = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
+julia> using DimensionfulAngles:radᵃ as rad
 
-julia> s2 = convert_frequency(s1, 1.0u"Hz^-1");
+julia> s1 = OmnidirectionalSpectrum(x -> x, typeof(1.0u"m/rad"));
+
+julia> s2 = convert_frequency(s1, 1.0u"m");
 
 ```
 """
 function convert_frequency(spectrum::OmnidirectionalSpectrum{TS,TF}, TF_new::T,
-    dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
-
+            dispersion::Equivalence=deepwater_gradient) where {TS,TF<:_Temporal,T<:_Spatial}
+    (1/upreferred(unit(T)) == 1*upreferred(unit(TF))) && @warn "Conversion contains a reciprocal, please use flip keyword in other functions to avoid errors!"
     spectrum_int_temporal = convert_frequency(spectrum, _TF_temporal, dispersion)
 
     grad = dispersion.gradient_inverse

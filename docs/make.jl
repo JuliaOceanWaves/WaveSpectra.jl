@@ -7,6 +7,9 @@ links = InterLinks(
 )
 
 #ENV["JULIA_DEBUG"]=Documenter
-makedocs(sitename="WaveSpectra", plugins=[links])
+DocMeta.setdocmeta!(WaveSpectra, :DocTestSetup, :(using WaveSpectra); recursive=true)
+makedocs(sitename="WaveSpectra",
+         modules=[WaveSpectra],
+         plugins=[links])
 
 deploydocs(repo="github.com/JuliaOceanWaves/WaveSpectra.jl.git",)

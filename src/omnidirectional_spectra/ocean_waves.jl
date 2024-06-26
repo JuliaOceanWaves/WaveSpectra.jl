@@ -44,10 +44,7 @@ Calculate the energy period of an omnidirectional spectra between a range if giv
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
 
 julia> energy_period(s, 1u"Hz", 5u"Hz")
 0.3333333333333333 s
@@ -56,9 +53,9 @@ julia> energy_period(s, 1u"Hz", 5u"Hz")
 """
 function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
     f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
-    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF<:Frequency}
-    m₋₁ = spectral_moment(spectrum, -1, f_begin, f_end; alg, kwargs...)
-    m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), flip::Bool=false, kwargs...) where {TS,TF<:Frequency}
+    m₋₁ = spectral_moment(spectrum, -1, f_begin, f_end; alg, flip, kwargs...)
+    m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, flip, kwargs...)
     return m₋₁ / m₀
 end
 
@@ -73,26 +70,23 @@ Calculate the energy period of an omnidirectional spectra in Hz.
 
 # Example
 ```jldoctest
-julia> using WaveSpectra, DimensionfulAngles
+julia> using WaveSpectra, Unitful
 
-julia> using Unitful:@u_str
+julia> using DimensionfulAngles:Dispersion, radᵃ as rad
 
-julia> func(x) = x
-func (generic function with 1 method)
-
-julia> s = OmnidirectionalSpectrum(func, typeof(1.0u"Hz^-1"));
+julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"rad*Hz"));
 
 julia> energy_period(s, Dispersion(), 1u"Hz", 5u"Hz")
-0.688888888888889 s
+0.3333333333333333 s
 
 ```
 """
 function energy_period(spectrum::OmnidirectionalSpectrum{TS,TF},
     dispersion::Dispersion=Dispersion(), f_begin::Union{Quantity,Nothing}=nothing,
-    f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(),
+    f_end::Union{Quantity,Nothing}=nothing; alg::AbstractIntegralAlgorithm=QuadGKJL(), flip::Bool=false,
     kwargs...) where {TS,TF}
-spectrum_hz = convert_frequency(spectrum, one(TF) * Hz, dispersion)
-return energy_period(spectrum_hz, f_begin, f_end; alg, kwargs...)
+    spectrum_hz = convert_frequency(spectrum, one(TF) * Hz, dispersion)
+    return energy_period(spectrum_hz, f_begin, f_end; alg, flip, kwargs...)
 end
 
 """
@@ -151,9 +145,9 @@ julia> significant_waveheight(s)
 """
 function significant_waveheight(spectrum::OmnidirectionalSpectrum{TS,TF},
     f_begin::Union{Quantity,Nothing}=nothing, f_end::Union{Quantity,Nothing}=nothing;
-    alg::AbstractIntegralAlgorithm=QuadGKJL(), kwargs...) where {TS,TF}
+    alg::AbstractIntegralAlgorithm=QuadGKJL(), flip::Bool=false, kwargs...) where {TS,TF}
     @assert quantity(spectrum)[1] == 𝐋^2
-    m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, kwargs...)
+    m₀ = spectral_moment(spectrum, 0, f_begin, f_end; alg, flip, kwargs...)
     return 4√m₀
 end
 
