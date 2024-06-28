@@ -148,7 +148,7 @@ function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
         abstol = 1e-8 * unit(TS) * unit(TF)^(n+1)
         kwargs = merge(values(kwargs), (abstol=abstol,))
     end
-    sol = solve(IntegralProblem((f, _) -> spectrum(f)*f^n, (f_begin, f_end), nothing),
+    sol = solve(IntegralProblem((f, _) -> spectrum.(f).*f.^n, (f_begin, f_end), nothing),
         alg; kwargs...)
     if sol.retcode ≠ ReturnCode.Success
         error("solution unsuccessful with code: $(sol.retcode)")
