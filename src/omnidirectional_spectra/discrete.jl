@@ -26,9 +26,9 @@ julia> s2 = DiscreteOmnidirectionalSpectrum(v2, f);
 struct DiscreteOmnidirectionalSpectrum{TS<:Quantity, TF<:Quantity, D, N} <: AbstractArray{TS, N}
     value::AbstractVecOrMat{<:Quantity}
     frequency::AbstractVector{<:Quantity}
-    # colnames::Union{AbstractVector{<:AbstractString}, Nothing}
-    # meta::Any
-    function DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}; density::Bool=true)
+    colnames::Union{AbstractVector{<:AbstractString}, Nothing}
+    meta::Any
+    function DiscreteOmnidirectionalSpectrum(value::AbstractVecOrMat{<:Quantity}, frequency::AbstractVector{<:Quantity}, colnames=nothing, meta=nothing; density::Bool=true)
         # Parameters
         N=ndims(value) # Don't need to check N if AbstractVecOrMat handles 0 dim and 3+ dims
         D=density
@@ -102,9 +102,9 @@ Unitful.unit(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = unit(TS)
 Unitful.dimension(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = dimension(TS)
 
 # Plots recipes
-@recipe function f(spectrum::DiscreteOmnidirectionalSpectrum, args...)
+@recipe function f(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, D}, args...) where {TS, TF, D}
     xlabel --> "frequency"
-    ylabel --> D ? "spectral density" : "discrete (integral) spectrum"
+    ylabel --> (D ? "spectral density" : "discrete (integral) spectrum")
     marker := :auto
     (spectrum.frequency, spectrum.value, args...)
 end

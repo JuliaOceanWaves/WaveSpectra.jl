@@ -76,6 +76,7 @@ _get_grad(dims_from::Dimensions, dims_to::Dimensions) = _grad_1[dims_from, dims_
 include("omnidirectional_spectra/discrete.jl")
 include("omnidirectional_spectra/continuous.jl")
 include("omnidirectional_spectra/ocean_waves.jl")
+include("omnidirectional_spectra/wave_time_series.jl")
 
 """
     frequency_unit(::[Discrete]OmnidirectionalSpectrum{TS, TF})

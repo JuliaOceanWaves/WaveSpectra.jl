@@ -160,18 +160,24 @@ Calculate the significant waveheight of a discrete spectra.
 ```jldoctest
 julia> using WaveSpectra, Unitful
 
-julia> v=f=range(1u"Hz", 5u"Hz", 5)
+julia> v=f=range(1,5,5)
+1.0:1.0:5.0
+
+julia> v = v.*u"m^2/Hz"
+(1.0:1.0:5.0) m² Hz⁻¹
+
+julia> f = f.*u"Hz"
 (1.0:1.0:5.0) Hz
 
 julia> s = DiscreteOmnidirectionalSpectrum(v,f);
 
 julia> significant_waveheight(s)
-13.856406460551018 s⁻¹
+13.856406460551018 m
 
 ```
 """
-function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum, args...;
-        alg::AbstractIntegralAlgorithm=TrapezoidalRule())
+function significant_waveheight(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, true}, args...;
+        alg::AbstractIntegralAlgorithm=TrapezoidalRule()) where {TS, TF}
     m_0 = spectral_moment(spectrum, 0; alg)
     return @. 4*√m_0
 end

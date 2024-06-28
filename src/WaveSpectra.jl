@@ -13,7 +13,9 @@ export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
 export convert_frequency, frequency_dimension, frequency_unit, quantity, spectral_moment
 export energy_period, significant_waveheight, ∅
 export normalize, scale, slope_spectrum, deepwater, pierson_moskowitz_spectrum
+export WaveTimeSeries
 
+using FFTW
 using ._NoUnit: ∅
 using Unitful: Unitful # extend: unit, dimension
 using Interpolations: linear_interpolation
