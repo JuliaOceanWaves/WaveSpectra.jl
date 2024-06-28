@@ -123,7 +123,7 @@ end
 Calculate the n-th spectral moment of a spectra, use range if given.
 
 # Example
-```jldoctest; filter = r"(\\d*).(\\d{3})\\d+"s => s"\\1.\\2"
+```jldoctest
 julia> using WaveSpectra, Unitful
 
 julia> s = OmnidirectionalSpectrum(x -> x, typeof(1.0u"Hz"));
@@ -135,7 +135,7 @@ julia> spectral_moment(s, 0, 1u"Hz", 5u"Hz")
 12.0 s⁻²
 
 julia> spectral_moment(s, 1, 1u"Hz", 5u"Hz")
-41.333 s⁻³
+41.333333333333336 s⁻³
 ```
 """
 function spectral_moment(spectrum::OmnidirectionalSpectrum{TS, TF}, n::Int,
