@@ -72,6 +72,7 @@ const _grad_1 = Dict(
 )
 
 _get_grad(dims_from::Dimensions, dims_to::Dimensions) = _grad_1[dims_from, dims_to]
+_firstState() = 1
 
 include("omnidirectional_spectra/discrete.jl")
 include("omnidirectional_spectra/continuous.jl")

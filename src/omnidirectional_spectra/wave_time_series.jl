@@ -26,7 +26,6 @@ function WaveTimeSeries(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}) where
     return WaveTimeSeries(X.*unit(eltype(V)), t)
 end
 
-_firstState() = 1
 #Interface
 Base.size(series::WaveTimeSeries) = size(series.value)
 Base.getindex(series::WaveTimeSeries, i::Int) = series.value[i]

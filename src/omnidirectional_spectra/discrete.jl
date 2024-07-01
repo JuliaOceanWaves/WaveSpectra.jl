@@ -67,7 +67,6 @@ function DiscreteOmnidirectionalSpectrum(func::Function, frequency::AbstractVect
     return DiscreteOmnidirectionalSpectrum(value, frequency; density)
 end
 
-_firstState() = 1
 #Interface
 Base.size(spectrum::DiscreteOmnidirectionalSpectrum) = size(spectrum.value)
 Base.getindex(spectrum::DiscreteOmnidirectionalSpectrum, i::Int) = spectrum.value[i]
