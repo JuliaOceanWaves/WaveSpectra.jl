@@ -76,8 +76,9 @@ _firstState() = 1
 
 include("omnidirectional_spectra/discrete.jl")
 include("omnidirectional_spectra/continuous.jl")
-include("omnidirectional_spectra/ocean_waves.jl")
 include("omnidirectional_spectra/wave_time_series.jl")
+include("omnidirectional_spectra/ocean_waves.jl")
+
 
 """
     frequency_unit(::[Discrete]OmnidirectionalSpectrum{TS, TF})
@@ -159,4 +160,14 @@ function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF}
     dimensions = dimension(TS) * dimension(TF)
     units = unit(TS) * unit(TF)
     return dimensions, units
+end
+
+function DiscreteOmnidirectionalSpectrum(timeseries::WaveTimeSeries{TS}, frequency::AbstractVector{<:Quantity}) where {TS}
+    N = size(timeseries.value, 1)÷2+1
+    ϕ = im .*randn(N)
+    rfft_temp = (rfft(ustrip(timeseries.value)))
+    Δt = frequency[begin+1:end] .- frequency[begin:end-1]
+    append!(Δt, 1.0*unit(eltype(frequency)))
+    value = @. abs((1/N^2)*(rfft_temp.*unit(TS) * exp(ϕ))^2 / (2*Δt))
+    return DiscreteOmnidirectionalSpectrum(value, frequency)
 end

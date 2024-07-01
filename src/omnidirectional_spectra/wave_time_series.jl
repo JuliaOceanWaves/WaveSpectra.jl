@@ -15,14 +15,16 @@ struct WaveTimeSeries{TS<:Quantity, TF<:Quantity, N} <: AbstractArray{TS, N}
 end
 
 #Constructors
-function WaveTimeSeries(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF}
+function WaveTimeSeries(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, D, 1}) where {TS, TF, D}
     v, f = spectrum.value, spectrum.frequency
     N = size(v, 1)
-    tend = 2π/f[1]
-    ϕ = -im .* randn(N)
-    V = @. exp(ϕ) * √(2*v*(f[2] - f[1]))
-    X = N .*irfft(ustrip.(V), 2*N-1)
+    tend = 2π/f[2]
     t = range(0/unit(TF), tend, 2*N-1)
+    ϕ = -im .* randn(N)
+    Δt = f[begin+1:end] .- f[begin:end-1]
+    append!(Δt, 0.0*unit(TF))
+    V = @. exp(ϕ) * sqrt(2*v*Δt)
+    X = N .*irfft(ustrip.(V), 2*N-1)
     return WaveTimeSeries(X.*unit(eltype(V)), t)
 end
 
@@ -39,7 +41,7 @@ Base.lastindex(series::WaveTimeSeries) = length(series.value)
 Base.eltype(::WaveTimeSeries{TS}) where {TS} = TS
 
 
-function Base.show(io::IO, series::WaveTimeSeries{TS,TF,N}) where {TS,TF,D,N}
+function Base.show(io::IO, series::WaveTimeSeries{TS,TF,N}) where {TS,TF,N}
     print(io, "\nPARAMS: {$TS,\n\t $TF,\n\t Value Dims=$N}\nTIME {$(unit(TF))}, VALUES $(size(series))\t{$(unit(TS))}")
 end
 
