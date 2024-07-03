@@ -101,8 +101,8 @@ true
 
 ```
 """
-frequency_unit(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
-frequency_unit(::DiscreteOmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
+function frequency_unit end
+
 """
     frequency_dimension(::[Discrete]OmnidirectionalSpectrum{TS, TF})
 
@@ -124,8 +124,7 @@ true
 
 ```
 """
-frequency_dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
-frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
+function frequency_dimension end
 
 """
     quantity(::[Discrete]OmnidirectionalSpectrum{TS, TF})
@@ -151,23 +150,22 @@ julia> quantity(s2)
 
 ```
 """
-function quantity(::OmnidirectionalSpectrum{TS, TF}) where {TS, TF}
-    dimensions = dimension(TS) * dimension(TF)
-    units = unit(TS) * unit(TF)
-    return dimensions, units
-end
-function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF}
-    dimensions = dimension(TS) * dimension(TF)
-    units = unit(TS) * unit(TF)
-    return dimensions, units
+function quantity end
+
+function DiscreteOmnidirectionalSpectrum(timeseries::WaveTimeSeries{TS}, frequency::AbstractRange{<:Quantity}) where {TS}
+    n_samples = size(timeseries.value, 1)÷2+1
+    ϕ = im .*randn(n_samples)
+    rfft_temp = (rfft(ustrip(timeseries.value)))
+    Δfreq = step(frequency)
+    value = @. abs((1/n_samples^2)*(rfft_temp.*unit(TS) * exp(ϕ))^2 / (2*Δfreq))
+    return DiscreteOmnidirectionalSpectrum(value, frequency)
 end
 
 function DiscreteOmnidirectionalSpectrum(timeseries::WaveTimeSeries{TS}, frequency::AbstractVector{<:Quantity}) where {TS}
-    N = size(timeseries.value, 1)÷2+1
-    ϕ = im .*randn(N)
+    n_samples = size(timeseries.value, 1)÷2+1
+    ϕ = im .*randn(n_samples)
     rfft_temp = (rfft(ustrip(timeseries.value)))
-    Δt = frequency[begin+1:end] .- frequency[begin:end-1]
-    append!(Δt, 1.0*unit(eltype(frequency)))
-    value = @. abs((1/N^2)*(rfft_temp.*unit(TS) * exp(ϕ))^2 / (2*Δt))
+    Δfreq = isapprox(0.0, frequency[begin]) ? frequency[2] : frequency[begin]
+    value = @. abs((1/n_samples^2)*(rfft_temp.*unit(TS) * exp(ϕ))^2 / (2*Δfreq))
     return DiscreteOmnidirectionalSpectrum(value, frequency)
 end

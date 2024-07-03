@@ -99,6 +99,13 @@ end
 # Unitful Interface
 Unitful.unit(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = unit(TS)
 Unitful.dimension(::DiscreteOmnidirectionalSpectrum{TS}) where {TS} = dimension(TS)
+frequency_unit(::DiscreteOmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
+frequency_dimension(::DiscreteOmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
+function quantity(::DiscreteOmnidirectionalSpectrum{TS, TF}) where {TS, TF}
+    dimensions = dimension(TS) * dimension(TF)
+    units = unit(TS) * unit(TF)
+    return dimensions, units
+end
 
 # Plots recipes
 @recipe function f(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, D}, args...) where {TS, TF, D}
@@ -200,4 +207,3 @@ function convert_frequency(spectrum::DiscreteOmnidirectionalSpectrum{TS,TF}, TF_
     spectrum_int_spatial = DiscreteOmnidirectionalSpectrum(inter_value, inter_freq)
     return convert_frequency(spectrum_int_spatial, TF_new, dispersion)
 end
-

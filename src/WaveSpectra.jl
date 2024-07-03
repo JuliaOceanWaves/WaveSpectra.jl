@@ -9,11 +9,10 @@ module _NoUnit
     end
 end
 
-export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum
+export DiscreteOmnidirectionalSpectrum, OmnidirectionalSpectrum, WaveTimeSeries
 export convert_frequency, frequency_dimension, frequency_unit, quantity, spectral_moment
 export energy_period, significant_waveheight, ∅
 export normalize, scale, slope_spectrum, deepwater, pierson_moskowitz_spectrum
-export WaveTimeSeries
 
 using FFTW
 using ._NoUnit: ∅

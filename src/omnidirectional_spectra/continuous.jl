@@ -97,6 +97,13 @@ end
 # Unitful interface
 Unitful.unit(::OmnidirectionalSpectrum{TS, TF})  where {TS, TF} = unit(TS)
 Unitful.dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS, TF} = dimension(TS)
+frequency_unit(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = unit(TF)
+frequency_dimension(::OmnidirectionalSpectrum{TS,TF}) where {TS,TF} = dimension(TF)
+function quantity(::OmnidirectionalSpectrum{TS, TF}) where {TS, TF}
+    dimensions = dimension(TS) * dimension(TF)
+    units = unit(TS) * unit(TF)
+    return dimensions, units
+end
 
 # Plots recipe
 @recipe function f(spectrum::OmnidirectionalSpectrum{TS, TF}, kwargs...) where {TS, TF}

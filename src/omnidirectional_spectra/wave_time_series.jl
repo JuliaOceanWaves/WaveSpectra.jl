@@ -15,16 +15,20 @@ struct WaveTimeSeries{TS<:Quantity, TF<:Quantity, N} <: AbstractArray{TS, N}
 end
 
 #Constructors
-function WaveTimeSeries(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, D, 1}) where {TS, TF, D}
-    v, f = spectrum.value, spectrum.frequency
-    N = size(v, 1)
-    tend = 2π/f[2]
-    t = range(0/unit(TF), tend, 2*N-1)
-    ϕ = -im .* randn(N)
-    Δt = f[begin+1:end] .- f[begin:end-1]
-    append!(Δt, 0.0*unit(TF))
-    V = @. exp(ϕ) * sqrt(2*v*Δt)
-    X = N .*irfft(ustrip.(V), 2*N-1)
+function WaveTimeSeries(spectrum::DiscreteOmnidirectionalSpectrum{TS, TF, D, 1}; seed=nothing) where {TS, TF, D}
+    values, freqs = spectrum.value, spectrum.frequency
+    # @assert typeof(freqs) <: AbstractRange "Frequencies must be a range, unevenly spaces frequencies are not yet implemented!"
+    n_samples = size(values, 1)
+    tend = isapprox(0.0, freqs[begin]) ? 2π/freqs[2] : 2π/freqs[begin]
+    t = range(0/unit(TF), tend, 2*n_samples-1)
+    if isnothing(seed)
+        ϕ = -im .* randn(n_samples)
+    else
+        ϕ = -im .* randn(seed, n_samples)
+    end
+    Δfreq = typeof(freqs) <: AbstractRange ? step(freqs) : (isapprox(0.0, freqs[begin]) ? freqs[2] : freqs[begin])
+    V = @. exp(ϕ) * sqrt(2*values*Δfreq)
+    X = n_samples .*irfft(ustrip.(V), 2*n_samples-1)
     return WaveTimeSeries(X.*unit(eltype(V)), t)
 end
 
