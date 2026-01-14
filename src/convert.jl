@@ -29,10 +29,6 @@ end
 
 uconvert(uq::Units, x::Spectrum) = uconvert(uq, unit(x, :axis1), unit(x, :axis2), x)
 
-function uconvert(uq::Units, x::Spectrum, e::Equivalence)
-    return uconvert(uq, unit(x, :axis1), unit(x, :axis2), x)
-end
-
 function uconvert(u::Units, s::Symbol, x::Spectrum, dispersion::Dispersion=Dispersion())
     uq, u1, u2 = unit(x, :integral), unit(x, :axis1), unit(x, :axis2)
     if s==x.axesnames[1] || s==:axis1
@@ -80,4 +76,14 @@ _derivative() = Dict(
     (𝐋 * 𝐀^-1, 𝐋) => (x -> 2π * rad),
     (𝐀 * 𝐋^-1, 𝐋 * 𝐀^-1) => (x -> -1 / x^2),
     (𝐋 * 𝐀^-1, 𝐀 * 𝐋^-1) => (x -> -1 / x^2),
+    # 2 - temporal
+    (𝐓^-1, 𝐓 * 𝐀^-1) => (x -> -1 / (2π * rad * x^2)),
+    (𝐓 * 𝐀^-1, 𝐓^-1) => (x -> -1 / (2π * rad * x^2)),
+    (𝐓^-1 * 𝐀, 𝐓) => (x -> -2π * rad / x^2),
+    (𝐓, 𝐓^-1 * 𝐀) => (x -> -2π * rad / x^2),
+    # 2 - spatial
+    (𝐋^-1, 𝐋 * 𝐀^-1) => (x -> -1 / (2π * rad * x^2)),
+    (𝐋 * 𝐀^-1, 𝐋^-1) => (x -> -1 / (2π * rad * x^2)),
+    (𝐋^-1 * 𝐀, 𝐋) => (x -> -2π * rad / x^2),
+    (𝐋, 𝐋^-1 * 𝐀) => (x -> -2π * rad / x^2),
 )
