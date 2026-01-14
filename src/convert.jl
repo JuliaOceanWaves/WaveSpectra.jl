@@ -87,3 +87,41 @@ _derivative() = Dict(
     (𝐋^-1 * 𝐀, 𝐋) => (x -> -2π * rad / x^2),
     (𝐋, 𝐋^-1 * 𝐀) => (x -> -2π * rad / x^2),
 )
+
+
+# Dispersion Gradient
+struct DispersionGradient <: Equivalence
+    dispersion::Dispersion
+    gradient::Union{Function,Nothing}
+    gradient_inverse::Union{Function,Nothing}
+
+    function DispersionGradient(dispersion::Dispersion;
+        gradient::Union{Function,Nothing}=nothing,
+        gradient_inverse::Union{Function,Nothing}=nothing
+    )
+        return new(dispersion, gradient, gradient_inverse)
+    end
+end
+
+function DispersionGradient(;
+    dispersion::Union{Function,Nothing}=nothing,
+    dispersion_inverse::Union{Function,Nothing}=nothing,
+    gradient::Union{Function,Nothing}=nothing,
+    gradient_inverse::Union{Function,Nothing}=nothing
+)
+    dispersion = Dispersion(dispersion, dispersion_inverse)
+    return DispersionGradient(dispersion; gradient, gradient_inverse)
+end
+
+_frequency_types() = [
+    Time, Frequency, AngularPeriod, AngularVelocity,
+    Length, Wavenumber, AngularWavelength, AngularWavenumber
+]
+
+for T1 ∈ _frequency_types, T2 ∈ _frequency_types()
+    @eval begin
+        function UnitfulEquivalences.edconvert(d::dimtype($T1), x::$T2, dispersion::DispersionGradient)
+            return edconvert(d, x, dispersion.dispersion)
+        end
+    end
+end
