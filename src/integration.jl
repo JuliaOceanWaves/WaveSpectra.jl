@@ -51,11 +51,11 @@ function omnidirectional_spectrum(x::Spectrum)
 end
 
 function spread_function(x::Spectrum)
-    return Spectrum(x ./ omnidirectional_spectrum(x), axes(x)...)
+    return Spectrum(x.data ./ omnidirectional_spectrum(x), AxisArrays.axes(x)...)
 end
 
 function split_spectrum(x::Spectrum)
     omnidirectional = omnidirectional_spectrum(x)
-    spread = Spectrum(x ./ omnidirectional, axes(x)...)
+    spread = Spectrum(x ./ omnidirectional, AxisArrays.axes(x)...)
     return (omnidirectional, spread)
 end

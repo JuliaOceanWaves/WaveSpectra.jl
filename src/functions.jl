@@ -26,8 +26,8 @@ unit(x::OmnidirectionalSpectrum) = unit(x, :spectrum)
 
 
 # utilities
-axes(x::Spectrum) = (x.axis1, x.axis2)
-axes(x::OmnidirectionalSpectrum) = (x.axis,)
+AxisArrays.axes(x::Spectrum) = (x.axis1, x.axis2)
+AxisArrays.axes(x::OmnidirectionalSpectrum) = (x.axis,)
 
 coordinates(x::Spectrum) = x.coordinates
 axesnames(x::Spectrum) = x.axesnames
