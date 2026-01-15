@@ -1,7 +1,7 @@
 name = "WaveSpectra"
 uuid = "9da5bd80-4f3d-48a2-a37e-447dff2ef7bc"
-version = "0.1.0"
 authors = ["Sandia National Laboratories"]
+version = "0.1.0"
 
 [deps]
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
@@ -11,10 +11,6 @@ Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 NamedDims = "356022a1-0364-5f58-8944-0da4b18d706f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulEquivalences = "da9c4bc3-91c8-4f02-8a40-6b990d2a7e0c"
-
-[compat]
-CairoMakie = "0.15.8"
-LaTeXStrings = "1.4.0"
-Plots = "1.41.4"
