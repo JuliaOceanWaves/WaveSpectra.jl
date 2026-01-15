@@ -1,4 +1,4 @@
-module Spectra
+module WaveSpectra
 
 using Unitful: Dimensions, Frequency, Length, Quantity, Time, Units, Wavenumber
 using Unitful: dimension, gn as g, m, s, 𝐋, 𝐓
