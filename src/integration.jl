@@ -43,19 +43,32 @@ function integrate(
     return sol.u
 end
 
+# Centered rectangular integration for evenly spaced Spectra
+struct RectangularRule <: AbstractSampledIntegralAlgorithm end
 
-# split into omnidirectional & spread function
-function omnidirectional_spectrum(x::Spectrum)
-    ispolar(x) && return integrate(x, :direction)
-    throw(ArgumentError("Spectrum must be in polar coordinates."))
+struct RectangularUniformWeights{T} <: UniformWeights
+    n::Int
+    h::T
 end
 
-function spread_function(x::Spectrum)
-    return Spectrum(x.data ./ omnidirectional_spectrum(x), AxisArrays.axes(x)...)
+@inline Base.getindex(w::RectangularUniformWeights, i) = w.h
+
+function find_weights(x::AbstractVector, ::RectangularRule)
+    (x isa AbstractRange) && return RectangularUniformWeights(length(x), step(x))
+    x_range = _convert_to_range(x)
+    if (length(x)==length(x_range)) && isapprox(x, x_range)
+        return RectangularUniformWeights(length(x_range), step(x_range))
+    else
+        throw(ArgumentError("Integrand must be evenly spaced."))
+    end
+    return TrapezoidalNonuniformWeights(x)
 end
 
-function split_spectrum(x::Spectrum)
-    omnidirectional = omnidirectional_spectrum(x)
-    spread = Spectrum(x ./ omnidirectional, AxisArrays.axes(x)...)
-    return (omnidirectional, spread)
+function _convert_to_range(x::AbstractVector)
+    (length(x) == 0) && return nothing
+    (length(x) == 1) && return (x:x)
+    start_val = x[begin]
+    end_val = x[end]
+    step_val = x[2] - x[1]
+    return range(start_val, stop=end_val, step=step_val)
 end

@@ -115,7 +115,7 @@ function Base.similar(
 ) where S
     sp = _find_first_in_broadcast(bc.args, Spectrum)
     sp === nothing && return similar(Array{S}, axes(bc))
-    check_axes_in_broadcast(bc.args, sp)
+    _check_axes_in_broadcast(bc.args, sp)
     shape = Base.to_shape(axes(bc))
     return similar(sp, S, shape)
 end
@@ -136,7 +136,7 @@ struct OmnidirectionalSpectrum{TDAT, TAX}  <: AbstractVector{TDAT}
         @assert length(data) == length(axis) "Data and axis lengths do not match!"
         _check_typeconsistency(data)
         _check_typeconsistency(axis)
-        issorted(axis) || throw(ArgumentError("Axis must be increasing."))
+        data, axis = _ensure_increasing_axis(data, axis)
         if !(istemporal(axis) || isspatial(axis))
             throw(ArgumentError("Invalid axis type for an 'OmnidirectionalSpectrum'."))
         end
@@ -201,73 +201,10 @@ function Base.similar(
 ) where S
     sp = _find_first_in_broadcast(bc.args, OmnidirectionalSpectrum)
     sp === nothing && return similar(Array{S}, axes(bc))
-    check_axes_in_broadcast(bc.args, sp)
+    _check_axes_in_broadcast(bc.args, sp)
     shape = Base.to_shape(axes(bc))
     return similar(sp, S, shape)
 end
-
-
-# convert to/from AxisArrays
-function AxisArray(x::Spectrum)
-    axis1 = Axis{x.axesnames[1]}(x.axis1)
-    axis2 = Axis{x.axesnames[2]}(x.axis2)
-    return AxisArray(x, axis1, axis2)
-end
-
-function Spectrum(x::AxisArray)
-    axes = axisvalues(x)
-    if length(axes) ≠ 2
-        throw(DimensionMismatch("Exactly two axes are required for 'Spectrum'."))
-    end
-    axis1, axis2 = axes
-    return Spectrum(x.data, axis1, axis2)
-end
-
-function AxisArray(x::OmnidirectionalSpectrum)
-    name = x.axisname
-    axis = Axis{name}(x.axis)
-    return AxisArray(x, axis)
-end
-
-function OmnidirectionalSpectrum(x::AxisArray)
-    axis = axisvalues(x)
-    if length(axis) ≠ 1
-        throw(DimensionMismatch(
-            "Exactly one axis is required for 'OmnidirectionalSpectrum'.")
-        )
-    end
-    return OmnidirectionalSpectrum(x.data, axis[1])
-end
-
-
-# Axes information
-axesinfo() = Dict(
-    :direction => ((:direction, :angle), 𝐀),
-    :frequency => ((:temporal, :frequency), 𝐓^-1),
-    :angular_frequency => ((:temporal, :angular_frequency), 𝐀 * 𝐓^-1),
-    :period => ((:temporal, :period), 𝐓),
-    :angular_period => ((:temporal, :angular_period), 𝐓 * 𝐀^-1),
-    :wavenumber => ((:spatial, :frequency), 𝐋^-1),
-    :angular_wavenumber => ((:spatial, :angular_frequency), 𝐀 * 𝐋^-1),
-    :wavelength => ((:spatial, :period), 𝐋),
-    :angular_wavelength => ((:spatial, :angular_period), 𝐋 * 𝐀^-1)
-)
-
-axesinfo(s::Symbol) = axesinfo()[s]
-axesinfo(x) = axesinfo.(axestypes(x))
-
-axestypes(dim::Dimensions) = Dict(v[2] => k for (k, v) in axesinfo())[dim]
-function axestypes(domain::Symbol, quantity::Symbol)
-    return Dict(v[1] => k for (k, v) in axesinfo())[(domain, quantity)]
-end
-axestypes(x::Union{Quantity, Units}) = axestypes(dimension(x))
-axestypes(x::AbstractArray{<:Quantity}) = axestypes(dimension(eltype(x)))
-axestypes(x::Spectrum) = x.axestypes
-axestypes(x::OmnidirectionalSpectrum) = x.axistype
-
-istemporal(x) = (axesinfo()[axestypes(x)][1][1]==:temporal)
-isspatial(x) = (axesinfo()[axestypes(x)][1][1] == :spatial)
-isdirection(x) = (axesinfo()[axestypes(x)][1][1] == :direction)
 
 # Support functions
 @inline function _check_typeconsistency(x::AbstractArray)::Nothing
@@ -321,6 +258,17 @@ end
     end
 end
 
+@inline function _ensure_increasing_axis(data, axis)
+    if issorted(axis)
+        return data, axis
+    elseif issorted(axis; rev=true)
+        axis = reverse(axis)
+        return reverse(data), axis
+    else
+        throw(ArgumentError("Axis must be monotonic."))
+    end
+end
+
 @inline function _axes_match(a::Spectrum, b::Spectrum)
     return ((a.axis1 ≈ b.axis1) && (a.axis2 ≈ b.axis2))
 end
@@ -329,7 +277,10 @@ end
     return (a.axis ≈ b.axis)
 end
 
-@inline function check_axes_in_broadcast(args, sp::Union{Spectrum, OmnidirectionalSpectrum})
+@inline function _check_axes_in_broadcast(
+    args,
+    sp::Union{Spectrum, OmnidirectionalSpectrum}
+)
     type = (typeof(sp) <: Spectrum) ? Spectrum : OmnidirectionalSpectrum
     typename = (typeof(sp) <: Spectrum) ? "Spectrum axes" : "OmnidirectionalSpectrum axis"
     for arg in args
@@ -339,7 +290,7 @@ end
                 "$(typename) must match for broadcasting."
             ))
         elseif arg isa Broadcast.Broadcasted
-            check_axes_in_broadcast(arg.args, sp)
+            _check_axes_in_broadcast(arg.args, sp)
         end
     end
     return nothing

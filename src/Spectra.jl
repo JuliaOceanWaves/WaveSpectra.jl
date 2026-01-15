@@ -1,30 +1,31 @@
 module Spectra
 
-using Unitful: Quantity, Dimensions, Units, Quantity, dimension, 𝐓, 𝐋, m, s, gn as g
-using Unitful: Time, Frequency, Length, Wavenumber
-using DimensionfulAngles: 𝐀, Dispersion, radᵃ as rad, θ₀, AngularPeriod
-using DimensionfulAngles: AngularVelocity, AngularWavelength, AngularWavenumber
-using UnitfulEquivalences: Equivalence, edconvert, dimtype
-using Integrals: SampledIntegralProblem, AbstractSampledIntegralAlgorithm, TrapezoidalRule
-using Integrals: solve
-using AxisArrays: AxisArray, Axis, ClosedInterval, axisvalues, (..)
+using Unitful: Dimensions, Frequency, Length, Quantity, Time, Units, Wavenumber
+using Unitful: dimension, gn as g, m, s, 𝐋, 𝐓
+using DimensionfulAngles: AngularPeriod, AngularVelocity, AngularWavelength
+using DimensionfulAngles: AngularWavenumber, Dispersion, radᵃ as rad, θ₀, 𝐀
+using UnitfulEquivalences: Equivalence, dimtype, edconvert
+using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule
+using Integrals: UniformWeights, solve
+using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
 
-import Base  # size, getindex, setindex!, copy, similar, eltype, BroadcastStyle
-import Unitful: unit, uconvert
+import Base  # BroadcastStyle, copy, eltype, getindex, setindex!, show, similar, size
+import Unitful: uconvert, unit
 import UnitfulEquivalences: edconvert
 import AxisArrays # axes
 const axes = Base.axes # name conflict will be fixed by AxisArrays in the future
+import Integrals: find_weights
 
-export Spectrum, OmnidirectionalSpectrum
-export axesinfo, integrate, spread_function, omnidirectional_spectrum, split_spectrum
-export deepwater
-# export ispolar, iscartesian, istemporal, isspatial, isdirection, axestypes, coordinates,
-# export axesnames
+export OmnidirectionalSpectrum, RectangularRule, Spectrum
+export axesinfo, deepwater, integrate, isevenlyspaced, omnidirectional_spectrum
+export split_spectrum, spread_function
+# export DispersionGradient, axesnames, axestypes, coordinates, iscartesian, isdirection
+# export ispolar, isspatial, istemporal
 
 include("core.jl")
-include("functions.jl")
+include("utilities.jl")
 include("integration.jl")
-include("convert.jl")
-include("dispersion.jl")
+include("conversion.jl")
+include("functions.jl")
 
 end
