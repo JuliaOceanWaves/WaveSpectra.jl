@@ -4,7 +4,7 @@ using Unitful: Quantity, Dimensions, Units, Quantity, dimension, 𝐓, 𝐋, m, 
 using Unitful: Time, Frequency, Length, Wavenumber
 using DimensionfulAngles: 𝐀, Dispersion, radᵃ as rad, θ₀, AngularPeriod
 using DimensionfulAngles: AngularVelocity, AngularWavelength, AngularWavenumber
-using UnitfulEquivalences: Equivalence
+using UnitfulEquivalences: Equivalence, edconvert, dimtype
 using Integrals: SampledIntegralProblem, AbstractSampledIntegralAlgorithm, TrapezoidalRule
 using Integrals: solve
 using AxisArrays: AxisArray, Axis, ClosedInterval, axisvalues, (..)
