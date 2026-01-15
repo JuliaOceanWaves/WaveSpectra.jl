@@ -8,9 +8,11 @@ using UnitfulEquivalences: Equivalence, dimtype, edconvert
 using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule
 using Integrals: UniformWeights, solve
 using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
+using Plots: @recipe, text
+using LaTeXStrings: @L_str
 
 import Base  # BroadcastStyle, copy, eltype, getindex, setindex!, show, similar, size
-import Unitful: uconvert, unit
+import Unitful: uconvert, unit, ustrip
 import UnitfulEquivalences: edconvert
 import AxisArrays # axes
 const axes = Base.axes # name conflict will be fixed by AxisArrays in the future
@@ -27,5 +29,7 @@ include("utilities.jl")
 include("integration.jl")
 include("conversion.jl")
 include("functions.jl")
+include("show.jl")
+include("visualization.jl")
 
 end
