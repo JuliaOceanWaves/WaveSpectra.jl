@@ -9,8 +9,10 @@ using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, Trape
 using Integrals: UniformWeights, solve
 using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
 using Plots: @recipe, text
-using LaTeXStrings: @L_str
+using Printf: @printf
+using PrettyTables: pretty_table
 
+import DataFrames: DataFrame
 import Base  # BroadcastStyle, copy, eltype, getindex, setindex!, show, similar, size
 import Unitful: uconvert, unit, ustrip
 import UnitfulEquivalences: edconvert
