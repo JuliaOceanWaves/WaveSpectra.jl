@@ -16,3 +16,10 @@ UnitfulEquivalences = "da9c4bc3-91c8-4f02-8a40-6b990d2a7e0c"
 
 [compat]
 Unitful = "1"
+Integrals = "4"
+AxisArrays = "0.4"
+Plots = "1"
+LaTeXStrings = "1"
+DimensionfulAngles = "0.2"
+NamedDims = "1"
+UnitfulEquivalences = "0.2"
