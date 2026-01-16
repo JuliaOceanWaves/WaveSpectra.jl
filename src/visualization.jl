@@ -1,41 +1,45 @@
-# TODO: add contour/surface plot using Makie and better 
+# TODO: investigate contour plot for polar spectrum
 
 @recipe function f(s::Spectrum)
     if s.coordinates == :polar
-        if Spectra.isdirection(s.axis1)
-            angle = ustrip.(s.axis1)
-            freq = ustrip.(s.axis2)
-            angle_name, freq_name = Spectra.axesnames(s)
-            angle_unit = Spectra.unit(s, :axis1)
-            freq_unit = Spectra.unit(s, :axis2)
-        elseif Spectra.isdirection(s.axis2)
-            freq = ustrip.(s.axis1)
-            angle = ustrip.(s.axis2)
-            freq_name, angle_name = Spectra.axesnames(s)
-            freq_unit = Spectra.unit(s, :axis1)
-            angle_unit = Spectra.unit(s, :axis2)
-        end
 
-        x = deg2rad.(repeat(angle, outer=length(freq)))
-        y = repeat(freq, inner=length(angle))
-        z = vec(ustrip.(s.data))
-        spectrum_unit = Spectra.unit(s)
+        freq = ustrip.(s.axis1)
+        angle = ustrip.(s.axis2)
+        x = deg2rad.(angle)
+        y = freq
+        z = s.data
 
-        seriestype := :scatter
-        projection := :polar
-        marker_z := z
-        label := L""
-        colorbar_title := L"Spectral Density (%$spectrum_unit)"
-        title := L"Polar Spectrum"
-        annotation := (-1.2, 0.9, text(L"Angular: %$angle_name (%$angle_unit)\nRadial: %$freq_name (%$freq_unit)", 8))
+        freq_name, angle_name = axesnames(s)
+        freq_unit = unit(s, :axis1)
+        angle_unit = unit(s, :axis2)
+        spectrum_unit = unit(s)
 
-        x, y
-    elseif s.coordinates == :cartesian # update for cartesian coordinates
-        # For cartesian coordinates, just use a simple heatmap
-        seriestype := :heatmap
-        title := L"Cartesian Spectrum"
+        seriestype --> :heatmap
+        projection --> :polar
+        label --> ""
+        color --> :viridis
+        colorbar_title --> "Spectral Density ($spectrum_unit)"
+        title --> "Polar Spectrum"
+        annotation --> (-1.2, 0.9, text("Angular: $angle_name ($angle_unit)\nRadial: $freq_name ($freq_unit)", 8))
 
-        Unitful.ustrip.(s.data)
+        return x, y, z
+    elseif s.coordinates == :cartesian
+        freq1_name, freq2_name = axesnames(s)
+        freq1_unit = unit(s, :axis1)
+        freq2_unit = unit(s, :axis2)
+        spectrum_unit = unit(s)
+
+        seriestype --> :contour # use contour as defaul
+        xlabel --> "$freq1_name ($freq1_unit)"
+        ylabel --> "$freq2_name ($freq2_unit)"
+        color --> :viridis
+        colorbar_title --> "Spectral Density ($spectrum_unit)"
+        fill --> true
+        linewidth --> 0
+        levels --> 100
+        title --> "Cartesian Spectrum"
+
+        return ustrip.(s.data)
     end
 end
 
@@ -45,11 +49,12 @@ end
     x = omni.axis
     y = omni
 
-    freq_name = Spectra.axesnames(omni)
+    freq_name = axesnames(omni)
 
-    xlabel := "$freq_name"
-    ylabel := "Spectral density"
-    title := "Omnidirectional Spectrum"
+    xlabel --> "$freq_name"
+    ylabel --> "Spectral density"
+    label --> ""
+    title --> "Omnidirectional Spectrum"
 
-    x, y
+    return x, y
 end
