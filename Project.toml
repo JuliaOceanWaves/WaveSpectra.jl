@@ -1,11 +1,10 @@
 name = "WaveSpectra"
 uuid = "9da5bd80-4f3d-48a2-a37e-447dff2ef7bc"
-authors = ["Sandia National Laboratories"]
 version = "0.1.0"
+authors = ["Sandia National Laboratories"]
 
 [deps]
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DimensionfulAngles = "2d4b8d7a-02d9-40f9-9abe-9c695b77de0d"
 Integrals = "de52edbc-65ea-441a-8357-d3a637375a31"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
