@@ -103,38 +103,3 @@ function OmnidirectionalSpectrum(x::AxisArray)
     end
     return OmnidirectionalSpectrum(x.data, axis[1])
 end
-
-function DataFrame(x::Spectrum)
-    n1 = length(x.axis1)
-    n2 = length(x.axis2)
-    axis1 = repeat(x.axis1, outer=n2)
-    axis2 = repeat(x.axis2, inner=n1)
-    return DataFrame(
-        x.axesnames[1] => axis1,
-        x.axesnames[2] => axis2,
-        :spectrum => vec(x.data),
-    )
-end
-
-function Spectrum(df::DataFrame)
-    cols = names(df)
-    spec_col = :spectrum
-    axis_cols = (spec_col in cols) ? filter(!=(spec_col), cols) : cols[1:2]
-    data_col = (spec_col in cols) ? spec_col : cols[3]
-    axis1 = unique(df[!, axis_cols[1]])
-    axis2 = unique(df[!, axis_cols[2]])
-    data = reshape(df[!, data_col], length(axis1), length(axis2))
-    return Spectrum(data, axis1, axis2)
-end
-
-function DataFrame(x::OmnidirectionalSpectrum)
-    return DataFrame(x.axisname => x.axis, :spectrum => x.data)
-end
-
-function OmnidirectionalSpectrum(df::DataFrame)
-    cols = names(df)
-    spec_col = :spectrum
-    axis_col = (spec_col in cols) ? first(filter(!=(spec_col), cols)) : cols[1]
-    data_col = (spec_col in cols) ? spec_col : cols[2]
-    return OmnidirectionalSpectrum(df[!, data_col], df[!, axis_col])
-end

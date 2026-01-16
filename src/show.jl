@@ -32,19 +32,40 @@ end
 
 function Base.show(io::IO, ::MIME"text/html", x::Spectrum)
     shape = size(x.data)
-    us, ui, u1, u2 = unit(x), unit(x, :integral), unit(x, :axis1), unit(x, :axis2)
+    us = repr(unit(x), context=:fancy_exponent => true)
+    ui = repr(unit(x, :integral), context=:fancy_exponent => true)
+    u1 = repr(unit(x, :axis1), context=:fancy_exponent => true)
+    u2 = repr(unit(x, :axis2), context=:fancy_exponent => true)
     axt = axestypes(x)
     axt1 = titlecase(replace(String(axt[1]), "_" => " "))
     axt2 = titlecase(replace(String(axt[2]), "_" => " "))
     xc = String(x.coordinates)
-    io_fancy = IOContext(io, :fancy_exponent => true)
-    println(io_fancy, shape[1], "×", shape[2], " Spectrum{", us, "}{", u1, "}{", u2, "}",
-        "\nSpectral density for Quantity (", ui,") with ", xc, " coordinates:",
-        "\n  • Axis 1: ", axt1, " (", u1, ")\n  • Axis 2: ", axt2, " (", u2, ")",
-        "\nand data:"
+    println(io,
+        "<p style='font-size:16px;'>",
+        shape[1], "×", shape[2], " Spectrum{", us, "}{", u1, "}{", u2, "}",
+        "<br>Spectral density for Quantity (", ui, ") with ", xc, " coordinates:",
+        "<br>  • Axis 1: ", axt1, " (", u1, ")<br>  • Axis 2: ", axt2, " (", u2, ")",
+        "<br>and data:</p>"
     )
-    pt = pretty_table(ustrip.(x.data), backend=Val(:html), formatters=ft_printf("%.2f"))
-    println(pt)
+    # title = ""
+    # subtitle = ""
+    pretty_table(
+        io,
+        ustrip.(x.data),
+        backend=:html,
+        column_labels = x.axis2,
+        row_labels=x.axis1,
+        maximum_number_of_rows=10,
+        vertical_crop_mode=:middle,
+        # title=title,
+        # subtitle=subtitle,
+        # title_alignment=:l,
+        # subtitle_alignment=:l,
+        style = HtmlTableStyle(;
+            first_line_column_label = ["color" => "LightSeaGreen", "font-weight" => "bold"],
+            row_label = ["color" => "Coral", "font-weight" => "bold"],
+        )
+    )
 end
 
 # function Base.show(io::IO, ::MIME"text/html", x::Spectrum)

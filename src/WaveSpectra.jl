@@ -8,11 +8,10 @@ using UnitfulEquivalences: Equivalence, dimtype, edconvert
 using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule
 using Integrals: UniformWeights, solve
 using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
-using Plots: @recipe, text
+using Plots: @recipe, plot, text
 using Printf: @printf
-using PrettyTables: pretty_table
+using PrettyTables # ToDO
 
-import DataFrames: DataFrame
 import Base  # BroadcastStyle, copy, eltype, getindex, setindex!, show, similar, size
 import Unitful: uconvert, unit, ustrip
 import UnitfulEquivalences: edconvert
