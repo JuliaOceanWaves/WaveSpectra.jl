@@ -18,7 +18,7 @@ UnitfulEquivalences = "da9c4bc3-91c8-4f02-8a40-6b990d2a7e0c"
 [compat]
 AxisArrays = "0.4"
 DimensionfulAngles = "0.2"
-Integrals = "4"
+Integrals = "4, 5"
 LaTeXStrings = "1"
 NamedDims = "1"
 Plots = "1"
