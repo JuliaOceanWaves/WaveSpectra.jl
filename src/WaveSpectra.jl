@@ -1,16 +1,15 @@
 module WaveSpectra
 
-using Unitful: Dimensions, Frequency, Length, Quantity, Time, Units, Wavenumber
-using Unitful: dimension, gn as g, m, s, 𝐋, 𝐓
+using Unitful: Dimensions, FreeUnits, Frequency, Length, NoDims, Quantity, Time, Units
+using Unitful: Wavenumber, dimension, gn as g, m, s, 𝐋, 𝐓
 using DimensionfulAngles: AngularPeriod, AngularVelocity, AngularWavelength
-using DimensionfulAngles: AngularWavenumber, Dispersion, radᵃ as rad, θ₀, 𝐀
+using DimensionfulAngles: AngularWavenumber, Dispersion, radᵃ as rad, turnᵃ as τ, θ₀, 𝐀
 using UnitfulEquivalences: Equivalence, dimtype, edconvert
 using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule
 using Integrals: UniformWeights, solve
 using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
-using Plots: @recipe, plot, text
-using Printf: @printf
-using PrettyTables # ToDO
+using Plots: mm as plots_mm, text, @recipe
+using PrettyTables: HtmlTableStyle, pretty_table
 
 import Base  # BroadcastStyle, copy, eltype, getindex, setindex!, show, similar, size
 import Unitful: uconvert, unit, ustrip
