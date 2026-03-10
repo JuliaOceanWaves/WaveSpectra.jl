@@ -1,7 +1,7 @@
 name = "WaveSpectra"
 uuid = "9da5bd80-4f3d-48a2-a37e-447dff2ef7bc"
-authors = ["Sandia National Laboratories"]
 version = "0.1.0"
+authors = ["Sandia National Laboratories"]
 
 [deps]
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
@@ -18,9 +18,7 @@ AxisArrays = "0.4"
 DimensionfulAngles = "0.2"
 Integrals = "4"
 Plots = "1"
-# LaTeXStrings = "1"
-# NamedDims = "1"
-# PrettyTables = "3"
+PrettyTables = "3"
 Unitful = "1"
 UnitfulEquivalences = "0.2"
 julia = "1.10"
