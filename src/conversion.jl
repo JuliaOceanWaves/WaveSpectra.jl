@@ -1,47 +1,12 @@
-# Dispersion Gradient
-struct DispersionGradient <: Equivalence
-    dispersion::Dispersion
-    gradient::Union{Function,Nothing}
-    gradient_inverse::Union{Function,Nothing}
+# Convert the axes of spectra, adjust units of distribution, keep total energy invariance
 
-    function DispersionGradient(dispersion::Dispersion;
-        gradient::Union{Function,Nothing}=nothing,
-        gradient_inverse::Union{Function,Nothing}=nothing
-    )
-        return new(dispersion, gradient, gradient_inverse)
-    end
-end
-
-function DispersionGradient(;
-    dispersion::Union{Function,Nothing}=nothing,
-    dispersion_inverse::Union{Function,Nothing}=nothing,
-    gradient::Union{Function,Nothing}=nothing,
-    gradient_inverse::Union{Function,Nothing}=nothing
-)
-    dispersion = Dispersion(; dispersion, dispersion_inverse)
-    return DispersionGradient(dispersion; gradient, gradient_inverse)
-end
-
-_frequency_types() = [
-    Time, Frequency, AngularPeriod, AngularVelocity,
-    Length, Wavenumber, AngularWavelength, AngularWavenumber
-]
-
-for T1 ∈ _frequency_types(), T2 ∈ _frequency_types()
-    @eval begin
-        function edconvert(d::dimtype($T1), x::$T2, dispersion::DispersionGradient)
-            return edconvert(d, x, dispersion.dispersion)
-        end
-    end
-end
-
-# uconvert Spectrum
+# Spectrum
 function uconvert(
     uq::Units,
     u1::Units,
     u2::Units,
-    x::Spectrum,
-    dispersion::DispersionGradient=DispersionGradient();
+    x::AbstractSpectrum,
+    dispersion::Dispersion=Dispersion();
 )
     # axis 1
     if isdirection(x.axis1)
@@ -64,9 +29,9 @@ function uconvert(
     return Spectrum(data, axis1, axis2)
 end
 
-uconvert(uq::Units, x::Spectrum) = uconvert(uq, unit(x, :axis1), unit(x, :axis2), x)
+uconvert(uq::Units, x::AbstractSpectrum) = uconvert(uq, unit(x, :axis1), unit(x, :axis2), x)
 
-function uconvert(u::Units, s::Symbol, x::Spectrum, dispersion::DispersionGradient=DispersionGradient())
+function uconvert(u::Units, s::Symbol, x::AbstractSpectrum, dispersion::Dispersion=Dispersion())
     uq, u1, u2 = unit(x, :integral), unit(x, :axis1), unit(x, :axis2)
     if s==x.axesnames[1] || s==:axis1
         u1 = u
@@ -85,12 +50,12 @@ function uconvert(u::Units, s::Symbol, x::Spectrum, dispersion::DispersionGradie
 end
 
 
-# uconvert OmnidirectionalSpectrum
+# OmnidirectionalSpectrum
 function uconvert(
     uq::Units,
     uax::Units,
-    x::OmnidirectionalSpectrum,
-    dispersion::DispersionGradient=DispersionGradient();
+    x::AbstractOmnidirectionalSpectrum,
+    dispersion::Dispersion=Dispersion();
 )
     # axis
     if isdirection(x.axis)
@@ -105,13 +70,13 @@ function uconvert(
     return OmnidirectionalSpectrum(data, axis)
 end
 
-uconvert(uq::Units, x::OmnidirectionalSpectrum) = uconvert(uq, unit(x, :axis), x)
+uconvert(uq::Units, x::AbstractOmnidirectionalSpectrum) = uconvert(uq, unit(x, :axis), x)
 
 function uconvert(
     u::Units,
     s::Symbol,
-    x::OmnidirectionalSpectrum,
-    dispersion::DispersionGradient=DispersionGradient()
+    x::AbstractOmnidirectionalSpectrum,
+    dispersion::Dispersion=Dispersion()
 )
     uq, uax = unit(x, :integral), unit(x, :axis)
     if s == x.axisname || s == :axis
@@ -171,7 +136,7 @@ _derivative() = Dict(
     (𝐋, 𝐋^-1 * 𝐀) => (x -> -2π * rad / x^2),
 )
 
-function _get_gradients(u::Units, axis::AbstractVector, dispersion::DispersionGradient)
+function _get_gradients(u::Units, axis::AbstractVector, dispersion::Dispersion)
     from_dim, to_dim = axesinfo(axis)[2], dimension(u)
     if istemporal(from_dim) && isspatial(to_dim)
         ax_t = uconvert.(rad/s, axis, dispersion)
@@ -181,7 +146,6 @@ function _get_gradients(u::Units, axis::AbstractVector, dispersion::DispersionGr
         grad_3 = _derivative()[𝐀/𝐋, to_dim]
         grad = grad_1.(axis) .* grad_2.(ax_t) .* grad_3.(ax_s)
     elseif isspatial(from_dim) && istemporal(to_dim)
-        nothing
         ax_s = uconvert.(rad / m, axis, dispersion)
         ax_t = uconvert.(rad / s, axis, dispersion)
         grad_1 = _derivative()[from_dim, 𝐀/𝐋]

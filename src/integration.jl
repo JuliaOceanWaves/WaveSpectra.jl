@@ -1,6 +1,24 @@
-# integrate
+# integrate spectra
+
+"""
+    integrate(x::AbstractSpectrum, method::AbstractSampledIntegralAlgorithm=TrapezoidalRule())
+    integrate(
+        x::AbstractSpectrum,
+        ax::Symbol,
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+    )
+
+Integrate a 2D [`Spectrum`] along one axis.
+
+The axis of integration `ax` can be `:axis1`, `:axis2`, or the corresponding entry in
+`x.axesnames`.
+If the remaining axis describes a spatial or temporal frequency, the result is returned as
+an `OmnidirectionalSpectrum`, else it is returned as a vector and a warning is raised.
+If no axis is specified a double integration, over both axis is performed returning a
+scalar quantity.
+"""
 function integrate(
-    x::Spectrum,
+    x::AbstractSpectrum,
     ax::Symbol,
     method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
 )
@@ -26,13 +44,21 @@ function integrate(
     return OmnidirectionalSpectrum(sol.u, axis)
 end
 
-function integrate(x::Spectrum, method::AbstractSampledIntegralAlgorithm=TrapezoidalRule())
+function integrate(x::AbstractSpectrum, method::AbstractSampledIntegralAlgorithm=TrapezoidalRule())
     ax = (x.axestypes[1] == :direction) ? :axis1 : :axis2
     return integrate(integrate(x, ax, method), method)
 end
 
+"""
+    integrate(
+        x::AbstractOmnidirectionalSpectrum,
+        method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+    )
+
+Integrate an `OmnidirectionalSpectrum` and return a scalar quantity.
+"""
 function integrate(
-    x::OmnidirectionalSpectrum,
+    x::AbstractOmnidirectionalSpectrum,
     method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
 )
     problem = SampledIntegralProblem(x.data, x.axis)
@@ -43,7 +69,14 @@ function integrate(
     return sol.u
 end
 
-# Centered rectangular integration for evenly spaced Spectra
+# centered rectangular integration for evenly spaced Spectra
+"""
+    RectangularRule
+
+Rectangular integration method for evenly spaced samples.
+Every sample has a weight equal to the sample spacing.
+Meant to work with `SampledIntegralProblem` from the `Integrals.jl` package.
+"""
 struct RectangularRule <: AbstractSampledIntegralAlgorithm end
 
 struct RectangularUniformWeights{T} <: UniformWeights
