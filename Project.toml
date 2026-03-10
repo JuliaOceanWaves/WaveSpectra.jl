@@ -16,7 +16,7 @@ UnitfulEquivalences = "da9c4bc3-91c8-4f02-8a40-6b990d2a7e0c"
 [compat]
 AxisArrays = "0.4"
 DimensionfulAngles = "0.2"
-Integrals = "4"
+Integrals = "5"
 Plots = "1"
 PrettyTables = "3"
 Unitful = "1"
