@@ -4,7 +4,6 @@
 AxisArrays.axes(x::AbstractSpectrum) = (x.axis1, x.axis2)
 AxisArrays.axes(x::AbstractOmnidirectionalSpectrum) = (x.axis,)
 
-
 # `axesinfo` function
 """
     axesinfo()
@@ -35,7 +34,6 @@ axesinfo() = Dict(
 axesinfo(s::Symbol) = axesinfo()[s]
 axesinfo(x) = axesinfo.(axestypes(x))
 
-
 # `axestypes` function
 axestypes(dim::Dimensions) = Dict(v[2] => k for (k, v) in axesinfo())[dim]
 
@@ -43,11 +41,10 @@ function axestypes(domain::Symbol, quantity::Symbol)
     return Dict(v[1] => k for (k, v) in axesinfo())[(domain, quantity)]
 end
 
-axestypes(x::Union{Quantity,Units}) = axestypes(dimension(x))
+axestypes(x::Union{Quantity, Units}) = axestypes(dimension(x))
 axestypes(x::AbstractArray{<:Quantity}) = axestypes(dimension(eltype(x)))
 axestypes(x::AbstractSpectrum) = x.axestypes
 axestypes(x::AbstractOmnidirectionalSpectrum) = x.axistype
-
 
 # utility functions to check type of axes
 istemporal(x) = (axesinfo()[axestypes(x)][1][1] == :temporal)
@@ -56,12 +53,10 @@ isdirection(x) = (axesinfo()[axestypes(x)][1][1] == :direction)
 ispolar(x::AbstractSpectrum) = (x.coordinates == :polar)
 iscartesian(x::AbstractSpectrum) = (x.coordinates == :cartesian)
 
-
 # alternate ways to obtain axes properties
 coordinates(x::AbstractSpectrum) = x.coordinates
 axesnames(x::AbstractSpectrum) = x.axesnames
 axesnames(x::AbstractOmnidirectionalSpectrum) = x.axisname
-
 
 # check if axes are evenly spaced & obtain spacing information
 """

@@ -8,14 +8,12 @@ Convert from an `AxisArray` to an `OmnidirectionalSpectrum`.
 The input must have exactly one axis.
 """ OmnidirectionalSpectrum(x::AxisArray)
 
-
 @doc """
     OmnidirectionalSpectrum(x::AbstractSpectrum)
 
 Calculate the omnidirectional spectrum of a given `Spectrum` by integrating over its
 directional axis.
 """ OmnidirectionalSpectrum(x::AbstractSpectrum)
-
 
 """
     OmnidirectionalSpectrum(
@@ -27,18 +25,18 @@ One-dimensional omnidirectional wave spectrum with a physical-unit axis.
 
 The inputs `data` and `axis` must have equal length.
 """
-struct OmnidirectionalSpectrum{TDAT,TAX} <: AbstractOmnidirectionalSpectrum{TDAT}
+struct OmnidirectionalSpectrum{TDAT, TAX} <: AbstractOmnidirectionalSpectrum{TDAT}
     data::Vector{TDAT}
     axis::Vector{TAX}
     axistype::Symbol
     axisname::Symbol
 
     function OmnidirectionalSpectrum(
-        data::AbstractVector{},
-        axis::AbstractVector{<:Quantity}
+            data::AbstractVector{},
+            axis::AbstractVector{<:Quantity}
     )
         # checks
-        @assert length(data) == length(axis) "Data and axis lengths do not match!"
+        @assert length(data)==length(axis) "Data and axis lengths do not match!"
         _check_typeconsistency(data)
         _check_typeconsistency(axis)
         data, axis = _ensure_increasing_axis(data, axis)
@@ -49,10 +47,9 @@ struct OmnidirectionalSpectrum{TDAT,TAX} <: AbstractOmnidirectionalSpectrum{TDAT
         # assign axis type and name
         axistype = axisname = axestypes(axis)
 
-        return new{eltype(data),eltype(axis)}(data, axis, axistype, axisname)
+        return new{eltype(data), eltype(axis)}(data, axis, axistype, axisname)
     end
 end
-
 
 # array interface: behave like a matrix
 Base.size(x::AbstractOmnidirectionalSpectrum) = size(x.data)
@@ -69,22 +66,21 @@ function Base.BroadcastStyle(::Type{<:AbstractOmnidirectionalSpectrum})
     return Broadcast.ArrayStyle{AbstractOmnidirectionalSpectrum}()
 end
 
-function Base.similar(x::AbstractOmnidirectionalSpectrum, ::Type{S}, dims::Dims) where S
+function Base.similar(x::AbstractOmnidirectionalSpectrum, ::Type{S}, dims::Dims) where {S}
     (dims ≠ size(x)) && return similar(x.data, S, dims)
     return OmnidirectionalSpectrum(similar(x.data, S, dims), x.axis)
 end
 
 function Base.similar(
-    bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{AbstractOmnidirectionalSpectrum}},
-    ::Type{S}
-) where S
+        bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{AbstractOmnidirectionalSpectrum}},
+        ::Type{S}
+) where {S}
     sp = _find_first_in_broadcast(bc.args, AbstractOmnidirectionalSpectrum)
     sp === nothing && return similar(Array{S}, axes(bc))
     _check_axes_in_broadcast(bc.args, sp)
     shape = Base.to_shape(axes(bc))
     return similar(sp, S, shape)
 end
-
 
 # fancy indexing using AxisArray
 function Base.getindex(x::AbstractOmnidirectionalSpectrum; kwargs...)
@@ -99,17 +95,17 @@ function Base.setindex!(x::AbstractOmnidirectionalSpectrum, v::Any; kwargs...)
 end
 
 function Base.getindex(
-    x::AbstractOmnidirectionalSpectrum,
-    i::Union{Quantity,ClosedInterval{<:Quantity}}
+        x::AbstractOmnidirectionalSpectrum,
+        i::Union{Quantity, ClosedInterval{<:Quantity}}
 )
     kwargs = Dict(x.axisname => i,)
     return getindex(x; kwargs...)
 end
 
 function Base.setindex!(
-    x::AbstractOmnidirectionalSpectrum,
-    v::Any,
-    i::Union{Quantity,ClosedInterval{<:Quantity}}
+        x::AbstractOmnidirectionalSpectrum,
+        v::Any,
+        i::Union{Quantity, ClosedInterval{<:Quantity}}
 )
     kwargs = Dict(x.axisname => i,)
     y = AxisArray(x)
@@ -117,7 +113,6 @@ function Base.setindex!(
     x = OmnidirectionalSpectrum(y)
     return nothing
 end
-
 
 # units: extend `Unitful.unit` function
 function unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)::Units
@@ -130,7 +125,6 @@ function unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)::Units
 end
 
 unit(x::AbstractOmnidirectionalSpectrum) = unit(x, :spectrum)
-
 
 # convert to/from AxisArray
 function AxisArray(x::AbstractOmnidirectionalSpectrum)

@@ -18,15 +18,15 @@ If no axis is specified a double integration, over both axis is performed return
 scalar quantity.
 """
 function integrate(
-    x::AbstractSpectrum,
-    ax::Symbol,
-    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+        x::AbstractSpectrum,
+        ax::Symbol,
+        method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
 )
     if (ax == :axis1) || (ax == x.axesnames[1])
-        problem = SampledIntegralProblem(x.data, x.axis1; dim=1)
+        problem = SampledIntegralProblem(x.data, x.axis1; dim = 1)
         axis = x.axis2
     elseif (ax == :axis2) || (ax == x.axesnames[2])
-        problem = SampledIntegralProblem(x.data, x.axis2; dim=2)
+        problem = SampledIntegralProblem(x.data, x.axis2; dim = 2)
         axis = x.axis1
     else
         throw(ArgumentError("Unknown axis."))
@@ -37,14 +37,15 @@ function integrate(
     end
     if axestypes(axis) == :direction
         @warn ("Integration: The resulting vector is a function of direction, and is not " *
-            "returned as an 'OmnidirectionalSpectrum'."
+               "returned as an 'OmnidirectionalSpectrum'."
         )
         return sol.u
     end
     return OmnidirectionalSpectrum(sol.u, axis)
 end
 
-function integrate(x::AbstractSpectrum, method::AbstractSampledIntegralAlgorithm=TrapezoidalRule())
+function integrate(
+        x::AbstractSpectrum, method::AbstractSampledIntegralAlgorithm = TrapezoidalRule())
     ax = (x.axestypes[1] == :direction) ? :axis1 : :axis2
     return integrate(integrate(x, ax, method), method)
 end
@@ -58,8 +59,8 @@ end
 Integrate an `OmnidirectionalSpectrum` and return a scalar quantity.
 """
 function integrate(
-    x::AbstractOmnidirectionalSpectrum,
-    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+        x::AbstractOmnidirectionalSpectrum,
+        method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
 )
     problem = SampledIntegralProblem(x.data, x.axis)
     sol = solve(problem, method)
@@ -89,7 +90,7 @@ end
 function find_weights(x::AbstractVector, ::RectangularRule)
     (x isa AbstractRange) && return RectangularUniformWeights(length(x), step(x))
     x_range = _convert_to_range(x)
-    if (length(x)==length(x_range)) && isapprox(x, x_range)
+    if (length(x) == length(x_range)) && isapprox(x, x_range)
         return RectangularUniformWeights(length(x_range), step(x_range))
     else
         throw(ArgumentError("Integrand must be evenly spaced."))
@@ -103,5 +104,5 @@ function _convert_to_range(x::AbstractVector)
     start_val = x[begin]
     end_val = x[end]
     step_val = x[2] - x[1]
-    return range(start_val, stop=end_val, step=step_val)
+    return range(start_val, stop = end_val, step = step_val)
 end

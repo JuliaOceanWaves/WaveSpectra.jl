@@ -8,7 +8,6 @@ Construct a `Spectrum` from an `AxisArray`.
 The input must have exactly two axes.
 """ Spectrum(x::AxisArray)
 
-
 @doc """
     Spectrum(omni::AbstractOmnidirectionalSpectrum, spread::AbstractSpectrum)
 
@@ -17,7 +16,6 @@ with a directional spread function.
 
 `spread` must use polar coordinates and its first axis must match `omni.axis`.
 """ Spectrum(omni::AbstractOmnidirectionalSpectrum, spread::AbstractSpectrum)
-
 
 """
     Spectrum(
@@ -35,27 +33,24 @@ The coordinate system is inferred from axis types and is either `:cartesian` or 
 """
 struct Spectrum{
     TDAT,
-    TAX1<:AbstractVector{<:Quantity},
-    TAX2<:AbstractVector{<:Quantity}
+    TAX1 <: AbstractVector{<:Quantity},
+    TAX2 <: AbstractVector{<:Quantity}
 } <: AbstractSpectrum{TDAT}
-
-    data :: Matrix{TDAT}
-    axis1:: TAX1 # AbstractVector{TAX1}
-    axis2:: TAX2 # AbstractVector{TAX2}
-    coordinates :: Symbol
-    axestypes :: Tuple{Symbol, Symbol}
-    axesnames :: Tuple{Symbol, Symbol}
+    data::Matrix{TDAT}
+    axis1::TAX1 # AbstractVector{TAX1}
+    axis2::TAX2 # AbstractVector{TAX2}
+    coordinates::Symbol
+    axestypes::Tuple{Symbol, Symbol}
+    axesnames::Tuple{Symbol, Symbol}
 
     function Spectrum(
-        data::AbstractMatrix{},
-        axis1::AbstractVector{<:Quantity},
-        axis2::AbstractVector{<:Quantity}
+            data::AbstractMatrix{},
+            axis1::AbstractVector{<:Quantity},
+            axis2::AbstractVector{<:Quantity}
     )
         # perform checks
-        @assert(
-            size(data) == (length(axis1), length(axis2)),
-            "Data and axes sizes do not match!"
-        )
+        @assert(size(data)==(length(axis1), length(axis2)),
+            "Data and axes sizes do not match!")
         _check_typeconsistency(data)
         _check_typeconsistency(axis1)
         _check_typeconsistency(axis2)
@@ -92,7 +87,6 @@ struct Spectrum{
     end
 end
 
-
 # array interface: behave like a matrix
 Base.size(x::AbstractSpectrum) = size(x.data)
 Base.eltype(x::AbstractSpectrum) = eltype(x.data)
@@ -105,22 +99,21 @@ Base.setindex!(x::AbstractSpectrum, v, I::Vararg{Int, 2}) = (x.data[I...] = v)
 
 Base.BroadcastStyle(::Type{<:AbstractSpectrum}) = Broadcast.ArrayStyle{AbstractSpectrum}()
 
-function Base.similar(x::AbstractSpectrum, ::Type{S}, dims::Dims) where S
+function Base.similar(x::AbstractSpectrum, ::Type{S}, dims::Dims) where {S}
     (dims ≠ size(x)) && return similar(x.data, S, dims)
     return Spectrum(similar(x.data, S, dims), x.axis1, x.axis2)
 end
 
 function Base.similar(
-    bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{AbstractSpectrum}},
-    ::Type{S}
-) where S
+        bc::Broadcast.Broadcasted{Broadcast.ArrayStyle{AbstractSpectrum}},
+        ::Type{S}
+) where {S}
     sp = _find_first_in_broadcast(bc.args, AbstractSpectrum)
     sp === nothing && return similar(Array{S}, axes(bc))
     _check_axes_in_broadcast(bc.args, sp)
     shape = Base.to_shape(axes(bc))
     return similar(sp, S, shape)
 end
-
 
 # fancy indexing using AxisArray
 function Base.getindex(x::AbstractSpectrum; kwargs...)
@@ -135,20 +128,20 @@ function Base.setindex!(x::AbstractSpectrum, v; kwargs...)
 end
 
 function Base.getindex(
-    x::AbstractSpectrum,
-    i::Vararg{Union{Quantity, ClosedInterval{<:Quantity}}, 2}
+        x::AbstractSpectrum,
+        i::Vararg{Union{Quantity, ClosedInterval{<:Quantity}}, 2}
 )
     kwargs = Dict()
-    for (k,v) in zip(x.axesnames, i)
+    for (k, v) in zip(x.axesnames, i)
         kwargs[k] = v
     end
     return getindex(x; kwargs...)
 end
 
 function Base.setindex!(
-    x::AbstractSpectrum,
-    v::Any,
-    i::Vararg{Union{Quantity, ClosedInterval{<:Quantity}}, 2},
+        x::AbstractSpectrum,
+        v::Any,
+        i::Vararg{Union{Quantity, ClosedInterval{<:Quantity}}, 2}
 )
     kwargs = Dict()
     for (key, value) in zip(x.axesnames, i)
@@ -157,7 +150,6 @@ function Base.setindex!(
     setindex!(x, v; kwargs...)
     return nothing
 end
-
 
 # units: extend `Unitful.unit` function
 function unit(x::AbstractSpectrum, quantity::Symbol)::Units
@@ -172,7 +164,6 @@ function unit(x::AbstractSpectrum, quantity::Symbol)::Units
 end
 
 unit(x::AbstractSpectrum) = unit(x, :spectrum)
-
 
 # convert to/from AxisArray
 function AxisArray(x::AbstractSpectrum)

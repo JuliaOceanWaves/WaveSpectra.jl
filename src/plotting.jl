@@ -8,20 +8,20 @@
         θ = ustrip.(uconvert.(rad, x.axis2))
         r = ustrip.(x.axis1)
         z = ustrip.(x.data)
-        spectrum_unit = repr(unit(x), context=:fancy_exponent => true)
+        spectrum_unit = repr(unit(x), context = :fancy_exponent => true)
 
         seriestype --> :heatmap
         projection --> :polar
         label --> ""
         color --> :deep
         colorbar_title --> "Spectral Density\n($spectrum_unit)"
-        right_margin --> 10*plots_mm
+        right_margin --> 10 * plots_mm
         return θ, r, z
     elseif x.coordinates == :cartesian
         freq1_name, freq2_name = axesnames(x)
-        freq1_unit = repr(unit(x, :axis1), context=:fancy_exponent => true)
-        freq2_unit = repr(unit(x, :axis2), context=:fancy_exponent => true)
-        spectrum_unit = repr(unit(x), context=:fancy_exponent => true)
+        freq1_unit = repr(unit(x, :axis1), context = :fancy_exponent => true)
+        freq2_unit = repr(unit(x, :axis2), context = :fancy_exponent => true)
+        spectrum_unit = repr(unit(x), context = :fancy_exponent => true)
 
         seriestype --> :contour
         xlabel --> "$freq1_name ($freq1_unit)"
@@ -39,15 +39,14 @@ end
     _x = ustrip.(x.axis)
     _y = ustrip.(x.data)
     freq_name = axesnames(x)
-    freq_unit = repr(unit(x, :axis), context=:fancy_exponent => true)
-    spectrum_unit = repr(unit(x), context=:fancy_exponent => true)
+    freq_unit = repr(unit(x, :axis), context = :fancy_exponent => true)
+    spectrum_unit = repr(unit(x), context = :fancy_exponent => true)
 
     xlabel --> "$freq_name ($freq_unit)"
     ylabel --> "Spectral Density ($spectrum_unit)"
     label --> ""
     return _x, _y
 end
-
 
 # Makie.jl
 # TODO: make these Makie recipes?
@@ -63,7 +62,8 @@ For polar spectra, `ax` must be a `PolarAxis`.
 
 See [`plot_spectrum`](@ref) for more information.
 """
-function plot_spectrum!(ax, s::AbstractSpectrum; (func!)=contourf!, make_cyclic=true, ax_properties=Dict(), kwargs...)
+function plot_spectrum!(ax, s::AbstractSpectrum; (func!) = contourf!,
+        make_cyclic = true, ax_properties = Dict(), kwargs...)
     for (prop, val) in ax_properties
         setproperty!(ax, prop, val)
     end
@@ -77,11 +77,12 @@ function plot_spectrum!(ax, s::AbstractSpectrum; (func!)=contourf!, make_cyclic=
             "Axis must be `PolarAxis` for a polar `Spectrum`")
         )
         runit = unit(s, :axis1)
-        runit_str = repr(runit, context=:fancy_exponent => true)
+        runit_str = repr(runit, context = :fancy_exponent => true)
         θunit = unit(s, :axis2)
-        thetaticks_pos = collect(0:1/8:7/8) * 2π
+        thetaticks_pos = collect(0:(1 / 8):(7 / 8)) * 2π
         thetaticks_label = (
-            (θunit == rad) ? ["0, 2π", "¼π", "½π", "¾π", "π", "1¼π", "1½π", "1¾π"] : (
+            (θunit == rad) ? ["0, 2π", "¼π", "½π", "¾π", "π", "1¼π", "1½π", "1¾π"] :
+            (
             (θunit == τ) ? ["0, τ", "⅛τ", "¼τ", "⅜τ", "½τ", "⅝τ", "¾τ", "⅞τ"] :
             ["0°, 360°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"])
         )
@@ -90,7 +91,7 @@ function plot_spectrum!(ax, s::AbstractSpectrum; (func!)=contourf!, make_cyclic=
         setaxproperty!(:rtickformat, values -> ["$(v) $(runit_str)" for v in values])
         setaxproperty!(:rgridcolor, :seashell4)
         setaxproperty!(:thetagridcolor, :seashell4)
-        setaxproperty!(:rtickangle, π/2)
+        setaxproperty!(:rtickangle, π / 2)
         setaxproperty!(:gridz, 1)
 
         θ = ustrip.(uconvert.(rad, s.axis2))
@@ -112,8 +113,8 @@ function plot_spectrum!(ax, s::AbstractSpectrum; (func!)=contourf!, make_cyclic=
         z = ustrip.(s.data)
 
         freq1_name, freq2_name = axesnames(s)
-        freq1_unit = repr(unit(s, :axis1), context=:fancy_exponent => true)
-        freq2_unit = repr(unit(s, :axis2), context=:fancy_exponent => true)
+        freq1_unit = repr(unit(s, :axis1), context = :fancy_exponent => true)
+        freq2_unit = repr(unit(s, :axis2), context = :fancy_exponent => true)
 
         setaxproperty!(:xlabel, "$freq1_name ($freq1_unit)")
         setaxproperty!(:ylabel, "$freq2_name ($freq2_unit)")
@@ -152,10 +153,10 @@ Keyword arguments:
 See also [`plot_spectrum!`](@ref) to plot into an existing axis.
 """
 function plot_spectrum(s::AbstractSpectrum;
-    (func!)=contourf!, make_cyclic=true, ax_properties=Dict(), colorbar_properties=Dict(),
-    kwargs...
+        (func!) = contourf!, make_cyclic = true, ax_properties = Dict(), colorbar_properties = Dict(),
+        kwargs...
 )
-    spectrum_unit = repr(unit(s), context=:fancy_exponent => true)
+    spectrum_unit = repr(unit(s), context = :fancy_exponent => true)
     defaults = Dict(
         :label => "Spectral Density\n($spectrum_unit)",
     )
@@ -169,7 +170,7 @@ function plot_spectrum(s::AbstractSpectrum;
 end
 
 function plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
-    (func!)=lines!, ax_properties=Dict(), kwargs...
+        (func!) = lines!, ax_properties = Dict(), kwargs...
 )
     for (prop, val) in ax_properties
         setproperty!(ax, prop, val)
@@ -183,15 +184,15 @@ function plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
     y = ustrip.(s.data)
 
     freq_name = axesnames(s)
-    freq_unit = repr(unit(s, :axis), context=:fancy_exponent => true)
-    spectrum_unit = repr(unit(s), context=:fancy_exponent => true)
+    freq_unit = repr(unit(s, :axis), context = :fancy_exponent => true)
+    spectrum_unit = repr(unit(s), context = :fancy_exponent => true)
 
     setaxproperty!(:xlabel, "$freq_name ($freq_unit)")
     setaxproperty!(:ylabel, "Spectral Density ($spectrum_unit)")
     setaxproperty!(:limits, ((0, nothing), (0, nothing)))
 
     defaults = Dict(
-        #
+    #
     )
 
     plot_props = merge(defaults, Dict(kwargs))
@@ -199,7 +200,7 @@ function plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
 end
 
 function plot_spectrum(s::AbstractOmnidirectionalSpectrum;
-    (func!)=lines!, ax_properties=Dict(), kwargs...
+        (func!) = lines!, ax_properties = Dict(), kwargs...
 )
     f = Figure()
     ax = MAxis(f[1, 1])
