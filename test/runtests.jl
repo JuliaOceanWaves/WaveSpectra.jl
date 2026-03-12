@@ -1,4 +1,4 @@
-using Test, SafeTestsets, Documenter
+using Test, SafeTestsets
 
 @time @testset verbose=true "WaveSpectra.jl" begin
     @time @safetestset "Test Core Capabilities" begin
@@ -18,5 +18,8 @@ using Test, SafeTestsets, Documenter
     end
     @time @safetestset "Test Parametric Spectra" begin
         include("test_parametric.jl")
+    end
+    @time @safetestset "Doc Tests" begin
+        include("test_doctest.jl")
     end
 end
