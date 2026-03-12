@@ -4,7 +4,6 @@
 AxisArrays.axes(x::AbstractSpectrum) = (x.axis1, x.axis2)
 AxisArrays.axes(x::AbstractOmnidirectionalSpectrum) = (x.axis,)
 
-
 # `axesinfo` function
 """
     axesinfo()
@@ -21,20 +20,21 @@ Return axis information including domain (spatial or temporal, or direction), ty
 - `axesinfo(x)` return the axis information for the axes of x, where the input x is either
   a `Spectrum` or an `OmnidirectionalSpectrum`.
 """
-axesinfo() = Dict(
-    :direction => ((:direction, :angle), 𝐀),
-    :frequency => ((:temporal, :frequency), 𝐓^-1),
-    :angular_frequency => ((:temporal, :angular_frequency), 𝐀 * 𝐓^-1),
-    :period => ((:temporal, :period), 𝐓),
-    :angular_period => ((:temporal, :angular_period), 𝐓 * 𝐀^-1),
-    :wavenumber => ((:spatial, :frequency), 𝐋^-1),
-    :angular_wavenumber => ((:spatial, :angular_frequency), 𝐀 * 𝐋^-1),
-    :wavelength => ((:spatial, :period), 𝐋),
-    :angular_wavelength => ((:spatial, :angular_period), 𝐋 * 𝐀^-1)
-)
+function axesinfo()
+    Dict(
+        :direction => ((:direction, :angle), 𝐀),
+        :frequency => ((:temporal, :frequency), 𝐓^-1),
+        :angular_frequency => ((:temporal, :angular_frequency), 𝐀 * 𝐓^-1),
+        :period => ((:temporal, :period), 𝐓),
+        :angular_period => ((:temporal, :angular_period), 𝐓 * 𝐀^-1),
+        :wavenumber => ((:spatial, :frequency), 𝐋^-1),
+        :angular_wavenumber => ((:spatial, :angular_frequency), 𝐀 * 𝐋^-1),
+        :wavelength => ((:spatial, :period), 𝐋),
+        :angular_wavelength => ((:spatial, :angular_period), 𝐋 * 𝐀^-1)
+    )
+end
 axesinfo(s::Symbol) = axesinfo()[s]
 axesinfo(x) = axesinfo.(axestypes(x))
-
 
 # `axestypes` function
 axestypes(dim::Dimensions) = Dict(v[2] => k for (k, v) in axesinfo())[dim]
@@ -43,11 +43,10 @@ function axestypes(domain::Symbol, quantity::Symbol)
     return Dict(v[1] => k for (k, v) in axesinfo())[(domain, quantity)]
 end
 
-axestypes(x::Union{Quantity,Units}) = axestypes(dimension(x))
+axestypes(x::Union{Quantity, Units}) = axestypes(dimension(x))
 axestypes(x::AbstractArray{<:Quantity}) = axestypes(dimension(eltype(x)))
 axestypes(x::AbstractSpectrum) = x.axestypes
 axestypes(x::AbstractOmnidirectionalSpectrum) = x.axistype
-
 
 # utility functions to check type of axes
 istemporal(x) = (axesinfo()[axestypes(x)][1][1] == :temporal)
@@ -56,12 +55,10 @@ isdirection(x) = (axesinfo()[axestypes(x)][1][1] == :direction)
 ispolar(x::AbstractSpectrum) = (x.coordinates == :polar)
 iscartesian(x::AbstractSpectrum) = (x.coordinates == :cartesian)
 
-
 # alternate ways to obtain axes properties
 coordinates(x::AbstractSpectrum) = x.coordinates
 axesnames(x::AbstractSpectrum) = x.axesnames
 axesnames(x::AbstractOmnidirectionalSpectrum) = x.axisname
-
 
 # check if axes are evenly spaced & obtain spacing information
 """

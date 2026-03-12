@@ -10,11 +10,11 @@ module WaveSpectra
 
 # using
 using Unitful: Dimensions, FreeUnits, NoDims, Quantity, Units, dimension, ustrip, gn as g,
-    m, s, 𝐋, 𝐓
+               m, s, 𝐋, 𝐓
 using DimensionfulAngles: Dispersion, radᵃ as rad, turnᵃ as τ, θ₀, 𝐀
 using UnitfulEquivalences: Equivalence, dimtype, edconvert
 using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule,
-    UniformWeights, solve
+                 UniformWeights, solve
 using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
 using Plots: mm as plots_mm, text, @recipe
 using PrettyTables: HtmlTableStyle, pretty_table
@@ -32,9 +32,9 @@ import Integrals: find_weights
 export DispersionRelations, ParametricSpectra # modules
 export OmnidirectionalSpectrum, RectangularRule, Spectrum # structs
 export axesinfo, evenspacing, integrate, isevenlyspaced,  # functions
-    plot_spectrum, plot_spectrum!, split_spectrum, spread_function
-    # axesnames, axestypes, coordinates, iscartesian, isdirection, ispolar,
-    # isspatial, istemporal
+       plot_spectrum, plot_spectrum!, split_spectrum, spread_function
+# axesnames, axestypes, coordinates, iscartesian, isdirection, ispolar,
+# isspatial, istemporal
 
 # include
 include("core.jl")
