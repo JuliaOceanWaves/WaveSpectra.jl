@@ -20,17 +20,19 @@ Return axis information including domain (spatial or temporal, or direction), ty
 - `axesinfo(x)` return the axis information for the axes of x, where the input x is either
   a `Spectrum` or an `OmnidirectionalSpectrum`.
 """
-axesinfo() = Dict(
-    :direction => ((:direction, :angle), 𝐀),
-    :frequency => ((:temporal, :frequency), 𝐓^-1),
-    :angular_frequency => ((:temporal, :angular_frequency), 𝐀 * 𝐓^-1),
-    :period => ((:temporal, :period), 𝐓),
-    :angular_period => ((:temporal, :angular_period), 𝐓 * 𝐀^-1),
-    :wavenumber => ((:spatial, :frequency), 𝐋^-1),
-    :angular_wavenumber => ((:spatial, :angular_frequency), 𝐀 * 𝐋^-1),
-    :wavelength => ((:spatial, :period), 𝐋),
-    :angular_wavelength => ((:spatial, :angular_period), 𝐋 * 𝐀^-1)
-)
+function axesinfo()
+    Dict(
+        :direction => ((:direction, :angle), 𝐀),
+        :frequency => ((:temporal, :frequency), 𝐓^-1),
+        :angular_frequency => ((:temporal, :angular_frequency), 𝐀 * 𝐓^-1),
+        :period => ((:temporal, :period), 𝐓),
+        :angular_period => ((:temporal, :angular_period), 𝐓 * 𝐀^-1),
+        :wavenumber => ((:spatial, :frequency), 𝐋^-1),
+        :angular_wavenumber => ((:spatial, :angular_frequency), 𝐀 * 𝐋^-1),
+        :wavelength => ((:spatial, :period), 𝐋),
+        :angular_wavelength => ((:spatial, :angular_period), 𝐋 * 𝐀^-1)
+    )
+end
 axesinfo(s::Symbol) = axesinfo()[s]
 axesinfo(x) = axesinfo.(axestypes(x))
 
