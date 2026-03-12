@@ -14,10 +14,10 @@ using DimensionfulAngles: Angle
 
 @inline function _check_frequency_axis(x, name::AbstractString)
     (istemporal(x) || isspatial(x)) && return nothing
-    isdirection(x) && throw(ArgumentError("`$name` must be spatial or temporal, not directional."))
+    isdirection(x) &&
+        throw(ArgumentError("`$name` must be spatial or temporal, not directional."))
     throw(ArgumentError("`$name` must be spatial or temporal."))
 end
-
 
 # omnidirectional spectra
 """
@@ -31,10 +31,10 @@ using `dispersion`.
 Based on IEC TS 62600-2 ED2 Annex C.2 (2019).
 """
 function spectrum_pierson_moskowitz(
-    frequencies::AbstractVector{<:Quantity},
-    significant_waveheight::Length,
-    peak_period::Quantity;
-    dispersion::Dispersion=Dispersion(),
+        frequencies::AbstractVector{<:Quantity},
+        significant_waveheight::Length,
+        peak_period::Quantity;
+        dispersion::Dispersion = Dispersion()
 )
     _check_frequency_axis(frequencies, "frequencies")
     _check_frequency_axis(peak_period, "peak_period")
@@ -47,7 +47,7 @@ function spectrum_pierson_moskowitz(
     fₚ = uconvert.(Hz, peak_period, dispersion)
     f̅ = uconvert.(Hz, frequencies[ind], dispersion)
 
-    b = -(5 / 4) * (fₚ ./ f̅).^4
+    b = -(5 / 4) * (fₚ ./ f̅) .^ 4
     a = -b * aₛ^2 ./ f̅
     spec = zeros(n) * unit(eltype(a))
     spec[ind] = a .* exp.(b)
@@ -68,11 +68,11 @@ using `dispersion`.
 Based on IEC TS 62600-2 ED2 Annex C.2 (2019).
 """
 function spectrum_jonswap(
-    frequencies::AbstractVector{<:Quantity},
-    significant_waveheight::Length,
-    peak_period::Quantity;
-    dispersion::Dispersion=Dispersion(),
-    gamma::Union{Number, Nothing}=nothing,
+        frequencies::AbstractVector{<:Quantity},
+        significant_waveheight::Length,
+        peak_period::Quantity;
+        dispersion::Dispersion = Dispersion(),
+        gamma::Union{Number, Nothing} = nothing
 )
     _check_frequency_axis(frequencies, "frequencies")
     _check_frequency_axis(peak_period, "peak_period")
@@ -101,18 +101,18 @@ function spectrum_jonswap(
         ))
     end
 
-    b = -(5 / 4) * (fₚ ./ f̅).^4
+    b = -(5 / 4) * (fₚ ./ f̅) .^ 4
     a = -b * aₛ^2 ./ f̅
     spec = zeros(n) * unit(eltype(a))
     spec[ind] = a .* exp.(b)
 
-    spec[ind] = spec .* (1-0.287log(γ)) .* γ.^exp.(-((f̅.-fₚ).^2) ./ (2*σ.^2 * fₚ^2))
+    spec[ind] = spec .* (1 - 0.287log(γ)) .*
+                γ .^ exp.(-((f̅ .- fₚ) .^ 2) ./ (2 * σ .^ 2 * fₚ^2))
 
     spec = WaveSpectra.OmnidirectionalSpectrum(spec, f̅)
     spec = uconvert(uaxis, :axis, spec, dispersion)
     return spec
 end
-
 
 # spread functions
 """
@@ -124,26 +124,26 @@ normalization.
 This spread function does not have any frequency dependency.
 """
 function spread_cartwright(
-    directions::AbstractVector{<:Angle},
-    frequencies::AbstractVector{<:Quantity},
-    mean_direction::Angle,
-    spread::Angle,
-    ;
-    under90::Bool=false,
+        directions::AbstractVector{<:Angle},
+        frequencies::AbstractVector{<:Quantity},
+        mean_direction::Angle,
+        spread::Angle,
+        ;
+        under90::Bool = false
 )
     _check_frequency_axis(frequencies, "frequencies")
 
     θ̅, θₘ, f = directions, mean_direction, frequencies
     Δθ̅ = mod2pi.(θ̅ .- θₘ)
     ind = Δθ̅ .> π * rad
-    Δθ̅[ind] .= 2π*rad .- Δθ̅[ind]
+    Δθ̅[ind] .= 2π * rad .- Δθ̅[ind]
 
-    s̃ = (2(θ₀/spread)^2) - 1
-    spread_func = (cos.(0.5Δθ̅)).^2s̃
+    s̃ = (2(θ₀ / spread)^2) - 1
+    spread_func = (cos.(0.5Δθ̅)) .^ 2s̃
     spread_func = repeat(spread_func', length(f), 1)
 
     # zero-out directions ±90° from mean direction
-    under90 && (spread_func[:, Δθ̅.≥π/4*rad] .= 0)
+    under90 && (spread_func[:, Δθ̅ .≥ π / 4 * rad] .= 0)
 
     # normalize
     spread_func = WaveSpectra.Spectrum(spread_func, f, θ̅)
@@ -151,6 +151,5 @@ function spread_cartwright(
     spread_func = WaveSpectra.Spectrum(spread_func ./ norm_vec, f, θ̅)
     return spread_func
 end
-
 
 end
