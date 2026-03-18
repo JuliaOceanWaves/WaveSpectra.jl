@@ -35,10 +35,13 @@ and data(m² °⁻¹ Hz⁻¹):
 ```
 
 We can also define a spectrum using parametric represenations. 
-We start with a parametric omnidirectional spectrum with a significant wave height of 1.2m anda peak period of 8s. 
+We start with a parametric omnidirectional spectrum with a significant wave height of 1.2m and a peak period of 8s. 
 
 ```julia-repl
-julia> S_omni = ParametricSpectra.spectrum_pierson_moskowitz(f, 1.2m, 8s)
+julia> Hₛ = 1.2m;
+julia > Tₚ = 8s;
+
+julia> S_omni = ParametricSpectra.spectrum_pierson_moskowitz(f, Hₛ, Tₚ)
 100-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
 Spectral density for Quantity (m²):
   • Axis: Frequency (Hz)
@@ -90,13 +93,42 @@ julia> integrate(S)
 
 julia> using Unitful: gn as g
 
+julia> ρ = 1025kg/m^3
 julia> 0.5*ρ*g*integrate(S) |> J/m^2
 450.12809880807976 J m^-2
 ```
 
-# Conversion
+### Change of Variables
 We can also convert between types of frequency axis, for example, between frequency and angular frequency or period. 
-This is a change of variable that requires some care to ensure correct 
+This is a change of variable that requires some care. 
+```julia-repl
+julia> using Unitful: uconvert
+
+julia> S_omni_period = uconvert(s, :axis, S_omni);
+
+julia> plot_spectrum(S_omni_period; ax_properties=Dict(:limits=>((0, 20), (0, nothing))))
+```
+<img height="400" alt="display" src="https://github.com/user-attachments/assets/7d899ed8-0664-421a-81f3-e0b893c669ff" />
+
+When converting between temporal and a spatial frequency we need to specify a [dispersion relation](https://en.wikipedia.org/wiki/Dispersion_(water_waves)). 
+
+```julia-repl
+julia> dispersion = DispersionRelations.gravitywaves_deepwater();
+
+julia> S_omni_wavenumber = uconvert(rad/m, :axis, S_omni, dispersion);
+```
+
+We can do change of variables for a full spectrum too. 
+
+```julia-repl
+julia> S2 = uconvert(rad/m, :frequency, S, dispersion);
+
+julia> S2 = uconvert(rad, :direction, S2);
+
+julia> plot_spectrum(S2)
+```
+<img height="400" alt="display" src="https://github.com/user-attachments/assets/fc56130b-d679-4feb-bb8c-1d5d369b237d" />
+
 
 ## Contributing
 
