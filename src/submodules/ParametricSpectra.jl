@@ -6,9 +6,8 @@ The intention is to grow this library.
 """
 module ParametricSpectra
 
-using ..WaveSpectra: uconvert, unit, integrate, m, s
-using ..WaveSpectra: Dispersion, rad, θ₀
-using ..WaveSpectra: isspatial, istemporal, isdirection
+using ..WaveSpectra: Dispersion, OmnidirectionalSpectrum, Spectrum, integrate, isdirection,
+                     isspatial, istemporal, uconvert, unit, m, rad, s, θ₀
 using Unitful: Hz, Length, Quantity
 using DimensionfulAngles: Angle
 
@@ -52,7 +51,7 @@ function spectrum_pierson_moskowitz(
     spec = zeros(n) * unit(eltype(a))
     spec[ind] = a .* exp.(b)
 
-    spec = WaveSpectra.OmnidirectionalSpectrum(spec, f̅)
+    spec = OmnidirectionalSpectrum(spec, f̅)
     spec = uconvert(uaxis, :axis, spec, dispersion)
     return spec
 end
@@ -109,7 +108,7 @@ function spectrum_jonswap(
     spec[ind] = spec .* (1 - 0.287log(γ)) .*
                 γ .^ exp.(-((f̅ .- fₚ) .^ 2) ./ (2 * σ .^ 2 * fₚ^2))
 
-    spec = WaveSpectra.OmnidirectionalSpectrum(spec, f̅)
+    spec = OmnidirectionalSpectrum(spec, f̅)
     spec = uconvert(uaxis, :axis, spec, dispersion)
     return spec
 end
@@ -146,9 +145,9 @@ function spread_cartwright(
     under90 && (spread_func[:, Δθ̅ .≥ π / 4 * rad] .= 0)
 
     # normalize
-    spread_func = WaveSpectra.Spectrum(spread_func, f, θ̅)
+    spread_func = Spectrum(spread_func, f, θ̅)
     norm_vec = integrate(spread_func, :direction)
-    spread_func = WaveSpectra.Spectrum(spread_func ./ norm_vec, f, θ̅)
+    spread_func = Spectrum(spread_func ./ norm_vec, f, θ̅)
     return spread_func
 end
 
