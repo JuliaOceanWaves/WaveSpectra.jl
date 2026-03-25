@@ -1,3 +1,7 @@
+[![Test](https://github.com/JuliaOceanWaves/WaveSpectra.jl/actions/workflows/Test.yaml/badge.svg)](https://github.com/JuliaOceanWaves/WaveSpectra.jl/actions/workflows/Test.yaml)
+[![codecov](https://codecov.io/github/JuliaOceanWaves/WaveSpectra.jl/graph/badge.svg?token=YX6TR1YKBJ)](https://codecov.io/github/JuliaOceanWaves/WaveSpectra.jl)
+[![deps](https://juliahub.com/docs/General/WaveSpectra/stable/deps.svg)](https://juliahub.com/ui/Packages/General/WaveSpectra?t=2)
+
 # WaveSpectra.jl
 A unit-aware spectral representation for ocean waves or other interfacial waves. 
 
