@@ -20,6 +20,16 @@ function moment(x::AbstractOmnidirectionalSpectrum, n::Integer)
 end
 
 """
+    significant_waveheight(x::AbstractOmnidirectionalSpectrum)
+
+Returns the significant wave height of the omnidirectional spectrum `x`,
+computed as ``4 \\sqrt{m_0}``.
+
+See also: [`moment`](@ref).
+"""
+significant_waveheight(x::AbstractOmnidirectionalSpectrum) = 4√(moment(x, 0))
+
+"""
     energy_frequency(
         x::AbstractOmnidirectionalSpectrum;
         dispersion::Dispersion = Dispersion()
@@ -40,13 +50,43 @@ function energy_frequency(x::AbstractOmnidirectionalSpectrum;
 end
 
 """
-    significant_waveheight(x::AbstractOmnidirectionalSpectrum)
+    mean_frequency(
+        x::AbstractOmnidirectionalSpectrum;
+        dispersion::Dispersion = Dispersion()
+    )
 
-Returns the significant wave height of the omnidirectional spectrum `x`,
-computed as ``4 \\sqrt{m_0}``.
+Returns the mean frequency of the omnidirectional spectrum `x`, computed as
+``m_1 / m_0`` for `S(f)`.
+The mean period can be obtained as ``1/mean_frequency(x)``.
+The provided spectrum is first converted to the frequency spectrum `S(f)`, using
+`dispersion` if the spectrum is in terms of spatial frequency.
 
 See also: [`moment`](@ref).
 """
-significant_waveheight(x::AbstractOmnidirectionalSpectrum) = 4√(moment(x, 0))
+function mean_frequency(x::AbstractOmnidirectionalSpectrum;
+        dispersion::Dispersion = Dispersion())
+    xf = uconvert(Hz, :axis, x, dispersion)
+    return moment(xf, 1) / moment(xf, 0)
+end
+
+"""
+    zero_crossing_frequency(
+        x::AbstractOmnidirectionalSpectrum;
+        dispersion::Dispersion = Dispersion()
+    )
+
+Returns the zero-crossing frequency of the omnidirectional spectrum `x`,
+computed as ``\\sqrt{m_2 / m_0}`` for `S(f)`.
+The zero-crossing period can be obtained as ``1/zero_crossing_frequency(x)``.
+The provided spectrum is first converted to the frequency spectrum `S(f)`, using
+`dispersion` if the spectrum is in terms of spatial frequency.
+
+See also: [`moment`](@ref).
+"""
+function zero_crossing_frequency(x::AbstractOmnidirectionalSpectrum;
+        dispersion::Dispersion = Dispersion())
+    xf = uconvert(Hz, :axis, x, dispersion)
+    return √(moment(xf, 2) / moment(xf, 0))
+end
 
 end
