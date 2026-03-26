@@ -26,7 +26,7 @@ function gravitywaves_deepwater()
 end
 
 """
-    gravitywaves_shallowwater(waterdepth)
+    gravitywaves_shallowwater(waterdepth::Length)
 
 Returns the shallow-water gravity-wave linear dispersion model based on the dispersion
 relation: ``ω(k) = k √(g h)``.
@@ -42,7 +42,7 @@ function gravitywaves_shallowwater(waterdepth)
 end
 
 """
-    gravitywaves(waterdepth)
+    gravitywaves(waterdepth::Length)
 
 Returns the finite-depth linear gravity-wave dispersion model based on the dispersion
 relation: ``ω(k) = √(g k tanh(k h))``.

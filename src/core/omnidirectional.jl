@@ -115,6 +115,16 @@ function Base.setindex!(
 end
 
 # units: extend `Unitful.unit` function
+"""
+    unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)
+    unit(x::AbstractOmnidirectionalSpectrum)
+
+Extend `Unitful.unit` for omnidirectional spectra.
+The `quantity` can be `:axis` (or the axis name), `:integral`, or `:spectrum`.
+These return the units of the frequency axis, the integral quantity, and the spectral
+density (unit of integral quantity / unit of axis), respectively.
+The default is `quantity=:spectrum`.
+"""
 function unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)::Units
     ux, ua = unit(eltype(x)), unit(eltype(x.axis))
     (quantity == :axis) && return ua

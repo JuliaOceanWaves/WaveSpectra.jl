@@ -152,6 +152,17 @@ function Base.setindex!(
 end
 
 # units: extend `Unitful.unit` function
+"""
+    unit(x::AbstractSpectrum, quantity::Symbol)
+    unit(x::AbstractSpectrum)
+
+Extend `Unitful.unit` for spectra.
+The `quantity` can be `:axis1` (or the axis name), `axis2` (or the axis name), `:integral`,
+or `:spectrum`.
+These return the units of the axes, the integral quantity, and the spectral
+density (unit of integral quantity / units of axes), respectively.
+The default is `quantity=:spectrum`.
+"""
 function unit(x::AbstractSpectrum, quantity::Symbol)::Units
     ux, u1, u2 = unit(eltype(x)), unit(eltype(x.axis1)), unit(eltype(x.axis2))
     (quantity == :axis1) && return u1

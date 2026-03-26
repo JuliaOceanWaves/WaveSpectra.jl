@@ -1,7 +1,10 @@
 # integrate spectra
 
 """
-    integrate(x::AbstractSpectrum, method::AbstractSampledIntegralAlgorithm=TrapezoidalRule())
+    integrate(
+        x::AbstractSpectrum,
+        method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+    )
     integrate(
         x::AbstractSpectrum,
         ax::Symbol,
@@ -45,7 +48,9 @@ function integrate(
 end
 
 function integrate(
-        x::AbstractSpectrum, method::AbstractSampledIntegralAlgorithm = TrapezoidalRule())
+        x::AbstractSpectrum,
+        method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)
     ax = (x.axestypes[1] == :direction) ? :axis1 : :axis2
     return integrate(integrate(x, ax, method), method)
 end

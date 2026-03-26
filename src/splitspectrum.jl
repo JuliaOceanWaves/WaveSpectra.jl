@@ -28,3 +28,15 @@ function Spectrum(omni::AbstractOmnidirectionalSpectrum, spread::AbstractSpectru
     ))
     return Spectrum(spread.data .* omni.data, AxisArrays.axes(spread)...)
 end
+
+"""
+    isspread(x::AbstractSpectrum)
+
+Check whether a `Spectrum` is a spread function.
+It must be in polar form and integrate to 1 (dimensionless) over the direction axis at every
+frequency.
+"""
+function isspread(x::AbstractSpectrum)
+    !ispolar(x) && return false
+    return all(integrate(x, :direction) .≈ 1)
+end

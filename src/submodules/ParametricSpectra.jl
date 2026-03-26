@@ -11,79 +11,108 @@ using ..WaveSpectra: Dispersion, OmnidirectionalSpectrum, Spectrum, integrate, i
 using Unitful: Hz, Length, Quantity
 using DimensionfulAngles: Angle
 
-@inline function _check_frequency_axis(x, name::AbstractString)
-    (istemporal(x) || isspatial(x)) && return nothing
-    isdirection(x) &&
-        throw(ArgumentError("`$name` must be spatial or temporal, not directional."))
-    throw(ArgumentError("`$name` must be spatial or temporal."))
-end
-
 # omnidirectional spectra
 """
-    spectrum_pierson_moskowitz(frequencies, significant_waveheight, peak_period;
-        dispersion=Dispersion())
+    spectrum_pierson_moskowitz(
+        frequencies::AbstractVector{<:Quantity},
+        significant_waveheight::Length,
+        energy_period::Quantity;
+        dispersion::Dispersion=Dispersion(),
+        peak_period::Bool=false
+    )
 
 Returns an omnidirectional Pierson-Moskowitz spectrum for the provided frequency array.
-The `frequencies` and `peak_period` can be spatial or temporal and are converted
-using `dispersion`.
+The `frequencies` and `period` can be of any frequency type (e.g., period, wavenumber, etc)
+and are converted to frequency (Hz).
+The spectrum is created using the frequency formulation and then converted to the frequency
+type of the inputs.
+
+You can provide the peak period instead of the energy period by passing `peak_period=true`.
+The peak period is defined as the peak of `S(f)` where `f` is the frequency (e.g. in Hz),
+regardless of the dimensions of `frequencies`.
+See documentation for more details.
 
 Based on IEC TS 62600-2 ED2 Annex C.2 (2019).
+Peak period and energy period relationship from ITTC Specialist Committee on Waves (2002).
 """
 function spectrum_pierson_moskowitz(
         frequencies::AbstractVector{<:Quantity},
         significant_waveheight::Length,
-        peak_period::Quantity;
-        dispersion::Dispersion = Dispersion()
+        energy_period::Quantity;
+        dispersion::Dispersion = Dispersion(),
+        peak_period::Bool = false
 )
-    _check_frequency_axis(frequencies, "frequencies")
-    _check_frequency_axis(peak_period, "peak_period")
-
     n = length(frequencies)
-    ind = (frequencies .≠ 0)
     uaxis = unit(eltype(frequencies))
+    frequencies = uconvert.(Hz, frequencies, dispersion)
+    ind = (frequencies .≠ 0)
+    energy_period = uconvert(s, energy_period, dispersion)
 
-    aₛ = significant_waveheight / 2
-    fₚ = uconvert.(Hz, peak_period, dispersion)
-    f̅ = uconvert.(Hz, frequencies[ind], dispersion)
+    aₛ = significant_waveheight / 2  # significant wave amplitude
+    fₚ = (peak_period ? 1 / energy_period : 0.858 / energy_period) |> Hz  # peak frequency
+    f̅ = frequencies[ind]
 
     b = -(5 / 4) * (fₚ ./ f̅) .^ 4
     a = -b * aₛ^2 ./ f̅
     spec = zeros(n) * unit(eltype(a))
     spec[ind] = a .* exp.(b)
 
-    spec = OmnidirectionalSpectrum(spec, f̅)
-    spec = uconvert(uaxis, :axis, spec, dispersion)
-    return spec
+    spec = OmnidirectionalSpectrum(spec, frequencies)
+    return uconvert(uaxis, :axis, spec, dispersion)
 end
 
 """
-    spectrum_jonswap(frequencies, significant_waveheight, peak_period;
-        dispersion=Dispersion(), gamma=nothing)
+    spectrum_jonswap(
+        frequencies::AbstractVector{<:Quantity},
+        significant_waveheight::Length,
+        energy_period::Quantity,
+        gamma::Union{Number, Nothing};
+        dispersion::Dispersion=Dispersion(),
+        peak_period::Bool=false
+    )
 
 Returns an omnidirectional JONSWAP spectrum for the provided frequency axis.
-The `frequencies` and `peak_period` can be spatial or temporal and are converted
-using `dispersion`.
+
+The `frequencies` and `period` can be of any frequency type (e.g., period, wavenumber, etc)
+and are converted to frequency (Hz).
+The spectrum is created using the frequency formulation and then converted to the frequency
+type of the inputs.
+
+You can provide the peak period instead of the energy period by passing `peak_period=true`.
+The peak period is defined as the peak of `S(f)` where `f` is the frequency (e.g. in Hz),
+regardless of the dimensions of `frequencies`.
+See documentation for more details.
+
+When peak period is used, `gamma` can be set to `gamma=nothing` in which case it will be
+calculated based on the standard formulation.
 
 Based on IEC TS 62600-2 ED2 Annex C.2 (2019).
+Peak period and energy period relationship from ITTC Specialist Committee on Waves (2002).
 """
 function spectrum_jonswap(
         frequencies::AbstractVector{<:Quantity},
         significant_waveheight::Length,
-        peak_period::Quantity;
+        energy_period::Quantity,
+        gamma::Union{Number, Nothing};
         dispersion::Dispersion = Dispersion(),
-        gamma::Union{Number, Nothing} = nothing
+        peak_period::Bool = false
 )
-    _check_frequency_axis(frequencies, "frequencies")
-    _check_frequency_axis(peak_period, "peak_period")
-
     n = length(frequencies)
-    ind = (frequencies .≠ 0)
     uaxis = unit(eltype(frequencies))
+    frequencies = uconvert.(Hz, frequencies, dispersion)
+    ind = (frequencies .≠ 0)
+    energy_period = uconvert(s, period, dispersion)
 
-    aₛ = significant_waveheight / 2
-    fₚ = uconvert.(Hz, peak_period, dispersion)
-    f̅ = uconvert.(Hz, frequencies[ind], dispersion)
+    if (!peak_period && isnothing(gamma))
+        throw(ArgumentError("`gamma` must be specified when `peak_period` is `false`"))
+    end
     γ = gamma
+
+    aₛ = significant_waveheight / 2  # significant wave amplitude
+    # fₚ = 1 / period |> Hz
+    c = (0.8225 + 0.03852γ - 0.005537γ^2 + 0.0003154γ^3)
+    fₚ = (peak_period ? 1 / energy_period : c / energy_period) |> Hz  # peak frequency
+    f̅ = frequencies[ind]
 
     σₐ = 0.07
     σb = 0.09
@@ -91,7 +120,7 @@ function spectrum_jonswap(
 
     if isnothing(γ)
         hₛ = 2aₛ
-        tₚ = uconvert.(s, peak_period, dispersion)
+        tₚ = uconvert.(s, 1 / fₚ, dispersion)
         val = tₚ / √(hₛ)
         uval = s * m^(-1 // 2)
         γ = (val ≤ 3.6uval) ? 5 : (
@@ -100,27 +129,36 @@ function spectrum_jonswap(
         ))
     end
 
+    # PM spectrum
     b = -(5 / 4) * (fₚ ./ f̅) .^ 4
     a = -b * aₛ^2 ./ f̅
     spec = zeros(n) * unit(eltype(a))
     spec[ind] = a .* exp.(b)
 
-    spec[ind] = spec .* (1 - 0.287log(γ)) .*
+    # JONSWAP
+    spec[ind] = spec[ind] .* (1 - 0.287log(γ)) .*
                 γ .^ exp.(-((f̅ .- fₚ) .^ 2) ./ (2 * σ .^ 2 * fₚ^2))
 
-    spec = OmnidirectionalSpectrum(spec, f̅)
-    spec = uconvert(uaxis, :axis, spec, dispersion)
-    return spec
+    spec = OmnidirectionalSpectrum(spec, frequencies)
+    return uconvert(uaxis, :axis, spec, dispersion)
 end
 
 # spread functions
 """
-    spread_cartwright(directions, frequencies, mean_direction, spread; under90=false)
+    spread_cartwright(
+        directions::AbstractVector{<:Angle},
+        frequencies::AbstractVector{<:Quantity},
+        mean_direction::Angle,
+        spread::Angle;
+        under90::Bool=false
+    )
 
 Cosine-squared directional spreading of Cartwright (1963).
 If `under90=true`, values outside ±90° from `mean_direction` are set to zero before
 normalization.
 This spread function does not have any frequency dependency.
+
+Code adapted from the `wavespectra` Python package.
 """
 function spread_cartwright(
         directions::AbstractVector{<:Angle},
@@ -130,8 +168,6 @@ function spread_cartwright(
         ;
         under90::Bool = false
 )
-    _check_frequency_axis(frequencies, "frequencies")
-
     θ̅, θₘ, f = directions, mean_direction, frequencies
     Δθ̅ = mod2pi.(θ̅ .- θₘ)
     ind = Δθ̅ .> π * rad
