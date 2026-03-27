@@ -55,7 +55,7 @@ function uconvert(
     end
     # data
     data = uconvert.(uq / (u1 * u2), x.data ./ g1 ./ (g2'))
-    return Spectrum(data, axis1, axis2)
+    return _rebuild_spectrum(x, data, axis1, axis2)
 end
 
 uconvert(uq::Units, x::AbstractSpectrum) = uconvert(uq, unit(x, :axis1), unit(x, :axis2), x)
@@ -124,7 +124,7 @@ function uconvert(
     end
     # data
     data = uconvert.(uq / uax, x.data ./ g1)
-    return OmnidirectionalSpectrum(data, axis)
+    return _rebuild_spectrum(x, data, axis)
 end
 
 uconvert(uq::Units, x::AbstractOmnidirectionalSpectrum) = uconvert(uq, unit(x, :axis), x)

@@ -58,6 +58,7 @@ end
                    (func!)=lines!, ax_properties=Dict(), kwargs...)
 
 Plot a spectrum `s` into an existing Makie axis `ax`.
+
 For polar spectra, `ax` must be a `PolarAxis`.
 
 See [`plot_spectrum`](@ref) for more information.

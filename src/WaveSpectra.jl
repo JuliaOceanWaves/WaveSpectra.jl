@@ -27,7 +27,7 @@ const axes = Base.axes # name conflict will be fixed by AxisArrays in the future
 import Integrals: find_weights
 
 # export
-export DispersionRelations, Moments, ParametricSpectra # modules
+# export DispersionRelations, Moments, ParametricSpectra, Shapes # modules
 export OmnidirectionalSpectrum, RectangularRule, Spectrum # structs
 export axesinfo, evenspacing, integrate, isevenlyspaced,  # functions
        plot_spectrum, plot_spectrum!, split_spectrum, spread_function
@@ -43,5 +43,6 @@ include("plotting.jl")
 include("submodules/DispersionRelations.jl")
 include("submodules/ParametricSpectra.jl")
 include("submodules/Moments.jl")
+include("submodules/Shapes.jl")
 
 end

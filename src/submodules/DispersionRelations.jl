@@ -15,7 +15,7 @@ using Roots: ZeroProblem, solve
 """
     gravitywaves_deepwater()
 
-Returns the deep-water gravity-wave linear dispersion model based on the dispersion
+Deep-water gravity-wave linear dispersion model based on the dispersion
 relation: ``ω(k) = √(g k)``.
 """
 function gravitywaves_deepwater()
@@ -28,8 +28,9 @@ end
 """
     gravitywaves_shallowwater(waterdepth::Length)
 
-Returns the shallow-water gravity-wave linear dispersion model based on the dispersion
+Shallow-water gravity-wave linear dispersion model based on the dispersion
 relation: ``ω(k) = k √(g h)``.
+
 The `waterdepth` must have units of length.
 Assumes zero air density.
 """
@@ -44,8 +45,9 @@ end
 """
     gravitywaves(waterdepth::Length)
 
-Returns the finite-depth linear gravity-wave dispersion model based on the dispersion
+Finite-depth linear gravity-wave dispersion model based on the dispersion
 relation: ``ω(k) = √(g k tanh(k h))``.
+
 The `waterdepth` must have units of length.
 Assumes zero air density.
 """

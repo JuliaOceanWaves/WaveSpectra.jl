@@ -21,7 +21,8 @@ using DimensionfulAngles: Angle
         peak_period::Bool=false
     )
 
-Returns an omnidirectional Pierson-Moskowitz spectrum for the provided frequency array.
+Omnidirectional Pierson-Moskowitz spectrum for the provided frequency array.
+
 The `frequencies` and `period` can be of any frequency type (e.g., period, wavenumber, etc)
 and are converted to frequency (Hz).
 The spectrum is created using the frequency formulation and then converted to the frequency
@@ -71,7 +72,7 @@ end
         peak_period::Bool=false
     )
 
-Returns an omnidirectional JONSWAP spectrum for the provided frequency axis.
+Omnidirectional JONSWAP spectrum for the provided frequency axis.
 
 The `frequencies` and `period` can be of any frequency type (e.g., period, wavenumber, etc)
 and are converted to frequency (Hz).
@@ -154,6 +155,7 @@ end
     )
 
 Cosine-squared directional spreading of Cartwright (1963).
+
 If `under90=true`, values outside ±90° from `mean_direction` are set to zero before
 normalization.
 This spread function does not have any frequency dependency.

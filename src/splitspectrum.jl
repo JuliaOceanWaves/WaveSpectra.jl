@@ -8,10 +8,10 @@ end
 """
     spread_function(x::AbstractSpectrum)
 
-Return the directional spreading function corresponding to the polar spectrum `x`.
+Directional spreading function corresponding to the polar spectrum `x`.
 """
 function spread_function(x::AbstractSpectrum)
-    return Spectrum(x ./ OmnidirectionalSpectrum(x), AxisArrays.axes(x)...)
+    return _rebuild_spectrum(x, x ./ OmnidirectionalSpectrum(x), AxisArrays.axes(x)...)
 end
 
 """
@@ -26,13 +26,14 @@ function Spectrum(omni::AbstractOmnidirectionalSpectrum, spread::AbstractSpectru
     (omni.axis ≉ spread.axis1) && throw(ArgumentError(
         "Frequency axis do not match between omnidirectional spectrum and spread function."
     ))
-    return Spectrum(spread.data .* omni.data, AxisArrays.axes(spread)...)
+    return _rebuild_spectrum(spread, spread.data .* omni.data, AxisArrays.axes(spread)...)
 end
 
 """
     isspread(x::AbstractSpectrum)
 
 Check whether a `Spectrum` is a spread function.
+
 It must be in polar form and integrate to 1 (dimensionless) over the direction axis at every
 frequency.
 """
