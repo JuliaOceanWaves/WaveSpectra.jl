@@ -11,7 +11,7 @@ AxisArrays.axes(x::AbstractOmnidirectionalSpectrum) = (x.axis,)
     axesinfo(x::AbstractSpectrum)
     axesinfo(x::AbstractOmnidirectionalSpectrum)
 
-Return axis information including domain (spatial or temporal, or direction), type
+Retrieve axis information including domain (spatial or temporal, or direction), type
 (e.g. angular frequency, period, etc.), and its physical dimensions.
 
 - `axesinfo()` returns a dictionary with information for all 9 possible axis types.
@@ -44,7 +44,7 @@ function axestypes(domain::Symbol, quantity::Symbol)
 end
 
 axestypes(x::Union{Quantity, Units}) = axestypes(dimension(x))
-axestypes(x::AbstractArray{<:Quantity}) = axestypes(dimension(eltype(x)))
+axestypes(x::AbstractVector{<:Quantity}) = axestypes(dimension(eltype(x)))
 axestypes(x::AbstractSpectrum) = x.axestypes
 axestypes(x::AbstractOmnidirectionalSpectrum) = x.axistype
 
@@ -67,6 +67,7 @@ axesnames(x::AbstractOmnidirectionalSpectrum) = x.axisname
     isevenlyspaced(x::AbstractSpectrum)
 
 Return `true` when axis values are evenly spaced.
+
 For `Spectrum` both axes are checked.
 """
 function isevenlyspaced(x::AbstractVector)

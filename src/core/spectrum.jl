@@ -37,8 +37,8 @@ struct Spectrum{
     TAX2 <: AbstractVector{<:Quantity}
 } <: AbstractSpectrum{TDAT}
     data::Matrix{TDAT}
-    axis1::TAX1 # AbstractVector{TAX1}
-    axis2::TAX2 # AbstractVector{TAX2}
+    axis1::TAX1
+    axis2::TAX2
     coordinates::Symbol
     axestypes::Tuple{Symbol, Symbol}
     axesnames::Tuple{Symbol, Symbol}
@@ -90,7 +90,9 @@ end
 # array interface: behave like a matrix
 Base.size(x::AbstractSpectrum) = size(x.data)
 Base.eltype(x::AbstractSpectrum) = eltype(x.data)
-Base.copy(x::AbstractSpectrum) = Spectrum(copy(x.data), copy(x.axis1), copy(x.axis2))
+function Base.copy(x::AbstractSpectrum)
+    _rebuild_spectrum(x, copy(x.data), copy(x.axis1), copy(x.axis2))
+end
 
 Base.getindex(x::AbstractSpectrum, i::Int) = getindex(x.data, i)
 Base.getindex(x::AbstractSpectrum, I::Vararg{Int, 2}) = getindex(x.data, I...)
@@ -101,7 +103,7 @@ Base.BroadcastStyle(::Type{<:AbstractSpectrum}) = Broadcast.ArrayStyle{AbstractS
 
 function Base.similar(x::AbstractSpectrum, ::Type{S}, dims::Dims) where {S}
     (dims ≠ size(x)) && return similar(x.data, S, dims)
-    return Spectrum(similar(x.data, S, dims), x.axis1, x.axis2)
+    return _rebuild_spectrum(x, similar(x.data, S, dims), x.axis1, x.axis2)
 end
 
 function Base.similar(
@@ -117,7 +119,9 @@ end
 
 # fancy indexing using AxisArray
 function Base.getindex(x::AbstractSpectrum; kwargs...)
-    return Spectrum(getindex(AxisArray(x); _update_kwargs(kwargs)...))
+    y = getindex(AxisArray(x); _update_kwargs(kwargs)...)
+    axis1, axis2 = axisvalues(y)
+    return _rebuild_spectrum(x, y.data, axis1, axis2)
 end
 
 function Base.setindex!(x::AbstractSpectrum, v; kwargs...)
@@ -152,6 +156,18 @@ function Base.setindex!(
 end
 
 # units: extend `Unitful.unit` function
+"""
+    unit(x::AbstractSpectrum, quantity::Symbol)
+    unit(x::AbstractSpectrum)
+
+Extend `Unitful.unit` for spectra.
+
+The `quantity` can be `:axis1` (or the axis name), `axis2` (or the axis name), `:integral`,
+or `:spectrum`.
+These return the units of the axes, the integral quantity, and the spectral
+density (unit of integral quantity / units of axes), respectively.
+The default is `quantity=:spectrum`.
+"""
 function unit(x::AbstractSpectrum, quantity::Symbol)::Units
     ux, u1, u2 = unit(eltype(x)), unit(eltype(x.axis1)), unit(eltype(x.axis2))
     (quantity == :axis1) && return u1

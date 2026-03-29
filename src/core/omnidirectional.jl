@@ -27,7 +27,7 @@ The inputs `data` and `axis` must have equal length.
 """
 struct OmnidirectionalSpectrum{TDAT, TAX} <: AbstractOmnidirectionalSpectrum{TDAT}
     data::Vector{TDAT}
-    axis::Vector{TAX}
+    axis::TAX
     axistype::Symbol
     axisname::Symbol
 
@@ -47,7 +47,7 @@ struct OmnidirectionalSpectrum{TDAT, TAX} <: AbstractOmnidirectionalSpectrum{TDA
         # assign axis type and name
         axistype = axisname = axestypes(axis)
 
-        return new{eltype(data), eltype(axis)}(data, axis, axistype, axisname)
+        return new{eltype(data), typeof(axis)}(data, axis, axistype, axisname)
     end
 end
 
@@ -56,7 +56,7 @@ Base.size(x::AbstractOmnidirectionalSpectrum) = size(x.data)
 Base.eltype(x::AbstractOmnidirectionalSpectrum) = eltype(x.data)
 
 function Base.copy(x::AbstractOmnidirectionalSpectrum)
-    return OmnidirectionalSpectrum(copy(x.data), copy(x.axis))
+    return _rebuild_spectrum(x, copy(x.data), copy(x.axis))
 end
 
 Base.getindex(x::AbstractOmnidirectionalSpectrum, i::Int) = getindex(x.data, i)
@@ -68,7 +68,7 @@ end
 
 function Base.similar(x::AbstractOmnidirectionalSpectrum, ::Type{S}, dims::Dims) where {S}
     (dims ≠ size(x)) && return similar(x.data, S, dims)
-    return OmnidirectionalSpectrum(similar(x.data, S, dims), x.axis)
+    return _rebuild_spectrum(x, similar(x.data, S, dims), x.axis)
 end
 
 function Base.similar(
@@ -84,7 +84,9 @@ end
 
 # fancy indexing using AxisArray
 function Base.getindex(x::AbstractOmnidirectionalSpectrum; kwargs...)
-    return OmnidirectionalSpectrum(getindex(AxisArray(x); _update_kwargs(kwargs)...))
+    y = getindex(AxisArray(x); _update_kwargs(kwargs)...)
+    axis = axisvalues(y)[1]
+    return _rebuild_spectrum(x, y.data, axis)
 end
 
 function Base.setindex!(x::AbstractOmnidirectionalSpectrum, v::Any; kwargs...)
@@ -115,6 +117,17 @@ function Base.setindex!(
 end
 
 # units: extend `Unitful.unit` function
+"""
+    unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)
+    unit(x::AbstractOmnidirectionalSpectrum)
+
+Extend `Unitful.unit` for omnidirectional spectra.
+
+The `quantity` can be `:axis` (or the axis name), `:integral`, or `:spectrum`.
+These return the units of the frequency axis, the integral quantity, and the spectral
+density (unit of integral quantity / unit of axis), respectively.
+The default is `quantity=:spectrum`.
+"""
 function unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)::Units
     ux, ua = unit(eltype(x)), unit(eltype(x.axis))
     (quantity == :axis) && return ua

@@ -1,5 +1,34 @@
 # Convert the axes of spectra, adjust units of distribution, keep total energy invariance
 
+"""
+    uconvert(
+        uq::Units,
+        u1::Units,
+        u2::Units,
+        x::AbstractSpectrum,
+        dispersion::Dispersion = Dispersion()
+    )
+    uconvert(uq::Units, x::AbstractSpectrum)
+    uconvert(
+        u::Units,
+        s::Symbol,
+        x::AbstractSpectrum,
+        dispersion::Dispersion = Dispersion()
+    )
+
+Extend `Unitful.uconvert` for directional spectra.
+
+`uconvert(uq, u1, u2, x, dispersion)` converts the integral quantity and both axes of `x`,
+updating the spectral-density units so that the integrated energy is preserved.
+
+`uconvert(uq, x)` converts only the integral quantity and keeps both axes in their current
+units.
+
+`uconvert(u, s, x, dispersion)` converts one component selected by `s`, where `s` can be
+`:axis1`, `:axis2` (or their axis names), or `:integral`.
+Passing `:spectrum` is not supported; the integral quantity and axes units must be
+specified explicitly.
+"""
 # Spectrum
 function uconvert(
         uq::Units,
@@ -26,7 +55,7 @@ function uconvert(
     end
     # data
     data = uconvert.(uq / (u1 * u2), x.data ./ g1 ./ (g2'))
-    return Spectrum(data, axis1, axis2)
+    return _rebuild_spectrum(x, data, axis1, axis2)
 end
 
 uconvert(uq::Units, x::AbstractSpectrum) = uconvert(uq, unit(x, :axis1), unit(x, :axis2), x)
@@ -51,6 +80,34 @@ function uconvert(
 end
 
 # OmnidirectionalSpectrum
+"""
+    uconvert(
+        uq::Units,
+        uax::Units,
+        x::AbstractOmnidirectionalSpectrum,
+        dispersion::Dispersion = Dispersion()
+    )
+    uconvert(uq::Units, x::AbstractOmnidirectionalSpectrum)
+    uconvert(
+        u::Units,
+        s::Symbol,
+        x::AbstractOmnidirectionalSpectrum,
+        dispersion::Dispersion = Dispersion()
+    )
+
+Extend `Unitful.uconvert` for omnidirectional spectra.
+
+`uconvert(uq, uax, x, dispersion)` converts the integral quantity and axis of `x`, updating
+the spectral-density units so that the integrated energy is preserved.
+
+`uconvert(uq, x)` converts only the integral quantity and keeps the axis in its current
+units.
+
+`uconvert(u, s, x, dispersion)` converts one component selected by `s`, where `s` can be
+`:axis` (or its axis name), or `:integral`.
+Passing `:spectrum` is not supported; the integral quantity and axis units must be
+specified explicitly.
+"""
 function uconvert(
         uq::Units,
         uax::Units,
@@ -59,7 +116,7 @@ function uconvert(
 )
     # axis
     if isdirection(x.axis)
-        axis = uconvert.(u1, x.axis)
+        axis = uconvert.(uax, x.axis)
         g1 = ones(length(x.axis))
     else
         axis = uconvert.(uax, x.axis, dispersion)
@@ -67,7 +124,7 @@ function uconvert(
     end
     # data
     data = uconvert.(uq / uax, x.data ./ g1)
-    return OmnidirectionalSpectrum(data, axis)
+    return _rebuild_spectrum(x, data, axis)
 end
 
 uconvert(uq::Units, x::AbstractOmnidirectionalSpectrum) = uconvert(uq, unit(x, :axis), x)

@@ -7,7 +7,7 @@ function Base.show(io::IO, x::AbstractSpectrum)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
     io_fancy = IOContext(io, :fancy_exponent => true)
     print(io_fancy,
-        shape[1], "×", shape[2], "-Spectrum{", us, "}{", u1, "}{", u2, "}"#, ustrip.(x.data)
+        shape[1], "×", shape[2], "-Spectrum{", us, "}{", u1, "}{", u2, "}"
     )
 end
 

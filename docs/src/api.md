@@ -1,5 +1,10 @@
 # API
 
 ```@autodocs
-Modules = [WaveSpectra, WaveSpectra.ParametricSpectra, WaveSpectra.DispersionRelations]
+Modules = [
+    WaveSpectra,
+    WaveSpectra.ParametricSpectra,
+    WaveSpectra.DispersionRelations,
+    WaveSpectra.Moments,
+    WaveSpectra.Shapes]
 ```

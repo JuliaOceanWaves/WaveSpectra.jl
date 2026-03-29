@@ -58,6 +58,7 @@ end
                    (func!)=lines!, ax_properties=Dict(), kwargs...)
 
 Plot a spectrum `s` into an existing Makie axis `ax`.
+
 For polar spectra, `ax` must be a `PolarAxis`.
 
 See [`plot_spectrum`](@ref) for more information.
@@ -82,9 +83,8 @@ function plot_spectrum!(ax, s::AbstractSpectrum; (func!) = contourf!,
         thetaticks_pos = collect(0:(1 / 8):(7 / 8)) * 2π
         thetaticks_label = (
             (θunit == rad) ? ["0, 2π", "¼π", "½π", "¾π", "π", "1¼π", "1½π", "1¾π"] :
-            (
-            (θunit == τ) ? ["0, τ", "⅛τ", "¼τ", "⅜τ", "½τ", "⅝τ", "¾τ", "⅞τ"] :
-            ["0°, 360°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"])
+            ((θunit == τ) ? ["0, τ", "⅛τ", "¼τ", "⅜τ", "½τ", "⅝τ", "¾τ", "⅞τ"] :
+             ["0°, 360°", "45°", "90°", "135°", "180°", "225°", "270°", "315°"])
         )
 
         setaxproperty!(:thetaticks, (thetaticks_pos, thetaticks_label))
@@ -153,7 +153,10 @@ Keyword arguments:
 See also [`plot_spectrum!`](@ref) to plot into an existing axis.
 """
 function plot_spectrum(s::AbstractSpectrum;
-        (func!) = contourf!, make_cyclic = true, ax_properties = Dict(), colorbar_properties = Dict(),
+        (func!) = contourf!,
+        make_cyclic = true,
+        ax_properties = Dict(),
+        colorbar_properties = Dict(),
         kwargs...
 )
     spectrum_unit = repr(unit(s), context = :fancy_exponent => true)

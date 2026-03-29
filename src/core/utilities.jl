@@ -6,6 +6,25 @@
     return nothing
 end
 
+@inline _typewrapper(::Type{T}) where {T} = Base.typename(T).wrapper
+
+@inline function _rebuild_spectrum(
+        x::AbstractSpectrum,
+        data::AbstractMatrix,
+        axis1::AbstractVector,
+        axis2::AbstractVector
+)
+    return _typewrapper(typeof(x))(data, axis1, axis2)
+end
+
+@inline function _rebuild_spectrum(
+        x::AbstractOmnidirectionalSpectrum,
+        data::AbstractVector,
+        axis::AbstractVector
+)
+    return _typewrapper(typeof(x))(data, axis)
+end
+
 @inline function _update_kwargs(d::AbstractDict)
     kwargs = Dict()
     for (k, v) in d
