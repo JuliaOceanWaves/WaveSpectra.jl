@@ -90,7 +90,9 @@ end
 # array interface: behave like a matrix
 Base.size(x::AbstractSpectrum) = size(x.data)
 Base.eltype(x::AbstractSpectrum) = eltype(x.data)
-Base.copy(x::AbstractSpectrum) = _rebuild_spectrum(x, copy(x.data), copy(x.axis1), copy(x.axis2))
+function Base.copy(x::AbstractSpectrum)
+    _rebuild_spectrum(x, copy(x.data), copy(x.axis1), copy(x.axis2))
+end
 
 Base.getindex(x::AbstractSpectrum, i::Int) = getindex(x.data, i)
 Base.getindex(x::AbstractSpectrum, I::Vararg{Int, 2}) = getindex(x.data, I...)

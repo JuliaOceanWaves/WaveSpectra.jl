@@ -5,5 +5,6 @@ Modules = [
     WaveSpectra,
     WaveSpectra.ParametricSpectra,
     WaveSpectra.DispersionRelations,
-    WaveSpectra.Moments]
+    WaveSpectra.Moments,
+    WaveSpectra.Shapes]
 ```
