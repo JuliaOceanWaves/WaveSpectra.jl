@@ -16,7 +16,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 [compat]
 AxisArrays = "0.4"
 DimensionfulAngles = "0.2"
-Integrals = "4.7"
+Integrals = "4.7, 5.2"
 Makie = "0.24"
 Plots = "1"
 PrettyTables = "3"
