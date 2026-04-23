@@ -182,10 +182,10 @@ end
 unit(x::AbstractSpectrum) = unit(x, :spectrum)
 
 # convert to/from AxisArray
-function AxisArray(x::AbstractSpectrum)
+function AxisArrays.AxisArray(x::AbstractSpectrum)
     axis1 = Axis{x.axesnames[1]}(x.axis1)
     axis2 = Axis{x.axesnames[2]}(x.axis2)
-    return AxisArray(x, axis1, axis2)
+    return AxisArrays.AxisArray(x, axis1, axis2)
 end
 
 function Spectrum(x::AxisArray)

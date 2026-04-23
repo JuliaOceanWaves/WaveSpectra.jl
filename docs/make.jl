@@ -9,15 +9,15 @@ bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 
 makedocs(
     sitename = "WaveSpectra.jl",
-    format = Documenter.HTML(
-        assets = String["assets/citations.css"],
-    ),
+    format = Documenter.HTML(assets = String["assets/citations.css"]),
     modules = [WaveSpectra],
     pages = [
         "Home" => "index.md",
-        "API" => "api.md"
+        "Quick Start" => "quickstart.md",
+        "Theory" => "theory.md",
+        "API" => "api.md",
     ],
     plugins = [bib]
 )
 
-deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git",)
+deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git")

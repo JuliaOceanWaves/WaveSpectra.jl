@@ -140,10 +140,10 @@ end
 unit(x::AbstractOmnidirectionalSpectrum) = unit(x, :spectrum)
 
 # convert to/from AxisArray
-function AxisArray(x::AbstractOmnidirectionalSpectrum)
+function AxisArrays.AxisArray(x::AbstractOmnidirectionalSpectrum)
     name = x.axisname
     axis = Axis{name}(x.axis)
-    return AxisArray(x, axis)
+    return AxisArrays.AxisArray(x, axis)
 end
 
 function OmnidirectionalSpectrum(x::AxisArray)

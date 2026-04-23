@@ -5,12 +5,12 @@ Includes normalizing, non-dimensionalizing, or re-scaling spectra.
 """
 module Shapes
 
-using ..WaveSpectra: AbstractOmnidirectionalSpectrum, Dispersion, OmnidirectionalSpectrum,
+using ..WaveSpectra: AbstractOmnidirectionalSpectrum, Dispersion,
                      uconvert, _check_typeconsistency, _ensure_increasing_axis
 using ..WaveSpectra.Moments: energy_frequency, moment, significant_waveheight
 using Unitful: Hz, Length, NoUnits, Quantity, unit
 
-import ..WaveSpectra: axestypes
+import ..WaveSpectra: axestypes, OmnidirectionalSpectrum
 import ..WaveSpectra.Moments: energy_frequency
 
 export OmnidirectionalSpectrumShape, scale
