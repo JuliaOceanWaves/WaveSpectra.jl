@@ -65,8 +65,8 @@ directional_zero = @test_logs (:warn, r"function of direction") integrate(
     S_polar, :axis1; include_zero = true)
 @test directional_zero isa AxisArray
 @test directional_zero ≈ [integrate(
-    AxisArray(vcat(0.0m^2 / Hz / °, data_polar[:, j]), Axis{:frequency}(axis_zero))
-) for j in eachindex(θ)]
+           AxisArray(vcat(0.0m^2 / Hz / °, data_polar[:, j]), Axis{:frequency}(axis_zero))
+       ) for j in eachindex(θ)]
 
 # Cartesian spectrum
 kx = collect((-2:2) .* (0.2 * rad / m))
