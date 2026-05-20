@@ -28,8 +28,9 @@ Spectral moment of order `n` for the omnidirectional spectrum `x`.
 function moment(x::AbstractOmnidirectionalSpectrum, n::Integer;
         include_zero::Bool = false,
         method::AbstractSampledIntegralAlgorithm = TrapezoidalRule())
-    include_zero && (n < 0) && throw(ArgumentError(
-        "Including the zero spectral value is not supported for negative moments."))
+    include_zero && (n < 0) &&
+        throw(ArgumentError(
+            "Including the zero spectral value is not supported for negative moments."))
     return integrate(
         _rebuild_spectrum(x, x.data .* (x.axis .^ n), x.axis);
         method,
