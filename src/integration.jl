@@ -249,7 +249,7 @@ function _spectrum_axis_info(x::AbstractSpectrum, ax::Symbol)
             dim = 2,
             integrated_axis = x.axis2,
             remaining_axis = x.axis1,
-            remaining_axis_name = x.axesnames[1],
+            remaining_axis_name = x.axesnames[1]
         )
     end
     throw(ArgumentError("Unknown axis."))
