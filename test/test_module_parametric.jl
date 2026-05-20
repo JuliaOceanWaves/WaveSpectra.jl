@@ -42,7 +42,7 @@ under90_mask = Δθ .>= (π / 4) * rad
 
 # JONSWAP
 js1 = spectrum_jonswap(frequencies, Hₛ, fₑ, 1)
-@test js1≈pm rtol=5e-3 atol=1e-6 * m^2 / Hz
+@test js1≈pm rtol=5e-3 atol=1e-6*m^2/Hz
 @test_throws ArgumentError spectrum_jonswap(frequencies, Hₛ, fₑ, nothing)
 
 # spectrum from omnidirectional spectrum and spread function
