@@ -53,4 +53,4 @@ spread = spread_function(directional)
 @test mean_direction(directional) ≈ mean_dir atol = 0.5°
 @test omni≈pm rtol=5e-3 atol=1e-6 * m^2 / Hz
 idx = .!isnan.(spread)
-@test spread[idx]≈spread_func[idx] rtol=5e-3 atol=1e-6 / rad
+@test spread[idx]≈spread_func[idx] rtol=5e-3 atol=1e-6/rad
