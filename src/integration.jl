@@ -313,8 +313,8 @@ function _solve_spectrum_axis_integration(
     remaining_axis = axis_info.remaining_axis
     if ispolar(x) && isdirection(remaining_axis)
         warn_non_spectrum &&
-            @warn("Integration: The result is a function of direction, and is returned as "*
-            "an 'AxisArray' rather than an 'OmnidirectionalSpectrum'.")
+            @warn("Integration: The result is a function of direction, and is returned as " *
+                  "an 'AxisArray' rather than an 'OmnidirectionalSpectrum'.")
         return AxisArray(result, Axis{axis_info.remaining_axis_name}(remaining_axis))
     elseif ispolar(x)
         return OmnidirectionalSpectrum(result, remaining_axis)
