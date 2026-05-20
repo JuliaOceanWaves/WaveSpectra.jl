@@ -191,7 +191,7 @@ Sxy_copy = copy(Sxy)
 Sxy_sum = Sxy .+ Sxy
 @test Sxy_sum isa Spectrum
 @test Sxy_sum == Spectrum(2 .* Sxy.data, Sxy.axis1, Sxy.axis2)
-@test_throws DimensionMismatch Sxy.+Spectrum(data_k, kx, ky .+ 0.1Δk)
+@test_throws DimensionMismatch Sxy .+ Spectrum(data_k, kx, ky .+ 0.1Δk)
 Sxy_gt = Sxy .> (10 * m^4 / rad^2)
 @test Sxy_gt isa AbstractMatrix{Bool}
 @test Sxy_gt == (Sxy.data .> (10 * m^4 / rad^2))
