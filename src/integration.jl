@@ -320,7 +320,7 @@ function _solve_spectrum_axis_integration(
         return OmnidirectionalSpectrum(result, remaining_axis)
     end
     warn_non_spectrum &&
-        @warn("Integration: The result is a marginal spectrum, and is returned as an "*
-        "'AxisArray' rather than an 'OmnidirectionalSpectrum'.")
+        @warn("Integration: The result is a marginal spectrum, and is returned as an " *
+              "'AxisArray' rather than an 'OmnidirectionalSpectrum'.")
     return AxisArray(result, Axis{axis_info.remaining_axis_name}(remaining_axis))
 end
