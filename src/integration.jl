@@ -242,7 +242,7 @@ function _spectrum_axis_info(x::AbstractSpectrum, ax::Symbol)
             dim = 1,
             integrated_axis = x.axis1,
             remaining_axis = x.axis2,
-            remaining_axis_name = x.axesnames[2],
+            remaining_axis_name = x.axesnames[2]
         )
     elseif (ax == :axis2) || (ax == x.axesnames[2])
         return (
