@@ -86,7 +86,7 @@ S_lt = S .< (10 * m^2 / Hz / °)
 @test S_lt isa AbstractMatrix{Bool}
 @test S_lt == (S.data .< (10 * m^2 / Hz / °))
 @test (S .== S.data[1, 1]) == (S.data .== S.data[1, 1])
-@test_throws DimensionMismatch S.<Spectrum(data, f, θ .+ 0.1Δθ)
+@test_throws DimensionMismatch S .< Spectrum(data, f, θ .+ 0.1Δθ)
 
 # Conversion to/from `AxisArray`.
 S_axis = WaveSpectra.AxisArray(S)
