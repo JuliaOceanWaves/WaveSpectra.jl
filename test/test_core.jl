@@ -81,7 +81,7 @@ S_copy = copy(S)
 S_sum = S + S
 @test S_sum isa Spectrum
 @test S_sum == Spectrum(2 * S.data, S.axis1, S.axis2)
-@test_throws DimensionMismatch S.+Spectrum(data, f, θ .+ 0.1Δθ)
+@test_throws DimensionMismatch S .+ Spectrum(data, f, θ .+ 0.1Δθ)
 S_lt = S .< (10 * m^2 / Hz / °)
 @test S_lt isa AbstractMatrix{Bool}
 @test S_lt == (S.data .< (10 * m^2 / Hz / °))
