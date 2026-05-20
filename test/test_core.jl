@@ -125,7 +125,7 @@ omni_le = omni .<= (sum(omni.data) / length(omni.data))
 @test omni_le isa AbstractVector{Bool}
 @test omni_le == (omni.data .<= (sum(omni.data) / length(omni.data)))
 @test (omni .== omni.data[1]) == (omni.data .== omni.data[1])
-@test_throws DimensionMismatch omni.>=OmnidirectionalSpectrum(omni.data, f .+ 0.1Hz)
+@test_throws DimensionMismatch omni .>= OmnidirectionalSpectrum(omni.data, f .+ 0.1Hz)
 
 # Show methods.
 @test occursin("Spectrum", sprint(show, S))
