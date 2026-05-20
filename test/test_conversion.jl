@@ -96,8 +96,10 @@ polar_points = polar_to_cartesian(spec)
 
 cartesian_points = cartesian_to_polar(cartesian_spec)
 @test cartesian_points isa WaveSpectra.AxisArray
-@test size(cartesian_points) == (length(cartesian_spec.axis1) * length(cartesian_spec.axis2), 3)
-@test WaveSpectra.axisvalues(cartesian_points)[2] == [:angular_wavenumber, :direction, :spectrum]
+@test size(cartesian_points) ==
+      (length(cartesian_spec.axis1) * length(cartesian_spec.axis2), 3)
+@test WaveSpectra.axisvalues(cartesian_points)[2] ==
+      [:angular_wavenumber, :direction, :spectrum]
 @test cartesian_points[1, 1] == sqrt(cartesian_spec.axis1[1]^2 + cartesian_spec.axis2[1]^2)
 @test cartesian_points[1, 2] == atan(°, cartesian_spec.axis2[1], cartesian_spec.axis1[1])
 @test cartesian_points[1, 3] ==
