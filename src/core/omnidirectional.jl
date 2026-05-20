@@ -11,7 +11,7 @@ The input must have exactly one axis.
 @doc """
     OmnidirectionalSpectrum(x::AbstractSpectrum)
 
-Calculate the omnidirectional spectrum of a given `Spectrum` by integrating over its
+Calculate the omnidirectional spectrum of a given polar `Spectrum` by integrating over its
 directional axis.
 """ OmnidirectionalSpectrum(x::AbstractSpectrum)
 
@@ -24,6 +24,7 @@ directional axis.
 One-dimensional omnidirectional wave spectrum with a physical-unit axis.
 
 The inputs `data` and `axis` must have equal length.
+The axis must be one of the 8 supported spectral-variable types and must be positive.
 """
 struct OmnidirectionalSpectrum{TDAT, TAX} <: AbstractOmnidirectionalSpectrum{TDAT}
     data::Vector{TDAT}
@@ -40,9 +41,9 @@ struct OmnidirectionalSpectrum{TDAT, TAX} <: AbstractOmnidirectionalSpectrum{TDA
         _check_typeconsistency(data)
         _check_typeconsistency(axis)
         data, axis = _ensure_increasing_axis(data, axis)
-        if !(istemporal(axis) || isspatial(axis))
-            throw(ArgumentError("Invalid axis type for an 'OmnidirectionalSpectrum'."))
-        end
+        isspectralvariable(axis) ||
+            throw(ArgumentError("Axis must be a spectral-variable type."))
+        _check_strictly_positive_finite_spectral_axis(axis)
 
         # assign axis type and name
         axistype = axisname = axestypes(axis)
@@ -60,6 +61,9 @@ function Base.copy(x::AbstractOmnidirectionalSpectrum)
 end
 
 Base.getindex(x::AbstractOmnidirectionalSpectrum, i::Int) = getindex(x.data, i)
+function Base.getindex(x::AbstractOmnidirectionalSpectrum, I...)
+    return getindex(AxisArray(x), _update_indices(I...)...)
+end
 Base.setindex!(x::AbstractOmnidirectionalSpectrum, v::Any, i::Int) = setindex!(x.data, v, i)
 
 function Base.BroadcastStyle(::Type{<:AbstractOmnidirectionalSpectrum})
@@ -82,11 +86,55 @@ function Base.similar(
     return similar(sp, S, shape)
 end
 
+# comparisons
+for op in (:(==), :(!=), :(<), :(<=), :(>), :(>=))
+    @eval begin
+        function Broadcast.broadcasted(
+                ::typeof($op),
+                a::AbstractOmnidirectionalSpectrum,
+                b::AbstractOmnidirectionalSpectrum
+        )
+            _axes_match(a, b) || throw(DimensionMismatch(
+                "OmnidirectionalSpectrum axis must match for broadcasting."))
+            return Broadcast.broadcast($op, a.data, b.data)
+        end
+
+        function Broadcast.broadcasted(
+                ::typeof($op),
+                a::AbstractOmnidirectionalSpectrum,
+                b
+        )
+            return Broadcast.broadcast($op, a.data, b)
+        end
+
+        function Broadcast.broadcasted(
+                ::typeof($op),
+                a,
+                b::AbstractOmnidirectionalSpectrum
+        )
+            return Broadcast.broadcast($op, a, b.data)
+        end
+    end
+end
+
+@inline function Base.:(==)(
+        a::AbstractOmnidirectionalSpectrum,
+        b::AbstractOmnidirectionalSpectrum
+)
+    return (a.axis == b.axis) && (a.data == b.data)
+end
+
+@inline function Base.isapprox(
+        a::AbstractOmnidirectionalSpectrum,
+        b::AbstractOmnidirectionalSpectrum;
+        kwargs...
+)
+    return (isapprox(a.axis, b.axis) && isapprox(a.data, b.data; kwargs...))
+end
+
 # fancy indexing using AxisArray
 function Base.getindex(x::AbstractOmnidirectionalSpectrum; kwargs...)
-    y = getindex(AxisArray(x); _update_kwargs(kwargs)...)
-    axis = axisvalues(y)[1]
-    return _rebuild_spectrum(x, y.data, axis)
+    return getindex(AxisArray(x); _update_kwargs(kwargs)...)
 end
 
 function Base.setindex!(x::AbstractOmnidirectionalSpectrum, v::Any; kwargs...)
@@ -124,8 +172,8 @@ end
 Extend `Unitful.unit` for omnidirectional spectra.
 
 The `quantity` can be `:axis` (or the axis name), `:integral`, or `:spectrum`.
-These return the units of the frequency axis, the integral quantity, and the spectral
-density (unit of integral quantity / unit of axis), respectively.
+These return the units of the spectral-variable axis, the integral quantity, and the
+spectral density (unit of integral quantity / unit of axis), respectively.
 The default is `quantity=:spectrum`.
 """
 function unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)::Units
@@ -143,7 +191,7 @@ unit(x::AbstractOmnidirectionalSpectrum) = unit(x, :spectrum)
 function AxisArray(x::AbstractOmnidirectionalSpectrum)
     name = x.axisname
     axis = Axis{name}(x.axis)
-    return AxisArray(x, axis)
+    return AxisArray(x.data, axis)
 end
 
 function OmnidirectionalSpectrum(x::AxisArray)

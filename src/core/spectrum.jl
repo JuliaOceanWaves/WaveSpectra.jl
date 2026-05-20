@@ -27,8 +27,11 @@ with a directional spread function.
 Directional wave spectrum with physical-unit axes and data.
 
 The `data` matrix must have size `(length(axis1), length(axis2))`.
-The axes vectors must have units corresponding to one of 8 acceptable frequency types:
-temporal/spatial frequency, period, angular frequency, or angular period.
+One axis must be a spectral variable and the other must be either a second spectral
+variable (cartesian spectrum) or direction (polar spectrum).
+There are 8 supported spectral-variable types: temporal/spatial, frequency/period,
+and linear/angular combinations.
+For polar spectra, the spectral-variable axis must be positive.
 The coordinate system is inferred from axis types and is either `:cartesian` or `:polar`.
 """
 struct Spectrum{
@@ -56,20 +59,8 @@ struct Spectrum{
         _check_typeconsistency(axis2)
         data, axis1, axis2 = _ensure_increasing_axes(data, axis1, axis2)
 
-        # determine coordinates type
-        cartesian_1 = (istemporal(axis1) || isspatial(axis1))
-        cartesian_2 = (istemporal(axis2) || isspatial(axis2))
-        if cartesian_1 && cartesian_2
-            coordinates = :cartesian
-        elseif cartesian_1 && isdirection(axis2)
-            coordinates = :polar
-        elseif cartesian_2 && isdirection(axis1)
-            coordinates = :polar
-            @warn "Swapping order of axes to have direction as second axis."
-            axis1, axis2 = axis2, axis1
-        else
-            throw(ArgumentError("Axes must define a cartesian or polar coordinate."))
-        end
+        # determine coordinates type and validate axis domains
+        coordinates, axis1, axis2 = _check_spectrum_axes(axis1, axis2)
 
         # assign axes types and names
         axes_types = (axestypes(axis1), axestypes(axis2))
@@ -95,7 +86,12 @@ function Base.copy(x::AbstractSpectrum)
 end
 
 Base.getindex(x::AbstractSpectrum, i::Int) = getindex(x.data, i)
-Base.getindex(x::AbstractSpectrum, I::Vararg{Int, 2}) = getindex(x.data, I...)
+function Base.getindex(x::AbstractSpectrum, I...)
+    return getindex(AxisArray(x), _update_indices(I...)...)
+end
+function Base.getindex(x::AbstractSpectrum, I::Vararg{Int, 2})
+    return getindex(x.data, I...)
+end
 Base.setindex!(x::AbstractSpectrum, v, i::Int) = setindex!(x.data, v, i)
 Base.setindex!(x::AbstractSpectrum, v, I::Vararg{Int, 2}) = (x.data[I...] = v)
 
@@ -117,11 +113,51 @@ function Base.similar(
     return similar(sp, S, shape)
 end
 
+# comparisons
+for op in (:(==), :(!=), :(<), :(<=), :(>), :(>=))
+    @eval begin
+        function Broadcast.broadcasted(
+                ::typeof($op),
+                a::AbstractSpectrum,
+                b::AbstractSpectrum
+        )
+            _axes_match(a, b) ||
+                throw(DimensionMismatch("Spectrum axes must match for broadcasting."))
+            return Broadcast.broadcast($op, a.data, b.data)
+        end
+
+        function Broadcast.broadcasted(
+                ::typeof($op),
+                a::AbstractSpectrum,
+                b
+        )
+            return Broadcast.broadcast($op, a.data, b)
+        end
+
+        function Broadcast.broadcasted(
+                ::typeof($op),
+                a,
+                b::AbstractSpectrum
+        )
+            return Broadcast.broadcast($op, a, b.data)
+        end
+    end
+end
+
+function Base.:(==)(a::AbstractSpectrum, b::AbstractSpectrum)
+    return (a.axis1 == b.axis1) && (a.axis2 == b.axis2) && (a.data == b.data)
+end
+
+function Base.isapprox(a::AbstractSpectrum, b::AbstractSpectrum; kwargs...)
+    approx_ax1 = isapprox(a.axis1, b.axis1)
+    approx_ax2 = isapprox(a.axis2, b.axis2)
+    approx_data = isapprox(a.data, b.data; kwargs...)
+    return (approx_ax1 && approx_ax2 && approx_data)
+end
+
 # fancy indexing using AxisArray
 function Base.getindex(x::AbstractSpectrum; kwargs...)
-    y = getindex(AxisArray(x); _update_kwargs(kwargs)...)
-    axis1, axis2 = axisvalues(y)
-    return _rebuild_spectrum(x, y.data, axis1, axis2)
+    return getindex(AxisArray(x); _update_kwargs(kwargs)...)
 end
 
 function Base.setindex!(x::AbstractSpectrum, v; kwargs...)
@@ -185,7 +221,7 @@ unit(x::AbstractSpectrum) = unit(x, :spectrum)
 function AxisArray(x::AbstractSpectrum)
     axis1 = Axis{x.axesnames[1]}(x.axis1)
     axis2 = Axis{x.axesnames[2]}(x.axis2)
-    return AxisArray(x, axis1, axis2)
+    return AxisArray(x.data, axis1, axis2)
 end
 
 function Spectrum(x::AxisArray)

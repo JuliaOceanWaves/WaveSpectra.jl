@@ -61,7 +61,8 @@ struct OmnidirectionalSpectrumShape{TDAT, TAX} <: AbstractOmnidirectionalSpectru
 end
 
 function OmnidirectionalSpectrumShape(x::AbstractOmnidirectionalSpectrum;
-        dispersion::Dispersion = Dispersion())
+        dispersion::Dispersion = Dispersion()
+)
     f = uconvert.(Hz, x.axis, dispersion)
     fₑ = energy_frequency(x; dispersion)
     Hₛ = significant_waveheight(x)
@@ -101,7 +102,8 @@ end
 
 # scaling
 """
-Scale a spectrum to have a specified significant wave height and energy frequency while preserving its shape.
+Scale a spectrum to have a specified significant wave height and energy frequency while
+preserving its shape.
 
 Returns an `OmnidirectionalSpectrum`.
 

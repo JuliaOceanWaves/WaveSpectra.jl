@@ -2,7 +2,7 @@
 
 # Compact show methods (e.g. within a vector or matrix)
 function Base.show(io::IO, x::AbstractSpectrum)
-    shape = size(x.data)
+    shape = size(x)
     us, u1, u2 = unit(x), unit(x, :axis1), unit(x, :axis2)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
     io_fancy = IOContext(io, :fancy_exponent => true)
@@ -12,7 +12,7 @@ function Base.show(io::IO, x::AbstractSpectrum)
 end
 
 function Base.show(io::IO, x::AbstractOmnidirectionalSpectrum)
-    n = length(x.data)
+    n = length(x)
     us, uax = unit(x), unit(x, :axis)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
     io_fancy = IOContext(io, :fancy_exponent => true)
@@ -21,7 +21,7 @@ end
 
 # Detailed show method (for text/plain, e.g., in the terminal)
 function Base.show(io::IO, ::MIME"text/plain", x::AbstractSpectrum)
-    shape = size(x.data)
+    shape = size(x)
     us, ui, u1, u2 = unit(x), unit(x, :integral), unit(x, :axis1), unit(x, :axis2)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
     axt = axestypes(x)
@@ -31,7 +31,8 @@ function Base.show(io::IO, ::MIME"text/plain", x::AbstractSpectrum)
     io_fancy = IOContext(io, :fancy_exponent => true)
     println(io_fancy,
         shape[1], "×", shape[2], " Spectrum{", us, "}{", u1, "}{", u2, "}",
-        "\nSpectral density for Quantity (", ui, ") with ", xc, " coordinates:",
+        "\nSpectral density of the quantity (", ui, ") with ", xc,
+        " coordinates:",
         "\n  • Axis 1: ", axt1, " (", u1, ")",
         "\n  • Axis 2: ", axt2, " (", u2, ")",
         "\nand data(", us, "):"
@@ -40,14 +41,14 @@ function Base.show(io::IO, ::MIME"text/plain", x::AbstractSpectrum)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", x::AbstractOmnidirectionalSpectrum)
-    n = length(x.data)
+    n = length(x)
     us, ui, uax = unit(x), unit(x, :integral), unit(x, :axis)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
     axt = titlecase(replace(String(axestypes(x)), "_" => " "))
     io_fancy = IOContext(io, :fancy_exponent => true)
     println(io_fancy,
         n, "-element OmnidirectionalSpectrum{", us, "}{", uax, "}",
-        "\nSpectral density for Quantity (", ui, "):",
+        "\nSpectral density of the quantity (", ui, "):",
         "\n  • Axis: ", axt, " (", uax, ")",
         "\nand data(", us, "):"
     )
@@ -55,7 +56,7 @@ function Base.show(io::IO, ::MIME"text/plain", x::AbstractOmnidirectionalSpectru
 end
 
 # HTML show method (e.g., in a Pluto or Jupyter notebook)
-function Base.show(io::IO, m::MIME"text/html", x::AbstractSpectrum)
+function Base.show(io::IO, ::MIME"text/html", x::AbstractSpectrum)
     s = size(x)
     us = unit(x)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
@@ -69,7 +70,8 @@ function Base.show(io::IO, m::MIME"text/html", x::AbstractSpectrum)
     xc = String(x.coordinates)
     println(io,
         "<p><strong>", s[1], "×", s[2], " Spectrum{", us, "}{", u1, "}{", u2, "}</strong>",
-        "<br>Spectral density for Quantity (", ui, ") with ", xc, " coordinates:",
+        "<br>Spectral density of the quantity (", ui, ") with ", xc,
+        " coordinates:",
         "<br>  • <strong>Axis 1:</strong> ", axt1, " (", u1, ")",
         "<br>  • <strong>Axis 2:</strong> ", axt2, " (", u2, ")",
         "<br>and data (", us, "):</p>"
@@ -89,7 +91,7 @@ function Base.show(io::IO, m::MIME"text/html", x::AbstractSpectrum)
     )
 end
 
-function Base.show(io::IO, m::MIME"text/html", x::AbstractOmnidirectionalSpectrum)
+function Base.show(io::IO, ::MIME"text/html", x::AbstractOmnidirectionalSpectrum)
     n = length(x)
     us = unit(x)
     (us isa FreeUnits{(), NoDims, nothing}) && (us = 1)
@@ -99,13 +101,13 @@ function Base.show(io::IO, m::MIME"text/html", x::AbstractOmnidirectionalSpectru
     axt = titlecase(replace(String(axestypes(x)), "_" => " "))
     println(io,
         "<p><strong>", n, "-element OmnidirectionalSpectrum{", us, "}{", uax, "}</strong>",
-        "<br>Spectral density for Quantity (", ui, "):",
+        "<br>Spectral density of the quantity (", ui, "):",
         "<br>  • <strong>Axis:</strong> ", axt, " (", uax, ")",
         "<br>and data (", us, "):</p>"
     )
     pretty_table(
         io,
-        ustrip.(reshape(x.data, :, 1)),
+        reshape(ustrip.(x.data), :, 1),
         backend = :html,
         column_labels = ["data"],
         row_labels = x.axis,

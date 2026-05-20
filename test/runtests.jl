@@ -13,12 +13,25 @@ using Test, SafeTestsets
     @time @safetestset "Test Conversion" begin
         include("test_conversion.jl")
     end
-    @time @safetestset "Test Dispersion Relations" begin
-        include("test_dispersion.jl")
+    @time @safetestset "Test Plotting" begin
+        include("test_plotting.jl")
     end
-    @time @safetestset "Test Parametric Spectra" begin
-        include("test_parametric.jl")
+
+    # submodules
+    @time @safetestset "Test Module: DispersionRelations" begin
+        include("test_module_dispersion.jl")
     end
+    @time @safetestset "Test Module: ParametricSpectra" begin
+        include("test_module_parametric.jl")
+    end
+    @time @safetestset "Test Module: Moments" begin
+        include("test_module_moments.jl")
+    end
+    @time @safetestset "Test Module: Shapes" begin
+        include("test_module_shapes.jl")
+    end
+
+    # documentation
     @time @safetestset "Doc Tests" begin
         include("test_doctest.jl")
     end

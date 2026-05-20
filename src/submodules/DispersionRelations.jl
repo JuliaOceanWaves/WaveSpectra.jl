@@ -12,6 +12,8 @@ using ..WaveSpectra: Dispersion, g, m, rad, s, θ₀
 using Unitful: kg
 using Roots: ZeroProblem, solve
 
+export gravitywaves, gravitywaves_deepwater, gravitywaves_shallowwater
+
 """
     gravitywaves_deepwater()
 
@@ -60,6 +62,7 @@ function gravitywaves(waterdepth)
         return solve(ZeroProblem(f, k₀))
     end
     function gradient(k)
+        iszero(k) && return √(g * h)
         kh = k * h / θ₀
         cp = √((g * θ₀ / k) * tanh(kh))
         return 0.5 * cp * (1 + 2kh / sinh(2kh))
