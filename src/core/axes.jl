@@ -11,36 +11,43 @@ AxisArrays.axes(x::AbstractOmnidirectionalSpectrum) = (x.axis,)
     axesinfo(x::AbstractSpectrum)
     axesinfo(x::AbstractOmnidirectionalSpectrum)
 
-Retrieve axis information including domain (spatial or temporal, or direction), type
-(e.g. angular frequency, period, etc.), and its physical dimensions.
+Query the axis type and its physical dimensions.
+
+There are 8 supported spectral-variable types, formed from the combinations of
+spatial/temporal domain, linear/angular geometry, and frequency/period quantity.
+There's one direction type `:direction`, for a total of 9 possible axis types.
 
 - `axesinfo()` returns a dictionary with information for all 9 possible axis types.
 - `axesinfo(s::Symbol)` returns information for a specific axis type, e.g.
   `axesinfo(:wavenumber)`
-- `axesinfo(x)` return the axis information for the axes of x, where the input x is either
-  a `Spectrum` or an `OmnidirectionalSpectrum`.
+- `axesinfo(x)` return the axis information for the axes of a spectrum x.
 """
-function axesinfo()
-    Dict(
-        :direction => ((:direction, :angle), 𝐀),
-        :frequency => ((:temporal, :frequency), 𝐓^-1),
-        :angular_frequency => ((:temporal, :angular_frequency), 𝐀 * 𝐓^-1),
-        :period => ((:temporal, :period), 𝐓),
-        :angular_period => ((:temporal, :angular_period), 𝐓 * 𝐀^-1),
-        :wavenumber => ((:spatial, :frequency), 𝐋^-1),
-        :angular_wavenumber => ((:spatial, :angular_frequency), 𝐀 * 𝐋^-1),
-        :wavelength => ((:spatial, :period), 𝐋),
-        :angular_wavelength => ((:spatial, :angular_period), 𝐋 * 𝐀^-1)
-    )
-end
+function axesinfo end
+
+const _AXESINFO = Dict(
+    :direction => ((:direction,), 𝐀),
+    :frequency => ((:temporal, :linear, :frequency), 𝐓^-1),
+    :angular_frequency => ((:temporal, :angular, :frequency), 𝐀 * 𝐓^-1),
+    :period => ((:temporal, :linear, :period), 𝐓),
+    :angular_period => ((:temporal, :angular, :period), 𝐓 * 𝐀^-1),
+    :wavenumber => ((:spatial, :linear, :frequency), 𝐋^-1),
+    :angular_wavenumber => ((:spatial, :angular, :frequency), 𝐀 * 𝐋^-1),
+    :wavelength => ((:spatial, :linear, :period), 𝐋),
+    :angular_wavelength => ((:spatial, :angular, :period), 𝐋 * 𝐀^-1)
+)
+
+const _AXESTYPES_BY_DIM = Dict(v[2] => k for (k, v) in _AXESINFO)
+const _AXESTYPES_BY_INFO = Dict(v[1] => k for (k, v) in _AXESINFO)
+
+axesinfo() = _AXESINFO
 axesinfo(s::Symbol) = axesinfo()[s]
 axesinfo(x) = axesinfo.(axestypes(x))
 
 # `axestypes` function
-axestypes(dim::Dimensions) = Dict(v[2] => k for (k, v) in axesinfo())[dim]
+axestypes(dim::Dimensions) = _AXESTYPES_BY_DIM[dim]
 
-function axestypes(domain::Symbol, quantity::Symbol)
-    return Dict(v[1] => k for (k, v) in axesinfo())[(domain, quantity)]
+function axestypes(domain::Symbol, geometry::Symbol, quantity::Symbol)
+    _AXESTYPES_BY_INFO[(domain, geometry, quantity)]
 end
 
 axestypes(x::Union{Quantity, Units}) = axestypes(dimension(x))
@@ -51,7 +58,12 @@ axestypes(x::AbstractOmnidirectionalSpectrum) = x.axistype
 # utility functions to check type of axes
 istemporal(x) = (axesinfo()[axestypes(x)][1][1] == :temporal)
 isspatial(x) = (axesinfo()[axestypes(x)][1][1] == :spatial)
+islinear(x) = (axesinfo()[axestypes(x)][1][2] == :linear)
+isangular(x) = (axesinfo()[axestypes(x)][1][2] == :angular)
+isfrequency(x) = (axesinfo()[axestypes(x)][1][3] == :frequency)
+isperiod(x) = (axesinfo()[axestypes(x)][1][3] == :period)
 isdirection(x) = (axesinfo()[axestypes(x)][1][1] == :direction)
+isspectralvariable(x) = !isdirection(x)
 ispolar(x::AbstractSpectrum) = (x.coordinates == :polar)
 iscartesian(x::AbstractSpectrum) = (x.coordinates == :cartesian)
 
@@ -79,6 +91,7 @@ isevenlyspaced(x::AbstractOmnidirectionalSpectrum) = isevenlyspaced(x.axis)
 isevenlyspaced(x::AbstractSpectrum) = (isevenlyspaced(x.axis1) && isevenlyspaced(x.axis2))
 
 """
+    evenspacing(x::AbstractVector)
     evenspacing(x::AbstractSpectrum)
     evenspacing(x::AbstractOmnidirectionalSpectrum)
 
@@ -87,15 +100,11 @@ Return evenly spaced axis parameters as tuples `(start, step, length)`.
 For a `Spectrum` two such tuples are returned, one for each axis.
 Throws `ArgumentError` if the axis or axes are not evenly spaced.
 """
-function evenspacing(x::AbstractSpectrum)
-    !isevenlyspaced(x) && throw(ArgumentError("Axes must be evenly spaced."))
-    r1 = _convert_to_range(x.axis1)
-    r2 = _convert_to_range(x.axis2)
-    return (r1.ref.hi, r1.step.hi, r1.len), (r2.ref.hi, r2.step.hi, r2.len)
-end
-
-function evenspacing(x::AbstractOmnidirectionalSpectrum)
-    !isevenlyspaced(x) && throw(ArgumentError("Axes must be evenly spaced."))
-    r = _convert_to_range(x.axis)
+function evenspacing(x::AbstractVector)
+    isevenlyspaced(x) || throw(ArgumentError("Vector `x` must be evenly spaced."))
+    r = _convert_to_range(x)
     return (r.ref.hi, r.step.hi, r.len)
 end
+
+evenspacing(x::AbstractSpectrum) = (evenspacing(x.axis1), evenspacing(x.axis2))
+evenspacing(x::AbstractOmnidirectionalSpectrum) = evenspacing(x.axis)

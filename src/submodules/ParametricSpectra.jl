@@ -1,7 +1,7 @@
 """
-Parametric omnidirectional spectra and directional spreading functions.
+Parametric omnidirectional spectra and directional spread functions.
 
-Currently only a few parametric ocean wave spectra and spreading functions are implemented.
+Currently only a few parametric ocean wave spectra and spread functions are implemented.
 The intention is to grow this library.
 """
 module ParametricSpectra
@@ -11,46 +11,50 @@ using ..WaveSpectra: Dispersion, OmnidirectionalSpectrum, Spectrum, integrate, i
 using Unitful: Hz, Length, Quantity
 using DimensionfulAngles: Angle
 
+export spectrum_jonswap, spectrum_pierson_moskowitz, spread_cartwright
+
 # omnidirectional spectra
 """
     spectrum_pierson_moskowitz(
         frequencies::AbstractVector{<:Quantity},
         significant_waveheight::Length,
-        energy_period::Quantity;
+        energy_frequency::Quantity;
         dispersion::Dispersion=Dispersion(),
-        peak_period::Bool=false
+        peak_frequency::Bool=false
     )
 
 Omnidirectional Pierson-Moskowitz spectrum for the provided frequency array.
 
-The `frequencies` and `period` can be of any frequency type (e.g., period, wavenumber, etc)
-and are converted to frequency (Hz).
+The `frequencies` and `energy_frequency` can be of any frequency type
+(e.g., period, wavenumber, etc) and are converted to frequency (Hz).
 The spectrum is created using the frequency formulation and then converted to the frequency
 type of the inputs.
 
-You can provide the peak period instead of the energy period by passing `peak_period=true`.
-The peak period is defined as the peak of `S(f)` where `f` is the frequency (e.g. in Hz),
+You can provide the peak frequency instead of the energy frequency by passing
+`peak_frequency=true`.
+The peak frequency is defined as the peak of `S(f)` where `f` is the frequency (e.g. in Hz),
 regardless of the dimensions of `frequencies`.
 See documentation for more details.
 
 Based on IEC TS 62600-2 ED2 Annex C.2 (2019).
-Peak period and energy period relationship from ITTC Specialist Committee on Waves (2002).
+Peak frequency and energy frequency relationship from ITTC Specialist Committee on Waves
+(2002).
 """
 function spectrum_pierson_moskowitz(
         frequencies::AbstractVector{<:Quantity},
         significant_waveheight::Length,
-        energy_period::Quantity;
+        energy_frequency::Quantity;
         dispersion::Dispersion = Dispersion(),
-        peak_period::Bool = false
+        peak_frequency::Bool = false
 )
     n = length(frequencies)
     uaxis = unit(eltype(frequencies))
     frequencies = uconvert.(Hz, frequencies, dispersion)
-    ind = (frequencies .≠ 0)
-    energy_period = uconvert(s, energy_period, dispersion)
+    ind = (frequencies .≠ 0Hz)
+    energy_frequency = uconvert(Hz, energy_frequency, dispersion)
 
     aₛ = significant_waveheight / 2  # significant wave amplitude
-    fₚ = (peak_period ? 1 / energy_period : 0.858 / energy_period) |> Hz  # peak frequency
+    fₚ = peak_frequency ? energy_frequency : (0.858 * energy_frequency)  # peak frequency
     f̅ = frequencies[ind]
 
     b = -(5 / 4) * (fₚ ./ f̅) .^ 4
@@ -66,53 +70,55 @@ end
     spectrum_jonswap(
         frequencies::AbstractVector{<:Quantity},
         significant_waveheight::Length,
-        energy_period::Quantity,
+        energy_frequency::Quantity,
         gamma::Union{Number, Nothing};
         dispersion::Dispersion=Dispersion(),
-        peak_period::Bool=false
+        peak_frequency::Bool=false
     )
 
 Omnidirectional JONSWAP spectrum for the provided frequency axis.
 
-The `frequencies` and `period` can be of any frequency type (e.g., period, wavenumber, etc)
-and are converted to frequency (Hz).
+The `frequencies` and `energy_frequency` can be of any frequency type
+(e.g., period, wavenumber, etc) and are converted to frequency (Hz).
 The spectrum is created using the frequency formulation and then converted to the frequency
 type of the inputs.
 
-You can provide the peak period instead of the energy period by passing `peak_period=true`.
-The peak period is defined as the peak of `S(f)` where `f` is the frequency (e.g. in Hz),
+You can provide the peak frequency instead of the energy frequency by passing
+`peak_frequency=true`.
+The peak frequency is defined as the peak of `S(f)` where `f` is the frequency (e.g. in Hz),
 regardless of the dimensions of `frequencies`.
 See documentation for more details.
 
-When peak period is used, `gamma` can be set to `gamma=nothing` in which case it will be
+When peak frequency is used, `gamma` can be set to `gamma=nothing` in which case it will be
 calculated based on the standard formulation.
 
 Based on IEC TS 62600-2 ED2 Annex C.2 (2019).
-Peak period and energy period relationship from ITTC Specialist Committee on Waves (2002).
+Peak frequency and energy frequency relationship from ITTC Specialist Committee on Waves
+(2002).
 """
 function spectrum_jonswap(
         frequencies::AbstractVector{<:Quantity},
         significant_waveheight::Length,
-        energy_period::Quantity,
+        energy_frequency::Quantity,
         gamma::Union{Number, Nothing};
         dispersion::Dispersion = Dispersion(),
-        peak_period::Bool = false
+        peak_frequency::Bool = false
 )
     n = length(frequencies)
     uaxis = unit(eltype(frequencies))
     frequencies = uconvert.(Hz, frequencies, dispersion)
-    ind = (frequencies .≠ 0)
-    energy_period = uconvert(s, period, dispersion)
+    ind = (frequencies .≠ 0Hz)
+    energy_frequency = uconvert(Hz, energy_frequency, dispersion)
 
-    if (!peak_period && isnothing(gamma))
-        throw(ArgumentError("`gamma` must be specified when `peak_period` is `false`"))
+    if (!peak_frequency && isnothing(gamma))
+        throw(ArgumentError("`gamma` must be specified when `peak_frequency` is `false`"))
     end
     γ = gamma
 
     aₛ = significant_waveheight / 2  # significant wave amplitude
-    # fₚ = 1 / period |> Hz
-    c = (0.8225 + 0.03852γ - 0.005537γ^2 + 0.0003154γ^3)
-    fₚ = (peak_period ? 1 / energy_period : c / energy_period) |> Hz  # peak frequency
+    c = peak_frequency ? 1 : 0.8255 + 0.03852γ - 0.005537γ^2 + 0.0003154γ^3
+    #  NOTE: for γ=1, `c=0.0.8587984` which is larger than the PM value of `c=0.858`
+    fₚ = c * energy_frequency  # peak frequency
     f̅ = frequencies[ind]
 
     σₐ = 0.07
@@ -154,11 +160,11 @@ end
         under90::Bool=false
     )
 
-Cosine-squared directional spreading of Cartwright (1963).
+Cosine-squared directional spread function of Cartwright (1963).
 
 If `under90=true`, values outside ±90° from `mean_direction` are set to zero before
 normalization.
-This spread function does not have any frequency dependency.
+This spread function does not depend on the spectral variable.
 
 Code adapted from the `wavespectra` Python package.
 """
@@ -185,7 +191,7 @@ function spread_cartwright(
     # normalize
     spread_func = Spectrum(spread_func, f, θ̅)
     norm_vec = integrate(spread_func, :direction)
-    spread_func = Spectrum(spread_func ./ norm_vec, f, θ̅)
+    spread_func = Spectrum(spread_func ./ norm_vec.data, f, θ̅)
     return spread_func
 end
 

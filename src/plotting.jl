@@ -3,11 +3,14 @@
 # TODO: Make these package extensions for PLots and Makie?
 # Plots.jl
 @recipe function f(x::AbstractSpectrum)
+    include_zero = get(plotattributes, :include_zero, false)
     if x.coordinates == :polar
+        axis1 = include_zero ? _prepend_zero_axis(x.axis1) : x.axis1
+        data = include_zero ? _prepend_zero_data(x.data) : x.data
         # data
         θ = ustrip.(uconvert.(rad, x.axis2))
-        r = ustrip.(x.axis1)
-        z = ustrip.(x.data)
+        r = ustrip.(axis1)
+        z = ustrip.(data)
         spectrum_unit = repr(unit(x), context = :fancy_exponent => true)
 
         seriestype --> :heatmap
@@ -36,8 +39,11 @@
 end
 
 @recipe function f(x::AbstractOmnidirectionalSpectrum)
-    _x = ustrip.(x.axis)
-    _y = ustrip.(x.data)
+    include_zero = get(plotattributes, :include_zero, false)
+    axis = include_zero ? _prepend_zero_axis(x.axis) : x.axis
+    data = include_zero ? _prepend_zero_data(x.data) : x.data
+    _x = ustrip.(axis)
+    _y = ustrip.(data)
     freq_name = axesnames(x)
     freq_unit = repr(unit(x, :axis), context = :fancy_exponent => true)
     spectrum_unit = repr(unit(x), context = :fancy_exponent => true)
@@ -53,9 +59,9 @@ end
 
 """
     plot_spectrum!(ax, s::AbstractSpectrum; func! = contourf!, make_cyclic = true,
-                   ax_properties = Dict(), kwargs...)
+                   include_zero = false, ax_properties = Dict(), kwargs...)
     plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
-                   (func!)=lines!, ax_properties=Dict(), kwargs...)
+                   (func!)=lines!, include_zero = false, ax_properties=Dict(), kwargs...)
 
 Plot a spectrum `s` into an existing Makie axis `ax`.
 
@@ -64,7 +70,7 @@ For polar spectra, `ax` must be a `PolarAxis`.
 See [`plot_spectrum`](@ref) for more information.
 """
 function plot_spectrum!(ax, s::AbstractSpectrum; (func!) = contourf!,
-        make_cyclic = true, ax_properties = Dict(), kwargs...)
+        make_cyclic = true, include_zero = false, ax_properties = Dict(), kwargs...)
     for (prop, val) in ax_properties
         setproperty!(ax, prop, val)
     end
@@ -94,9 +100,11 @@ function plot_spectrum!(ax, s::AbstractSpectrum; (func!) = contourf!,
         setaxproperty!(:rtickangle, π / 2)
         setaxproperty!(:gridz, 1)
 
+        axis1 = include_zero ? _prepend_zero_axis(s.axis1) : s.axis1
+        data = include_zero ? _prepend_zero_data(s.data) : s.data
         θ = ustrip.(uconvert.(rad, s.axis2))
-        r = collect(ustrip.(s.axis1))
-        z = ustrip.(s.data)'
+        r = collect(ustrip.(axis1))
+        z = ustrip.(data)'
         if make_cyclic
             push!(θ, 2π)
             z = vcat(z, z[1:1, :])
@@ -132,9 +140,10 @@ end
 
 """
     plot_spectrum(s::AbstractSpectrum; func! = contourf!, make_cyclic = true,
-                  ax_properties = Dict(), colorbar_properties = Dict(), kwargs...)
+                  include_zero = false, ax_properties = Dict(),
+                  colorbar_properties = Dict(), kwargs...)
     plot_spectrum(s::AbstractOmnidirectionalSpectrum; func! = lines!,
-                  ax_properties = Dict(), kwargs...)
+                  include_zero = false, ax_properties = Dict(), kwargs...)
 
 Create a new Makie figure and plot spectrum `s`.
 
@@ -146,6 +155,8 @@ Keyword arguments:
   and `lines!` for `AbstractOmnidirectionalSpectrum`.
 - `make_cyclic`: when `true`, repeats the first angular bin at `2π` for seamless polar
   plots.
+- `include_zero`: when `true`, prepends an implicit zero-valued spectral sample at the
+  spectral-variable origin for polar and omnidirectional plots.
 - `ax_properties`: dictionary of additional axis properties.
 - `colorbar_properties`: dictionary of additional colorbar properties.
 - `kwargs...`: additional plot properties passed to `func!`.
@@ -155,6 +166,7 @@ See also [`plot_spectrum!`](@ref) to plot into an existing axis.
 function plot_spectrum(s::AbstractSpectrum;
         (func!) = contourf!,
         make_cyclic = true,
+        include_zero = false,
         ax_properties = Dict(),
         colorbar_properties = Dict(),
         kwargs...
@@ -167,13 +179,13 @@ function plot_spectrum(s::AbstractSpectrum;
 
     f = Figure()
     ax = ispolar(s) ? PolarAxis(f[1, 1]) : MAxis(f[1, 1])
-    p = plot_spectrum!(ax, s; func!, make_cyclic, ax_properties, kwargs...)
+    p = plot_spectrum!(ax, s; func!, make_cyclic, include_zero, ax_properties, kwargs...)
     Colorbar(f[1, 2], p; colorbar_properties...)
     return f
 end
 
 function plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
-        (func!) = lines!, ax_properties = Dict(), kwargs...
+        (func!) = lines!, include_zero = false, ax_properties = Dict(), kwargs...
 )
     for (prop, val) in ax_properties
         setproperty!(ax, prop, val)
@@ -183,8 +195,10 @@ function plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
         (prop ∉ keys(ax_properties)) && setproperty!(ax, prop, val)
     end
 
-    x = ustrip.(s.axis)
-    y = ustrip.(s.data)
+    axis = include_zero ? _prepend_zero_axis(s.axis) : s.axis
+    data = include_zero ? _prepend_zero_data(s.data) : s.data
+    x = ustrip.(axis)
+    y = ustrip.(data)
 
     freq_name = axesnames(s)
     freq_unit = repr(unit(s, :axis), context = :fancy_exponent => true)
@@ -203,10 +217,10 @@ function plot_spectrum!(ax, s::AbstractOmnidirectionalSpectrum;
 end
 
 function plot_spectrum(s::AbstractOmnidirectionalSpectrum;
-        (func!) = lines!, ax_properties = Dict(), kwargs...
+        (func!) = lines!, include_zero = false, ax_properties = Dict(), kwargs...
 )
     f = Figure()
     ax = MAxis(f[1, 1])
-    plot_spectrum!(ax, s; func!, ax_properties, kwargs...)
+    plot_spectrum!(ax, s; func!, include_zero, ax_properties, kwargs...)
     return f
 end

@@ -4,7 +4,7 @@
 
 WaveSpectra.jl provides a unit-aware tool for working with ocean wave spectra.
 This package enables input, conversion, creation, and characterization
-for both polar, cartesian, and omnidirectional wave spectra.
+for cartesian and polar spectra, as well as omnidirectional spectra.
 
 ## Quick start
 
