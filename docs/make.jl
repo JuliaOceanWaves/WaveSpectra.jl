@@ -8,16 +8,18 @@ ENV["UNITFUL_FANCY_EXPONENTS"] = true
 bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 
 makedocs(
-    sitename = "WaveSpectra.jl",
-    format = Documenter.HTML(
-        assets = String["assets/citations.css"],
-    ),
-    modules = [WaveSpectra],
-    pages = [
-        "Home" => "index.md",
-        "API" => "api.md"
-    ],
-    plugins = [bib]
+	sitename = "WaveSpectra.jl",
+	format = Documenter.HTML(
+		assets = String["assets/citations.css"],
+	),
+	modules = [WaveSpectra],
+	pages = [
+		"Home" => "index.md",
+		"API" => "api.md",
+	],
+	plugins = [bib],
 )
 
-deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git",)
+deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git",
+	push_preview = true,
+	versions = ["latest" => "v^", "v#"])
