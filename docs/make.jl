@@ -21,5 +21,5 @@ makedocs(
 )
 
 deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git",
-	push_preview = true,
-	versions = ["latest" => "v^", "v#"])
+    push_preview = true,
+    versions = ["latest" => "v^", "v#"])
