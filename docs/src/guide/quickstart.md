@@ -1,36 +1,24 @@
-# Core Functionality
+# Quickstart
 
-Leveraging the [AxisArrays.jl](https://juliaarrays.github.io/AxisArrays.jl/latest/)
+## Intro
+
+Leveraging [AxisArrays.jl](https://juliaarrays.github.io/AxisArrays.jl/latest/)
 we store additional information such as the 
 [Unitful.jl](https://juliaphysics.github.io/Unitful.jl/stable/)
 and [DimensionfulAngles.jl](https://juliaoceanwaves.github.io/DimensionfulAngles.jl/stable/)
 quantities. This helps preserve the units across transformations and ensure that all
 operations respect the units of the data. DimensionfulAngles extends the functionality of
-Unitful quantities to angles and this package leverages this to ensure consistency when
-dealing with WaveSpectra. Below is an example of the former; normally Unitful would not 
-correctly handle the conversion from _degrees_ to _radians_ as they are both considered 
-unitless.
+Unitful quantities to angles and this package leverages that functionality to ensure 
+consistency when dealing with wave spectra. Below is an example of the former; normally 
+Unitful would not correctly handle the conversion from _degrees_ to _radians_ as they are 
+both considered unitless.
 
 ```julia
 using WaveSpectra, AxisArrays, DimensionfulAngles
 
-julia> f = (6:6:18) * Hz
+julia> f = (6:6:18) * Hz; Θ = (120:120:360) * °;
 
-(6:6:18) Hz
-
-julia> Θ = (120:120:360) * °
-
-(120:120:360)°
-
-julia> A = AxisArray(ones(Float64, (3, 3)) * m^2/Hz/°, f, Θ)
-
-2-dimensional AxisArray{Unitful.Quantity{Float64, 𝐋² 𝐓 𝐀⁻¹, Unitful.FreeUnits{(°⁻¹, Hz⁻¹, m²), 𝐋² 𝐓 𝐀⁻¹, nothing}},2,...} with axes:
-    :row, (6:6:18) Hz
-    :col, (120:120:360)°
-And data, a 3×3 Matrix{Unitful.Quantity{Float64, 𝐋² 𝐓 𝐀⁻¹, Unitful.FreeUnits{(°⁻¹, Hz⁻¹, m²), 𝐋² 𝐓 𝐀⁻¹, nothing}}}:
- 1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹
- 1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹
- 1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹
+julia> A = AxisArray(ones(Float64, (3, 3)) * m^2/Hz/°, f, Θ);
 
 julia> S1 = Spectrum(A)
 
@@ -54,6 +42,8 @@ and data(m² Hz⁻¹ rad⁻¹):
  57.29577951308232  57.29577951308232  57.29577951308232
  57.29577951308232  57.29577951308232  57.29577951308232
 ```
+
+## Conversions
 
 In scenarios where the user is working with multiple spectra, this package will handle
 conversions when appropriate:
@@ -96,23 +86,9 @@ and data(m² s rad⁻¹):
 and will notify the user when otherwise incompatible.
 
 ```julia
-julia> f = (6:6:18) * Hz
+julia> f = (6:6:18) * Hz; Θ = (120:120:360) * °;
 
-(6:6:18) Hz
-
-julia> Θ = (120:120:360) * °
-
-(120:120:360)°
-
-julia> A3 = AxisArray(ones(Float64, (3, 3)) * m^3/Hz/°, f, Θ)
-
-2-dimensional AxisArray{Unitful.Quantity{Float64, 𝐋³ 𝐓 𝐀⁻¹, Unitful.FreeUnits{(°⁻¹, Hz⁻¹, m³), 𝐋³ 𝐓 𝐀⁻¹, nothing}},2,...} with axes:
-    :row, (6:6:18) Hz
-    :col, (120:120:360)°
-And data, a 3×3 Matrix{Unitful.Quantity{Float64, 𝐋³ 𝐓 𝐀⁻¹, Unitful.FreeUnits{(°⁻¹, Hz⁻¹, m³), 𝐋³ 𝐓 𝐀⁻¹, nothing}}}:
- 1.0 m³ °⁻¹ Hz⁻¹  1.0 m³ °⁻¹ Hz⁻¹  1.0 m³ °⁻¹ Hz⁻¹
- 1.0 m³ °⁻¹ Hz⁻¹  1.0 m³ °⁻¹ Hz⁻¹  1.0 m³ °⁻¹ Hz⁻¹
- 1.0 m³ °⁻¹ Hz⁻¹  1.0 m³ °⁻¹ Hz⁻¹  1.0 m³ °⁻¹ Hz⁻¹
+julia> A3 = AxisArray(ones(Float64, (3, 3)) * m^3/Hz/°, f, Θ); # Cubic meters
 
 julia> S3 = Spectrum(A3)
 
@@ -131,12 +107,72 @@ ERROR: DimensionError: 1.0 m² °⁻¹ Hz⁻¹ and 1.0 m³ °⁻¹ Hz⁻¹ are n
 ```
 
 The following quantities are accepted for the axes and their respective conversions are implemented in
-this package. Any other type of spectra are not supported.
+this package. 
 
-![dispersion_cube](./assets/Commutative_diagram_of_harmonic_wave_properties.svg)
 
-## Syntax
-```@autodocs; canonical=false
-Modules = [WaveSpectra]
-Filter = x -> !isnothing(match(r"Spectrum", string(x)))
+![dispersion_cube](../assets/Commutative_diagram_of_harmonic_wave_properties.svg)
+
+## Characterization
+
+This package also includes a few functions to characterize ocean wave spectra both for 
+[directional spectra]() and [omnidirectional spectra]().
+
+```julia
+julia> f = (6:6:18) * Hz; Θ = (120:120:360) * °;
+
+julia> A = AxisArray(Float64.([x+y for x in 0:2, y in 0:2]) * m^2/Hz/°, f, Θ);
+
+julia> S = Spectrum(A)
+3×3 Spectrum{m² °⁻¹ Hz⁻¹}{Hz}{°}
+Spectral density of the quantity (m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m² °⁻¹ Hz⁻¹):
+ 0.0  1.0  2.0
+ 1.0  2.0  3.0
+ 2.0  3.0  4.0
+
+julia> WaveSpectra.Moments.mean_direction(S)
+-79.10660535086907°
+```
+
+```julia
+julia> S_omni = OmnidirectionalSpectrum((1.0:3.0) .* m^2/Hz, (1.0:3.0) .* Hz)
+3-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 2.0
+ 3.0
+
+julia> WaveSpectra.Moments.significant_waveheight(S_omni)
+8.0 m
+
+julia> WaveSpectra.Moments.energy_frequency(S_omni)
+2.0 Hz
+```
+
+## Other Functions
+
+This package also includes a few functions to create a parametric spectra.
+
+```julia
+julia> f = (1.0:10.0) .* Hz;
+
+julia> WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz(f, 8.0 * m, 4.0 * Hz)
+10-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.3423912370794646e-72
+ 0.001701611389553719
+ 1.3421276585162367
+ 1.376317426592531
+ 0.6727667924496734
+ 0.3121398175430826
+ 0.1535891690462104
+ 0.08116740160851418
+ 0.045764352079589225
+ 0.02727015323859412
 ```

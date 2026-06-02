@@ -4,23 +4,20 @@
 
 WaveSpectra.jl provides a unit-aware tool for working with ocean wave spectra.
 This package enables input, conversion, creation, and characterization
-for cartesian and polar spectra, as well as omnidirectional spectra.
+for cartesian and polar spectra, omnidirectional spectra, and some parametric spectra.
 
-## Quick start
+## Package Guide
 
-```julia
-using DimensionfulAngles.DefaultSymbols
-using WaveSpectra
+The [Package Guide](@ref Quickstart) is the main documentation for the package and includes
+usage details and examples of _WaveSpectra.jl's_ capabilities. Including:
 
-Nf = 20
-Δf = 0.1Hz
-f = (0:Nf-1) * Δf
-Nθ = 36
-Δθ = 360° / Nθ
-θ = (0:Nθ-1) * Δθ
-
-S = Spectrum(randn(Nf, Nθ)*m^2/Hz/°, f, θ)
-```
+- Directional wave spectra
+    - In cartesian coordinates
+    - In polar coordinates
+- Omnidirectional wave spectra
+- Parametric wave spectra
+- Functions for characterization
+- and other auxilary functions
 
 ## Reference
 
