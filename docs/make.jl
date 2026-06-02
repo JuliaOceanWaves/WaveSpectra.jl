@@ -12,18 +12,18 @@ function regex_match(regex, x)
 end
 
 makedocs(
-	sitename = "WaveSpectra.jl",
-	format = Documenter.HTML(
-		assets = String["assets/citations.css",
-			"assets/core.css"],
-	),
-	modules = [WaveSpectra],
-	pages = [
-		"Home" => "index.md",
-		"Core Functionality" => "core.md",
-		"API" => "api.md",
-	],
-	plugins = [bib],
+    sitename = "WaveSpectra.jl",
+    format = Documenter.HTML(
+        assets = String["assets/citations.css",
+        "assets/core.css"],
+    ),
+    modules = [WaveSpectra],
+    pages = [
+        "Home" => "index.md",
+        "Core Functionality" => "core.md",
+        "API" => "api.md"
+    ],
+    plugins = [bib]
 )
 
 deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git")
