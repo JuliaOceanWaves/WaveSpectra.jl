@@ -106,16 +106,13 @@ julia> S1 + S3
 ERROR: DimensionError: 1.0 m² °⁻¹ Hz⁻¹ and 1.0 m³ °⁻¹ Hz⁻¹ are not dimensionally compatible.
 ```
 
-The following quantities are accepted for the axes and their respective conversions are implemented in
-this package. 
-
-
-![dispersion_cube](../assets/Commutative_diagram_of_harmonic_wave_properties.svg)
+The accepted spectral-variables types are temporal/spatial, frequency/period, and 
+linear/angular combinations. Represented as a diagram [here](@ref spectral_var_cube).
 
 ## Characterization
 
 This package also includes a few functions to characterize ocean wave spectra both for 
-[directional spectra]() and [omnidirectional spectra]().
+[directional spectra](@ref dir_spectra) and [omnidirectional spectra](@ref omnidir_spectra).
 
 ```julia
 julia> f = (6:6:18) * Hz; Θ = (120:120:360) * °;

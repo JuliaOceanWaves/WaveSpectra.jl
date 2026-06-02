@@ -3,6 +3,7 @@ using DocumenterCitations
 using WaveSpectra
 using Unitful
 using DimensionfulAngles
+using AxisArrays
 
 ENV["UNITFUL_FANCY_EXPONENTS"] = true
 bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
@@ -27,6 +28,7 @@ makedocs(
 		"API" => "api.md",
 	],
 	plugins = [bib],
+	warnonly = true,
 )
 
 deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git")
