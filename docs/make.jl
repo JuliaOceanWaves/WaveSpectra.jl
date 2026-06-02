@@ -8,7 +8,7 @@ ENV["UNITFUL_FANCY_EXPONENTS"] = true
 bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 
 function regex_match(regex, x)
-	return !isnothing(match(regex, string(x)))
+    return !isnothing(match(regex, string(x)))
 end
 
 makedocs(
