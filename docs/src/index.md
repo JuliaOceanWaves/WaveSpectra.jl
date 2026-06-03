@@ -15,9 +15,9 @@ usage details and examples of _WaveSpectra.jl's_ capabilities. Including:
     - In cartesian coordinates
     - In polar coordinates
 - [Omnidirectional wave spectra](@ref omnidir_spectra)
-- Functions for characterization
+- [Functions for characterization](@ref spectra_funcs)
 - [Parametric wave spectra](@ref param_spectra)
-- and other auxilary functions
+- and [other auxilary functions](@ref other_funcs)
 
 ## [Supported Spectral-Variables](@id spectral_var_cube)
 

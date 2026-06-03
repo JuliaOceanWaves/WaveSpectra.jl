@@ -1,0 +1,1 @@
+# [Spectra Functions](@id spectra_funcs)

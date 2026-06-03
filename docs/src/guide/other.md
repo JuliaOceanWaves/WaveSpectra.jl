@@ -1,4 +1,4 @@
-# Other Capabilities
+# [Other Capabilities](@id other_funcs)
 
 ## [Parametric Spectra](@id param_spectra)
 

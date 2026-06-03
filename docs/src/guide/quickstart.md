@@ -1,16 +1,37 @@
 # Quickstart
 
-## Intro
+## Introduction
+
+You can construct a [Spectrum](@ref WaveSpectra.Spectrum) by passing a matrix and two axes 
+with units. The axes can both be spectral variables for a cartesian spectrum or 
+only one is a direction for a polar spectrum, below is an example of the cartesian spectrum.
+
+```julia
+julia> x1 = (1.0:4.0) .* Hz; x2 = (1.0:4.0) .* °;
+
+julia> S = Spectrum(ones(Float64, (4,4)) .* m^2, x1, x2)
+4×4 Spectrum{m²}{Hz}{°}
+Spectral density of the quantity (° Hz m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m²):
+ 1.0  1.0  1.0  1.0
+ 1.0  1.0  1.0  1.0
+ 1.0  1.0  1.0  1.0
+ 1.0  1.0  1.0  1.0
+```
+
+## Unit Compatibility
 
 Leveraging [AxisArrays.jl](https://juliaarrays.github.io/AxisArrays.jl/latest/)
-we store additional information such as the 
+we store additional information like the 
 [Unitful.jl](https://juliaphysics.github.io/Unitful.jl/stable/)
 and [DimensionfulAngles.jl](https://juliaoceanwaves.github.io/DimensionfulAngles.jl/stable/)
 quantities. This helps preserve the units across transformations and ensure that all
 operations respect the units of the data. DimensionfulAngles extends the functionality of
-Unitful quantities to angles and this package leverages that functionality to ensure 
-consistency when dealing with wave spectra. Below is an example of the former; normally 
-Unitful would not correctly handle the conversion from _degrees_ to _radians_ as they are 
+Unitful quantities to angles and this package uses that functionality to ensure 
+consistency when dealing with wave spectra. Below is an example of the former; Unitful 
+normally would not handle correctly the conversion from _degrees_ to _radians_ as they are 
 both considered unitless.
 
 ```julia
@@ -42,8 +63,6 @@ and data(m² Hz⁻¹ rad⁻¹):
  57.29577951308232  57.29577951308232  57.29577951308232
  57.29577951308232  57.29577951308232  57.29577951308232
 ```
-
-## Conversions
 
 In scenarios where the user is working with multiple spectra, this package will handle
 conversions when appropriate:
@@ -150,26 +169,65 @@ julia> WaveSpectra.Moments.energy_frequency(S_omni)
 2.0 Hz
 ```
 
+
 ## Other Functions
 
-This package also includes a few functions to create a parametric spectra.
+This package also includes a few functions to create a omnidirectional parametric spectra.
 
 ```julia
-julia> f = (1.0:10.0) .* Hz;
+julia> f = (1.0:0.5:10.0) .* Hz;
 
-julia> WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz(f, 8.0 * m, 4.0 * Hz)
-10-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+julia> PM = WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz(f, 8.0 * m, 4.0 * Hz, peak_frequency=true)
+19-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
 Spectral density of the quantity (m²):
   • Axis: Frequency (Hz)
 and data(m² Hz⁻¹):
  1.3423912370794646e-72
+ 4.849071845233627e-13
  0.001701611389553719
+ 0.335309891337633
  1.3421276585162367
- 1.376317426592531
- 0.6727667924496734
- 0.3121398175430826
- 0.1535891690462104
+ 1.6633580565889663
+ ⋮
  0.08116740160851418
+ 0.0604917892588704
  0.045764352079589225
+ 0.035103816684478595
  0.02727015323859412
+
+julia> plot(PM)
+```
+![pm_spectra](../assets/pm_spectra.png)
+
+## [Syntax](@ref intro_syntax)
+
+  - [Spectrum](@ref intro_syntax)
+  - [Units](@ref units_syntax)
+  - [Characterization](@ref char_syntax)
+  - [Other](@ref param_syntax)
+
+```@autodocs; canonical=false
+Modules = [WaveSpectra]
+Filter = x -> (regex_match(r"Spectrum", x) && !regex_match(r"Omni", x))
+```
+
+### [Syntax for Units](@ref units_syntax)
+
+```@docs; canonical=false
+WaveSpectra.uconvert
+WaveSpectra.unit
+```
+
+### [Syntax for Characterization Methods](@ref char_syntax)
+
+```@autodocs; canonical=false
+Modules = [WaveSpectra.Moments]
+Order   = [:function, :type]
+```
+
+### [Syntax for Parametric Spectra](@ref param_syntax)
+
+```@autodocs; canonical=false
+Modules = [WaveSpectra.ParametricSpectra]
+Order   = [:function, :type]
 ```
