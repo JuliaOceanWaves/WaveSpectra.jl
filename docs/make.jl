@@ -31,4 +31,6 @@ makedocs(
 	warnonly = true,
 )
 
-deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git")
+deploydocs(; repo = "github.com/JuliaOceanWaves/WaveSpectra.jl.git",
+    push_preview = true,
+    versions = ["latest" => "v^", "v#"])
