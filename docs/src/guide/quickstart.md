@@ -131,7 +131,8 @@ linear/angular combinations. Represented as a diagram [here](@ref spectral_var_c
 ## Characterization
 
 This package also includes a few functions to characterize ocean wave spectra both for 
-[directional spectra](@ref dir_spectra) and [omnidirectional spectra](@ref omnidir_spectra).
+[directional spectra](@ref directional_spectra) and 
+[omnidirectional spectra](@ref omnidirectional_spectra).
 
 ```julia
 julia> f = (6:6:18) * Hz; Θ = (120:120:360) * °;
@@ -199,33 +200,33 @@ julia> plot(PM)
 ```
 ![pm_spectra](../assets/pm_spectra.png)
 
-## [Syntax](@ref intro_syntax)
+## [Syntax](@id intro_syntax)
 
   - [Spectrum](@ref intro_syntax)
-  - [Units](@ref units_syntax)
-  - [Characterization](@ref char_syntax)
-  - [Other](@ref param_syntax)
+  - [Units](@ref units_intro_syntax)
+  - [Characterization](@ref charecterization_syntax)
+  - [Other](@ref parametricspectra_syntax)
 
 ```@autodocs; canonical=false
 Modules = [WaveSpectra]
 Filter = x -> (regex_match(r"Spectrum", x) && !regex_match(r"Omni", x))
 ```
 
-### [Syntax for Units](@ref units_syntax)
+### [Syntax for Units](@id units_intro_syntax)
 
 ```@docs; canonical=false
 WaveSpectra.uconvert
 WaveSpectra.unit
 ```
 
-### [Syntax for Characterization Methods](@ref char_syntax)
+### [Syntax for Characterization Methods](@id charecterization_syntax)
 
 ```@autodocs; canonical=false
 Modules = [WaveSpectra.Moments]
 Order   = [:function, :type]
 ```
 
-### [Syntax for Parametric Spectra](@ref param_syntax)
+### [Syntax for Parametric Spectra](@id parametricspectra_syntax)
 
 ```@autodocs; canonical=false
 Modules = [WaveSpectra.ParametricSpectra]

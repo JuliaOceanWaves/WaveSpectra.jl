@@ -9,7 +9,7 @@ to ensure the units of the data are respected in operations and conversions. The
 spectral-variables types are temporal/spatial, frequency/period, and linear/angular 
 combinations. Represented as a diagram [here](@ref spectral_var_cube).
 
-## [Directional Spectra](@id dir_spectra)
+## [Directional Spectra](@id directional_spectra)
 
 You can construct a [Spectrum](@ref WaveSpectra.Spectrum) using an AxisArray matrix given 
 that there are exactly two axes and both are spectral variables for a cartesian spectrum or 
@@ -65,7 +65,9 @@ and data(m²):
  1.0  1.0  1.0  1.0
 ```
 
-## [Omnidirectional Spectra](@id omnidir_spectra)
+Please refer to the full syntax for each function [here](@ref directional_syntax).
+
+## [Omnidirectional Spectra](@id omnidirectional_spectra)
 
 You can construct an [OmnidirectionalSpectrum](@ref WaveSpectra.OmnidirectionalSpectrum)
 using two vectors with units.
@@ -138,19 +140,21 @@ and data(m²):
  4.0  5.0  6.0  7.0
 ```
 
-## [Syntax](@ref spectra_syntax)
+Please refer to the full syntax for each function [here](@ref omnidirectional_syntax).
 
-  - [Directional Spectra](@ref dir_syntax)
-  - [Omnidirectional Spectra](@ref omni_syntax)
+## Syntax
+
+  - [Directional Spectra](@ref directional_syntax)
+  - [Omnidirectional Spectra](@ref omnidirectional_syntax)
   - [Units](@ref unit_spectra_syntax)
 
-### [Directional Spectra](@id dir_syntax)
+### [Directional Spectra](@id directional_syntax)
 ```@autodocs; canonical=false
 Modules = [WaveSpectra]
 Filter = x -> (regex_match(r"Spectrum", x) && !regex_match(r"Omni", x))
 ```
 
-### [Omnidirectional Spectra](@id omni_syntax)
+### [Omnidirectional Spectra](@id omnidirectional_syntax)
 ```@autodocs; canonical=false
 Modules = [WaveSpectra]
 Filter = x -> (regex_match(r"Spectrum", x) && regex_match(r"Omni", x))

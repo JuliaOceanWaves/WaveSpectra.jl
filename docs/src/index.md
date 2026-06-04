@@ -11,12 +11,12 @@ for cartesian and polar spectra, omnidirectional spectra, and some parametric sp
 The [Package Guide](@ref Quickstart) is the main documentation for the package and includes
 usage details and examples of _WaveSpectra.jl's_ capabilities. Including:
 
-- [Directional wave spectra](@ref dir_spectra)
+- [Directional wave spectra](@ref directional_spectra)
     - In cartesian coordinates
     - In polar coordinates
-- [Omnidirectional wave spectra](@ref omnidir_spectra)
-- [Functions for characterization](@ref spectra_funcs)
-- [Parametric wave spectra](@ref param_spectra)
+- [Omnidirectional wave spectra](@ref omnidirectional_spectra)
+- [Functions for characterization](@ref spectra_functions)
+- [Parametric wave spectra](@ref parametric_spectra)
 - and [other auxilary functions](@ref other_funcs)
 
 ## [Supported Spectral-Variables](@id spectral_var_cube)
