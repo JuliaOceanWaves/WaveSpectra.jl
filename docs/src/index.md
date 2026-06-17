@@ -8,16 +8,16 @@ for cartesian and polar spectra, omnidirectional spectra, and some parametric sp
 
 ## Package Guide
 
-The [Package Guide](@ref Quickstart) is the main documentation for the package and includes
+The [Package Guide](@ref quickstart) is the main documentation for the package and includes
 usage details and examples of _WaveSpectra.jl's_ capabilities. Including:
 
 - [Directional wave spectra](@ref directional_spectra)
     - In cartesian coordinates
     - In polar coordinates
 - [Omnidirectional wave spectra](@ref omnidirectional_spectra)
-- [Functions for characterization](@ref spectra_functions)
+- [Functions for characterization](@ref moments)
 - [Parametric wave spectra](@ref parametric_spectra)
-- and [other auxilary functions](@ref other_funcs)
+- and [other auxilary functions](@ref spectral_shapes)
 
 ## [Supported Spectral-Variables](@id spectral_var_cube)
 
@@ -25,7 +25,7 @@ As part of the unit-aware capabilities, the tool only accepts the following
 spectral-variables types: temporal/spatial, frequency/period, and linear/angular 
 combinations. Represented below:
 
-![dispersion_cube_sample](./assets/Commutative_diagram_of_harmonic_wave_properties.svg)
+![index_dispersion_cube](./assets/Commutative_diagram_of_harmonic_wave_properties.svg)
 
 ## Reference
 

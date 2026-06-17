@@ -1,6 +1,69 @@
-# [Other Capabilities](@id other_funcs)
+# Extended Functionality
 
-## [Parametric Spectra](@id parametric_spectra)
+## Dispersion Relations
+
+
+The DispersionRelation.jl submodule contains the dispersion relations for linear interfacial
+waves. Currently only gravity wave dispersion relations are implemented.
+
+!!! note
+
+    We use phase velocity ($V_p$)
+
+See also [https://en.wikipedia.org/wiki/Dispersion\_(water_waves)](https://en.wikipedia.org/wiki/Dispersion_(water_waves)) 
+for more information on dispersion.
+
+```julia
+
+julia> x = (1.0:3:10.0) * Hz;
+
+julia> S = OmnidirectionalSpectrum(([1.0, 6.0, 3.0, 2.0])*m^2/Hz, x)
+4-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 6.0
+ 3.0
+ 2.0
+
+julia> uconvert(rad/m, :axis, S, WaveSpectra.DispersionRelations.gravitywaves_deepwater())
+4-element OmnidirectionalSpectrum{m³ rad⁻¹}{rad m⁻¹}
+Spectral density of the quantity (m²):
+  • Axis: Angular Wavenumber (rad m⁻¹)
+and data(m³ rad⁻¹):
+ 0.12420267319576646
+ 0.1863040097936497
+ 0.053229717083899904
+ 0.02484053463915329
+
+julia> uconvert(rad/m, :axis, S, WaveSpectra.DispersionRelations.gravitywaves_shallowwater(3m))
+4-element OmnidirectionalSpectrum{m³ rad⁻¹}{rad m⁻¹}
+Spectral density of the quantity (m²):
+  • Axis: Angular Wavenumber (rad m⁻¹)
+and data(m³ rad⁻¹):
+ 0.863258964143784
+ 5.179553784862704
+ 2.589776892431352
+ 1.726517928287568
+
+julia> uconvert(rad/m, :axis, S, WaveSpectra.DispersionRelations.gravitywaves(3m))
+4-element OmnidirectionalSpectrum{m³ rad⁻¹}{rad m⁻¹}
+Spectral density of the quantity (m²):
+  • Axis: Angular Wavenumber (rad m⁻¹)
+and data(m³ rad⁻¹):
+ 0.12420267338189336
+ 0.1863040097936497
+ 0.053229717083899904
+ 0.02484053463915329
+
+```
+
+Please refer to the full syntax for each function [here](@ref dispersion_relation_syntax).
+
+
+## [Parametric Spectra](@id parametric_spectra) 
+
 
 Brief description of parametric spectrum
 
@@ -83,7 +146,44 @@ and data(m °⁻¹):
 
 Please refer to the full syntax for each function [here](@ref parametric_spectra_syntax).
 
-## [Spectral Shape](@id spectral_shape)
+
+## [Moments](@id moments)
+
+
+The following examples are different functions used in literature for characterizing 
+spectra. 
+
+```julia
+julia> x = (1.0:3:10.0) * Hz; S = OmnidirectionalSpectrum(([1.0, 6.0, 3.0, 2.0])*m^2, x);
+
+julia> WaveSpectra.Moments.moment(S, 0)
+31.5 m²
+
+julia> WaveSpectra.Moments.energy_frequency(S)
+4.152542372881356 Hz
+
+julia> WaveSpectra.Moments.mean_frequency(S)
+5.285714285714286 Hz
+
+julia> WaveSpectra.Moments.mean_wavelength(S)
+0.09051335476420994 m
+
+julia> WaveSpectra.Moments.significant_waveheight(S)
+22.44994432064365 m
+
+julia> WaveSpectra.Moments.steepness(S)
+248.02908232852977
+
+julia> WaveSpectra.Moments.zero_crossing_frequency(S)
+5.719640348333601 Hz
+
+```
+
+Please refer to the full syntax for each function [here](@ref moments_syntax).
+
+## [Spectral Shapes](@id spectral_shapes)
+
+Spectral Shape
 
 ```julia
 julia> S = [1.0, 2.0, 3.5, 1.0, 0.5]*m^2; f = (1.0:1.0:5.0)*Hz;
@@ -125,9 +225,23 @@ and data(m² Hz⁻¹):
 ```
 
 
-Please refer to the full syntax for each function [here](@ref spectral_shape_syntax).
+Please refer to the full syntax for each function [here](@ref spectral_shapes_syntax).
+
 
 ## Syntax
+
+  - [Dispersion Relation](@ref dispersion_relation_syntax)
+  - [Parametric Spectra](@ref parametric_spectra_syntax)
+  - [Moments](@ref moments_syntax)
+  - [Spectral Shapes](@ref spectral_shapes_syntax)
+
+
+### [Dispersion Relation](@id dispersion_relation_syntax)
+
+```@autodocs; canonical=false
+Modules = [WaveSpectra.DispersionRelations]
+Order = [:function]
+```
 
 ### [Parametric Spectra](@id parametric_spectra_syntax)
 
@@ -136,7 +250,14 @@ Modules = [WaveSpectra.ParametricSpectra]
 Order = [:function, :type]
 ```
 
-### [Spectral Shape](@id spectral_shape_syntax)
+### [Moments](@id moments_syntax)
+
+```@autodocs; canonical=false
+Modules = [WaveSpectra.Moments]
+Order = [:function]
+```
+
+### [Spectral Shape](@id spectral_shapes_syntax)
 
 ```@autodocs; canonical=false
 Modules = [WaveSpectra.Shapes]

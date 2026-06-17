@@ -6,6 +6,7 @@ using DimensionfulAngles
 using AxisArrays
 
 ENV["UNITFUL_FANCY_EXPONENTS"] = true
+DocMeta.setdocmeta!(WaveSpectra, :DocTestSetup, :(using WaveSpectra); recursive = true)
 bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 
 function regex_match(regex, x)
@@ -22,10 +23,9 @@ makedocs(
 	modules = [WaveSpectra],
 	pages = [
 		"Home" => "index.md",
-		"Package Guide" => ["Quickstart" => "guide/quickstart.md",
-			"Spectra" => "guide/spectra.md",
-			"Working with Spectra" => "guide/spectra_funcs.md",
-			"Other Functions" => "guide/other.md"],
+		"Quickstart" => "quickstart.md",
+		"Basic Functionality" => "basic_func.md",
+		"Extended Funcitonality" => "extended_func.md",
 		"API" => "api.md",
 	],
 	plugins = [bib],
