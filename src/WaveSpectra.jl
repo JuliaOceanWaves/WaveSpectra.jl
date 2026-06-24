@@ -13,8 +13,7 @@ using Unitful: Dimensions, FreeUnits, NoDims, Quantity, Units, dimension, gn as 
                m, s, ustrip, 𝐋, 𝐓
 using DimensionfulAngles: Dispersion, turnᵃ as τ, θ₀, 𝐀
 using DimensionfulAngles.DefaultSymbols: rad, °
-using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule,
-                 UniformWeights, solve
+using Integrals: AbstractSampledIntegralAlgorithm, TrapezoidalRule, UniformWeights
 using AxisArrays: Axis, AxisArray, ClosedInterval, axisvalues, (..)
 using Plots: mm as plots_mm, text, @recipe
 using PrettyTables: HtmlTableStyle, pretty_table

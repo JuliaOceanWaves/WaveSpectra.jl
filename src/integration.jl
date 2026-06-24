@@ -201,13 +201,49 @@ function _solve_sampled_integral(data, axis;
         method::AbstractSampledIntegralAlgorithm,
         dim::Union{Nothing, Int} = nothing
 )
-    problem = isnothing(dim) ? SampledIntegralProblem(data, axis) :
-              SampledIntegralProblem(data, axis; dim)
-    sol = solve(problem, method)
-    if Int(sol.retcode) ≠ 1
-        throw(ProcessFailedException("Integration failed with return code: $(sol.retcode)"))
+    weights = find_weights(axis, method)
+    return isnothing(dim) ? _evaluate_sampled_integral(data, weights) :
+           _evaluate_sampled_integral(data, weights, dim)
+end
+
+function _evaluate_sampled_integral(data::AbstractVector, weights)
+    (length(data) == length(weights)) ||
+        throw(DimensionMismatch("Data and integration weights must have the same length."))
+
+    weighted_data = zip(data, weights)
+    next = iterate(weighted_data)
+    isnothing(next) && throw(ArgumentError("No points to integrate."))
+
+    (value, weight), state = next
+    out = weight * value
+    next = iterate(weighted_data, state)
+    while !isnothing(next)
+        (value, weight), state = next
+        out += weight * value
+        next = iterate(weighted_data, state)
     end
-    return sol.u
+    return out
+end
+
+function _evaluate_sampled_integral(data::AbstractArray, weights, dim::Int)
+    ((1 <= dim) && (dim <= ndims(data))) ||
+        throw(ArgumentError("Invalid integration dimension."))
+    (size(data, dim) == length(weights)) ||
+        throw(DimensionMismatch("Data and integration weights must have the same length."))
+
+    weighted_slices = zip(eachslice(data; dims = dim), weights)
+    next = iterate(weighted_slices)
+    isnothing(next) && throw(ArgumentError("No points to integrate."))
+
+    (slice, weight), state = next
+    out = weight .* slice
+    next = iterate(weighted_slices, state)
+    while !isnothing(next)
+        (slice, weight), state = next
+        out .+= weight .* slice
+        next = iterate(weighted_slices, state)
+    end
+    return out
 end
 
 function _only_axis(x::AxisArray)

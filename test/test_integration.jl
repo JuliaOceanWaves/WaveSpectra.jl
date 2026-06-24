@@ -1,5 +1,6 @@
 using AxisArrays
 using DimensionfulAngles.DefaultSymbols
+using Integrals: SampledIntegralProblem, solve
 using Test
 using WaveSpectra
 
@@ -12,14 +13,20 @@ S_polar = Spectrum(data_polar, f, θ)
 
 # Integrating over direction returns the omnidirectional spectrum.
 omni = integrate(S_polar, :axis2)
+manual_omni_data = ((data_polar[:, 1] .+ data_polar[:, end]) .* (step(θ) / 2)) .+
+                   vec(sum(data_polar[:, 2:(end - 1)]; dims = 2)) .* step(θ)
 @test omni isa OmnidirectionalSpectrum
+@test omni.data ≈ manual_omni_data
 @test omni ≈ integrate(S_polar, :direction)
 @test omni ≈ OmnidirectionalSpectrum(S_polar)
 
 # Integrating over frequency
 directional = @test_logs (:warn, r"function of direction") integrate(S_polar, :axis1)
+manual_directional = ((data_polar[1, :] .+ data_polar[end, :]) .* (step(f) / 2)) .+
+                     vec(sum(data_polar[2:(end - 1), :]; dims = 1)) .* step(f)
 @test directional isa AxisArray
 @test axisvalues(directional) == (θ,)
+@test directional ≈ manual_directional
 @test directional ≈
       [integrate(OmnidirectionalSpectrum(data_polar[:, j], f)) for j in eachindex(θ)]
 @test directional ==
@@ -96,8 +103,10 @@ spec_x_sub = @test_logs (:warn, r"marginal spectrum") match_mode=:any integrate(
 # Rectangular integration
 rect_omni = integrate(omni_manual; method = RectangularRule())
 rect_range = integrate(omni_manual, (2, 4); method = RectangularRule())
+rect_solution = solve(SampledIntegralProblem(omni_manual.data, f), RectangularRule())
 @test rect_omni ≈ sum(omni_manual.data) * step(f)
 @test rect_range ≈ sum(omni_manual.data[2:4]) * step(f)
+@test rect_solution.u ≈ rect_omni
 @test integrate(S_polar, :axis2; method = RectangularRule()).data ≈
       vec(sum(data_polar; dims = 2) .* step(θ))
 weights_range = WaveSpectra.find_weights(1:4, RectangularRule())
@@ -107,3 +116,6 @@ weights_vec = WaveSpectra.find_weights(collect(f), RectangularRule())
 @test weights_range[1] == 1
 @test weights_vec[1] == step(f)
 @test_throws ArgumentError WaveSpectra.find_weights([1, 2, 4], RectangularRule())
+nonuniform_omni = OmnidirectionalSpectrum([1.0, 2.0, 3.0] .* (m^2 / Hz),
+    [0.1, 0.2, 0.4] .* Hz)
+@test_throws ArgumentError integrate(nonuniform_omni; method = RectangularRule())
