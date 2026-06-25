@@ -174,7 +174,6 @@ end
 Rectangular integration method for evenly spaced samples.
 
 Every sample has a weight equal to the sample spacing.
-Meant to work with `SampledIntegralProblem` from the `Integrals.jl` package.
 """
 struct RectangularRule <: AbstractSampledIntegralAlgorithm end
 
@@ -184,6 +183,24 @@ struct RectangularUniformWeights{T} <: UniformWeights
 end
 
 @inline Base.getindex(w::RectangularUniformWeights, i) = w.h
+@inline Base.length(w::RectangularUniformWeights) = w.n
+@inline function Base.iterate(w::RectangularUniformWeights, i = 1)
+    return i > w.n ? nothing : (w.h, i + 1)
+end
+
+function find_weights(x::AbstractVector, ::TrapezoidalRule)
+    n = length(x)
+    (n == 0) && throw(ArgumentError("No points to integrate."))
+    (n == 1) && return [zero(x[1] - x[1])]
+
+    weights = Vector{typeof((x[2] - x[1]) / 2)}(undef, n)
+    weights[1] = (x[2] - x[1]) / 2
+    for i in 2:(n - 1)
+        weights[i] = (x[i + 1] - x[i - 1]) / 2
+    end
+    weights[end] = (x[end] - x[end - 1]) / 2
+    return weights
+end
 
 function find_weights(x::AbstractVector, ::RectangularRule)
     (x isa AbstractRange) && return RectangularUniformWeights(length(x), step(x))
@@ -193,7 +210,6 @@ function find_weights(x::AbstractVector, ::RectangularRule)
     else
         throw(ArgumentError("Integrand must be evenly spaced."))
     end
-    return TrapezoidalNonuniformWeights(x)
 end
 
 # utilities
