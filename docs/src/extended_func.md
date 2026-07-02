@@ -8,7 +8,9 @@ waves. Currently only gravity wave dispersion relations are implemented.
 
 !!! note
 
-    We use phase velocity ($V_p$)
+    When building the struct to properly convert units we ask for the dispersion relation 
+    ($\Omega(k)$), but this is simply preference over phase velocity ($V_p$) or group
+    velocity ($V_g$)
 
 See also [https://en.wikipedia.org/wiki/Dispersion\_(water_waves)](https://en.wikipedia.org/wiki/Dispersion_(water_waves)) 
 for more information on dispersion.
@@ -67,6 +69,7 @@ Please refer to the full syntax for each function [here](@ref dispersion_relatio
 
 Brief description of parametric spectrum
 
+[pierson_moskowitz](@cite) [Hasselmann1973](@cite)
 ```julia
 julia> f = (1.0:0.5:10.0) .* Hz;
 
@@ -150,7 +153,7 @@ Please refer to the full syntax for each function [here](@ref parametric_spectra
 ## [Moments](@id moments)
 
 
-The following examples are different functions used in literature for characterizing 
+The following examples are different functions used in literature for characterizing wave
 spectra. 
 
 ```julia
@@ -183,7 +186,10 @@ Please refer to the full syntax for each function [here](@ref moments_syntax).
 
 ## [Spectral Shapes](@id spectral_shapes)
 
-Spectral Shape
+Spectral shape was described in Mackay[MACKAY201617](@cite) after normalizing 
+omnidirectional wave spectra to have a significant waveheight ($H_S$) and ($T_e$) of 1.
+These were leveraged in a different paper[autoencoder2025](@cite) that used normalized 
+spectra to train a neural network architecture.
 
 ```julia
 julia> S = [1.0, 2.0, 3.5, 1.0, 0.5]*m^2; f = (1.0:1.0:5.0)*Hz;
@@ -227,6 +233,10 @@ and data(m² Hz⁻¹):
 
 Please refer to the full syntax for each function [here](@ref spectral_shapes_syntax).
 
+## References
+
+```@bibliography
+```
 
 ## Syntax
 
