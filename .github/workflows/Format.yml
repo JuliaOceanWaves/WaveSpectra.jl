@@ -1,4 +1,4 @@
-name: Format suggestions
+name: JuliaFormatter suggestions
 on:
   pull_request:
     branches:
@@ -6,7 +6,10 @@ on:
 jobs:
   code-style:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: julia-actions/julia-format@v4
         with:
-          version: '2'
+          version: '2.2'
