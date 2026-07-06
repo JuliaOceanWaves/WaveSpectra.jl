@@ -201,6 +201,10 @@ function _solve_sampled_integral(data, axis;
         method::AbstractSampledIntegralAlgorithm,
         dim::Union{Nothing, Int} = nothing
 )
+    # TODO: This is a workaround for Integrals.jl Issue #341
+    if data isa AbstractMatrix && dim == ndims(data)
+        return _solve_sampled_integral_matrix_lastdim(data, axis, method)
+    end
     problem = isnothing(dim) ? SampledIntegralProblem(data, axis) :
               SampledIntegralProblem(data, axis; dim)
     sol = solve(problem, method)
@@ -208,6 +212,20 @@ function _solve_sampled_integral(data, axis;
         throw(ProcessFailedException("Integration failed with return code: $(sol.retcode)"))
     end
     return sol.u
+end
+
+# TODO: This is a workaround for Integrals.jl Issue #341.
+# Revert to solve(SampledIntegralProblem(...)) directly once Integrals initializes its
+# matrix accumulator with the result type.
+function _solve_sampled_integral_matrix_lastdim(data::AbstractMatrix, axis, method)
+    n = size(data, 2)
+    n == 0 && throw(ArgumentError("No points to integrate"))
+    weights = find_weights(axis, method)
+    out = weights[1] .* @view(data[:, 1])
+    @inbounds for i in 2:n
+        out .+= weights[i] .* @view(data[:, i])
+    end
+    return out
 end
 
 function _only_axis(x::AxisArray)

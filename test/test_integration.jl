@@ -100,6 +100,8 @@ rect_range = integrate(omni_manual, (2, 4); method = RectangularRule())
 @test rect_range ≈ sum(omni_manual.data[2:4]) * step(f)
 @test integrate(S_polar, :axis2; method = RectangularRule()).data ≈
       vec(sum(data_polar; dims = 2) .* step(θ))
+@test WaveSpectra._solve_sampled_integral(ones(2, 3), (0:2) .* m;
+    method = WaveSpectra.TrapezoidalRule(), dim = 2) ≈ [2m, 2m]
 weights_range = WaveSpectra.find_weights(1:4, RectangularRule())
 weights_vec = WaveSpectra.find_weights(collect(f), RectangularRule())
 @test weights_range isa WaveSpectra.RectangularUniformWeights
