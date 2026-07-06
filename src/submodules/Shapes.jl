@@ -10,7 +10,7 @@ using ..WaveSpectra: AbstractOmnidirectionalSpectrum, Dispersion, Omnidirectiona
 using ..WaveSpectra.Moments: energy_frequency, moment, significant_waveheight
 using Unitful: Hz, Length, NoUnits, Quantity, unit
 
-import ..WaveSpectra: axestypes
+import ..WaveSpectra: OmnidirectionalSpectrum, axestypes
 import ..WaveSpectra.Moments: energy_frequency
 
 export OmnidirectionalSpectrumShape, scale
