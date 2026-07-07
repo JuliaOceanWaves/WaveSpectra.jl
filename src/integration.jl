@@ -187,7 +187,8 @@ end
 
 function find_weights(x::AbstractVector, ::RectangularRule)
     (x isa AbstractRange) && return RectangularUniformWeights(length(x), step(x))
-    x_range = _convert_to_range(x)
+    length(x) < 2 && throw(ArgumentError("Integrand must be evenly spaced."))
+    x_range = range(first(x), stop = last(x), step = x[2] - x[1])
     if (length(x) == length(x_range)) && isapprox(x, x_range)
         return RectangularUniformWeights(length(x_range), step(x_range))
     else

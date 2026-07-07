@@ -65,7 +65,7 @@ function uconvert(
     p2 === nothing || (data = data[:, p2])
     # data
     data = uconvert.(uq / (u1 * u2), data ./ g1 ./ (g2'))
-    return _rebuild_spectrum(x, data, axis1, axis2)
+    return rebuild_superposition(x, data, axis1, axis2)
 end
 
 function uconvert(
@@ -136,7 +136,7 @@ function uconvert(
     data = x.data
     p === nothing || (data = data[p])
     data = uconvert.(uq / uax, data ./ g1)
-    return _rebuild_spectrum(x, data, axis)
+    return rebuild_superposition(x, data, axis)
 end
 
 function uconvert(

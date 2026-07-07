@@ -12,7 +12,7 @@ Directional spread function corresponding to the polar spectrum `x`.
 """
 function spread_function(x::AbstractSpectrum)
     data = x ./ OmnidirectionalSpectrum(x)
-    return _rebuild_spectrum(x, data, AxisArrays.axes(x)...)
+    return rebuild_superposition(x, data, AxisArrays.axes(x)...)
 end
 
 """
@@ -28,7 +28,7 @@ function Spectrum(omni::AbstractOmnidirectionalSpectrum, spread::AbstractSpectru
         "Spectral-variable axis does not match between omnidirectional spectrum and " *
         "spread function."
     ))
-    return _rebuild_spectrum(spread, spread.data .* omni.data, AxisArrays.axes(spread)...)
+    return rebuild_superposition(spread, spread.data .* omni.data, AxisArrays.axes(spread)...)
 end
 
 """
