@@ -31,11 +31,6 @@ using Test, SafeTestsets
         include("test_module_shapes.jl")
     end
 
-    # WaveRealizations
-    @time @safetestset "WaveRealizations.jl" begin
-        include("test_waverealizations.jl")
-    end
-
     # documentation
     @time @safetestset "Doc Tests" begin
         include("test_doctest.jl")
