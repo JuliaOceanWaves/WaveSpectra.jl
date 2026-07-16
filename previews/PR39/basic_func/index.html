@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Basic Functionality · WaveSpectra.jl</title><meta name="title" content="Basic Functionality · WaveSpectra.jl"/><meta property="og:title" content="Basic Functionality · WaveSpectra.jl"/><meta property="twitter:title" content="Basic Functionality · WaveSpectra.jl"/><meta name="description" content="Documentation for WaveSpectra.jl."/><meta property="og:description" content="Documentation for WaveSpectra.jl."/><meta property="twitter:description" content="Documentation for WaveSpectra.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/citations.css" rel="stylesheet" type="text/css"/><link href="../assets/images.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">WaveSpectra.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../quickstart/">Quickstart</a></li><li class="is-active"><a class="tocitem" href>Basic Functionality</a><ul class="internal"><li><a class="tocitem" href="#directional_spectra"><span>Directional Spectra</span></a></li><li><a class="tocitem" href="#omnidirectional_spectra"><span>Omnidirectional Spectra</span></a></li><li><a class="tocitem" href="#Other-Spectra-Functions"><span>Other Spectra Functions</span></a></li><li><a class="tocitem" href="#Syntax"><span>Syntax</span></a></li></ul></li><li><a class="tocitem" href="../extended_func/">Extended Funcitonality</a></li><li><a class="tocitem" href="../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Basic Functionality</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Basic Functionality</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/main/docs/src/basic_func.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Basic-Functionality"><a class="docs-heading-anchor" href="#Basic-Functionality">Basic Functionality</a><a id="Basic-Functionality-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-Functionality" title="Permalink"></a></h1><p>This package leverages <a href="https://juliaarrays.github.io/AxisArrays.jl/latest/">AxisArrays.jl</a> for the structure of the data and both  <a href="https://juliaphysics.github.io/Unitful.jl/stable/">Unitful.jl</a> and  <a href="https://juliaoceanwaves.github.io/DimensionfulAngles.jl/stable/">DimensionfulAngles.jl</a> to ensure the units of the data are respected in operations and conversions. The accepted spectral-variable types are temporal/spatial, frequency/period, and linear/angular  combinations. Represented as a diagram below.</p><p><img src="../assets/Commutative_diagram_of_harmonic_wave_properties.svg" alt="dispersion_cube"/></p><h2 id="directional_spectra"><a class="docs-heading-anchor" href="#directional_spectra">Directional Spectra</a><a id="directional_spectra-1"></a><a class="docs-heading-anchor-permalink" href="#directional_spectra" title="Permalink"></a></h2><p><a href="../api/#WaveSpectra.Spectrum">Spectrum</a> objects are directional wave spectra that can be initialized using an AxisArray matrix with exactly two axes. The axes must both be spectral variables for a cartesian spectrum or only one should be a direction for a polar spectrum.  Alternatively you can pass both axes as vectors directly into the constructor. Below is an  example for creating a spectra with and without AxisArrays.</p><pre><code class="language-julia hljs">julia&gt; using WaveSpectra, DimensionfulAngles
+
+julia&gt; f = (6:6:18) * Hz
+(6:6:18) Hz
+
+julia&gt; Θ = (120:120:360) * °
+(120:120:360)°
+
+julia&gt; S = Spectrum(ones(Float64, (3, 3)) * m^2/Hz/°, f, Θ)
+3×3 Spectrum{m² °⁻¹ Hz⁻¹}{Hz}{°}
+Spectral density of the quantity (m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m² °⁻¹ Hz⁻¹):
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+
+julia&gt; A = AxisArray(ones(Float64, (3,3)) * m^2/Hz/°, f, Θ)
+2-dimensional AxisArray{Unitful.Quantity{Float64, 𝐋² 𝐓 𝐀⁻¹, Unitful.FreeUnits{(°⁻¹, Hz⁻¹, m²), 𝐋² 𝐓 𝐀⁻¹, nothing}},2,...} with axes:
+    :row, (6:6:18) Hz
+    :col, (120:120:360)°
+And data, a 3×3 Matrix{Unitful.Quantity{Float64, 𝐋² 𝐓 𝐀⁻¹, Unitful.FreeUnits{(°⁻¹, Hz⁻¹, m²), 𝐋² 𝐓 𝐀⁻¹, nothing}}}:
+ 1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹
+ 1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹
+ 1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹  1.0 m² °⁻¹ Hz⁻¹
+
+julia&gt; S = Spectrum(A)
+3×3 Spectrum{m² °⁻¹ Hz⁻¹}{Hz}{°}
+Spectral density of the quantity (m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m² °⁻¹ Hz⁻¹):
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0</code></pre><p>You can also use a package like <a href="https://juliaoceanwaves.github.io/BuoyData.jl">BuoyData.jl</a> that downloads data from the <a href="https://www.ndbc.noaa.gov/">National Data Buoy Center</a> and converts them into Spectrum objects.</p><pre><code class="language-julia hljs">julia&gt; buoy = 46050; year = 2025;
+
+julia&gt; available_pacwave = NDBC.available(buoy, :spectrum; retries = 1)
+18×2 DataFrame
+ Row │ year   b_file
+     │ Int64  Bool
+─────┼───────────────
+   1 │  2008   false
+   2 │  2009   false
+   3 │  2010   false
+    ...
+  16 │  2023   false
+  17 │  2024   false
+  18 │  2025   false
+
+julia&gt; bfile = available_pacwave[available_pacwave.year .== year, :].b_file == 1
+false
+
+julia&gt; data_historical = NDBC.request(buoy, year, bfile)
+1-dimensional AxisArray{Spectrum,1,...} with axes:
+    :time, Axis{:time, Vector{Dates.DateTime}}([Dates.DateTime(&quot;2025-01-01T00:10:00&quot;), Dates.DateTime(&quot;2025-01-01T00:40:00&quot;), Dates.DateTime(&quot;2025-01-01T01:10:00&quot;), Dates.DateTime(&quot;2025-01-01T01:40:00&quot;), Dates.DateTime(&quot;2025-01-01T02:10:00&quot;), Dates.DateTime(&quot;2025-01-01T02:40:00&quot;), Dates.DateTime(&quot;2025-01-01T03:10:00&quot;), Dates.DateTime(&quot;2025-01-01T03:40:00&quot;), Dates.DateTime(&quot;2025-01-01T04:10:00&quot;), Dates.DateTime(&quot;2025-01-01T04:40:00&quot;)  …  Dates.DateTime(&quot;2025-12-31T19:10:00&quot;), Dates.DateTime(&quot;2025-12-31T19:40:00&quot;), Dates.DateTime(&quot;2025-12-31T20:10:00&quot;), Dates.DateTime(&quot;2025-12-31T20:40:00&quot;), Dates.DateTime(&quot;2025-12-31T21:10:00&quot;), Dates.DateTime(&quot;2025-12-31T21:40:00&quot;), Dates.DateTime(&quot;2025-12-31T22:10:00&quot;), Dates.DateTime(&quot;2025-12-31T22:40:00&quot;), Dates.DateTime(&quot;2025-12-31T23:10:00&quot;), Dates.DateTime(&quot;2025-12-31T23:40:00&quot;)])
+And data, a 10696-element Vector{Spectrum}:
+ 47×360-Spectrum{m² Hz⁻¹}{Hz}{°}
+ 47×360-Spectrum{m² Hz⁻¹}{Hz}{°}
+ ⋮
+ 47×360-Spectrum{m² Hz⁻¹}{Hz}{°}
+ 47×360-Spectrum{m² Hz⁻¹}{Hz}{°}
+ 47×360-Spectrum{m² Hz⁻¹}{Hz}{°}</code></pre><p>Please refer to the full syntax for each function <a href="#directional_syntax">here</a>.</p><h2 id="omnidirectional_spectra"><a class="docs-heading-anchor" href="#omnidirectional_spectra">Omnidirectional Spectra</a><a id="omnidirectional_spectra-1"></a><a class="docs-heading-anchor-permalink" href="#omnidirectional_spectra" title="Permalink"></a></h2><p>Similar to it&#39;s directional counterpart, the  <a href="../api/#WaveSpectra.OmnidirectionalSpectrum">OmnidirectionalSpectrum</a> constructor can take an AxisArray object that only has a single axes with any of the compatible units.  Alternatively, you can pass the vectors directly into the constructor or use another package that downloads the data. An example showing the initialization with and without an AxisArray matrix.</p><pre><code class="language-julia hljs">julia&gt; using WaveSpectra, AxisArrays, DimensionfulAngles
+
+julia&gt; Sf = (1.0:4.0) .* m^2/Hz
+4-element Vector{Unitful.Quantity{Float64, 𝐋² 𝐓, Unitful.FreeUnits{(Hz⁻¹, m²), 𝐋² 𝐓, nothing}}}:
+ 1.0 m² Hz⁻¹
+ 2.0 m² Hz⁻¹
+ 3.0 m² Hz⁻¹
+ 4.0 m² Hz⁻¹
+
+julia&gt; f = (1.0:4.0) .* Hz
+(1.0:1.0:4.0) Hz
+
+julia&gt; S = OmnidirectionalSpectrum(Sf, f)
+4-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 2.0
+ 3.0
+ 4.0
+
+julia&gt; A = AxisArray(Sf, f)
+1-dimensional AxisArray{Unitful.Quantity{Float64, 𝐋² 𝐓, Unitful.FreeUnits{(Hz⁻¹, m²), 𝐋² 𝐓, nothing}},1,...} with axes:
+    :row, (1.0:1.0:4.0) Hz
+And data, a 4-element Vector{Unitful.Quantity{Float64, 𝐋² 𝐓, Unitful.FreeUnits{(Hz⁻¹, m²), 𝐋² 𝐓, nothing}}}:
+ 1.0 m² Hz⁻¹
+ 2.0 m² Hz⁻¹
+ 3.0 m² Hz⁻¹
+ 4.0 m² Hz⁻¹
+
+julia&gt; S = OmnidirectionalSpectrum(A)
+4-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 2.0
+ 3.0
+ 4.0</code></pre><p>Please refer to the full syntax for each function <a href="#omnidirectional_syntax">here</a>.</p><h2 id="Other-Spectra-Functions"><a class="docs-heading-anchor" href="#Other-Spectra-Functions">Other Spectra Functions</a><a id="Other-Spectra-Functions-1"></a><a class="docs-heading-anchor-permalink" href="#Other-Spectra-Functions" title="Permalink"></a></h2><ul><li><a href="#transforming_spectra">Transforming Spectra</a></li><li><a href="#integrating_spectra">Integrating Spectra</a></li><li><a href="#plotting_spectra">Plotting Spectra</a></li><li><a href="#utilities">Utilities</a></li></ul><h3 id="transforming_spectra"><a class="docs-heading-anchor" href="#transforming_spectra">Transforming Spectra</a><a id="transforming_spectra-1"></a><a class="docs-heading-anchor-permalink" href="#transforming_spectra" title="Permalink"></a></h3><p>This package supports the transformation between directional and omnidirectional spectra. Going from directional to omnidirectional you can call the  <a href="../api/#WaveSpectra.spread_function-Tuple{WaveSpectra.AbstractSpectrum}">spread_function</a> function and pass the directional <a href="../api/#WaveSpectra.Spectrum">Spectrum</a> into the  <a href="../api/#WaveSpectra.OmnidirectionalSpectrum">OmnidirectionalSpectrum</a> constructor or call the  <a href="../api/#WaveSpectra.split_spectrum-Tuple{WaveSpectra.AbstractSpectrum}">split_spectrum</a> helper functions which uses both and returns a tuple.</p><pre><code class="language-julia hljs">julia&gt; f = (1.0:4.0) .* Hz
+(1.0:4.0) Hz
+
+julia&gt; Θ = (1.0:4.0) .* °
+(1.0:4.0) °
+
+julia&gt; S = Spectrum([x + y for x in 0:3, y in 1:4] .* m^2, f, Θ)
+4×4 Spectrum{m²}{Hz}{°}
+Spectral density of the quantity (° Hz m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m²):
+ 1  2  3  4
+ 2  3  4  5
+ 3  4  5  6
+ 4  5  6  7
+
+ julia&gt; S_omni = OmnidirectionalSpectrum(S)
+4-element OmnidirectionalSpectrum{° m²}{Hz}
+Spectral density of the quantity (° Hz m²):
+  • Axis: Frequency (Hz)
+and data(° m²):
+  7.5
+ 10.5
+ 13.5
+ 16.5
+
+julia&gt; S_spread = spread_function(S)
+4×4 Spectrum{°⁻¹}{Hz}{°}
+Spectral density of the quantity (Hz) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(°⁻¹):
+ 0.13333333333333333  0.26666666666666666  0.4                  0.5333333333333333
+ 0.19047619047619047  0.2857142857142857   0.38095238095238093  0.47619047619047616
+ 0.2222222222222222   0.2962962962962963   0.37037037037037035  0.4444444444444444
+ 0.24242424242424243  0.30303030303030304  0.36363636363636365  0.42424242424242425
+
+julia&gt; S_omni, S_spread = split_spectrum(S)
+(4×1-OmnidirectionalSpectrum{° m²}{Hz}, 4×4-Spectrum{°⁻¹}{Hz}{°})
+
+julia&gt; isspread(S_spread)
+true</code></pre><p>This package also allows the conversion of directional spectra from polar to cartesian coordinates and vice versa.</p><pre><code class="language-julia hljs">
+julia&gt; f = (1.0:4.0) .* Hz
+(1.0:4.0) Hz
+
+julia&gt; Θ = (1.0:4.0) .* °
+(1.0:4.0) °
+
+julia&gt; S = Spectrum([x + y for x in 0:3, y in 1:4] .* m^2, f, Θ)
+4×4 Spectrum{m²}{Hz}{°}
+Spectral density of the quantity (° Hz m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m²):
+ 1  2  3  4
+ 2  3  4  5
+ 3  4  5  6
+ 4  5  6  7
+
+julia&gt; polar_to_cartesian(S)
+2-dimensional AxisArray{Any,2,...} with axes:
+    :point, 1:16
+    :component, [:frequency_x, :frequency_y, :spectrum]
+And data, a 16×3 Matrix{Any}:
+ 0.999848 Hz  0.0174524 Hz  1.0 m² rad Hz⁻¹
+ 1.9997 Hz    0.0349048 Hz  1.0 m² rad Hz⁻¹
+ 2.99954 Hz   0.0523572 Hz  1.0 m² rad Hz⁻¹
+ 3.99939 Hz   0.0698096 Hz  1.0 m² rad Hz⁻¹
+ ⋮                          
+ 0.997564 Hz  0.0697565 Hz  4.0 m² rad Hz⁻¹
+ 1.99513 Hz   0.139513 Hz   2.5 m² rad Hz⁻¹
+ 2.99269 Hz   0.209269 Hz   2.0 m² rad Hz⁻¹
+ 3.99026 Hz   0.279026 Hz   1.75 m² rad Hz⁻¹
+
+julia&gt; x1 = (1.0:4.0) .* m
+(1.0:4.0) m
+
+julia&gt; x2 = (1.0:4.0) .* m
+(1.0:4.0) m
+
+julia&gt; S_cartesian = Spectrum([x + y for x in 0:3, y in 1:4] .* m^3, x1, x2)
+4×4 Spectrum{m³}{m}{m}
+Spectral density of the quantity (m⁵) with cartesian coordinates:
+  • Axis 1: Wavelength (m)
+  • Axis 2: Wavelength (m)
+and data(m³):
+ 1  2  3  4
+ 2  3  4  5
+ 3  4  5  6
+ 4  5  6  7
+
+julia&gt; cartesian_to_polar(S_cartesian)
+2-dimensional AxisArray{Any,2,...} with axes:
+    :point, 1:16
+    :component, [:wavelength, :direction, :spectrum]
+And data, a 16×3 Matrix{Any}:
+ 1.41421 m  45.0°      1.41421 m⁴ rad⁻¹
+ 2.23607 m  26.5651°   4.47214 m⁴ rad⁻¹
+ 3.16228 m  18.4349°   9.48683 m⁴ rad⁻¹
+ 4.12311 m  14.0362°  16.4924 m⁴ rad⁻¹
+ ⋮                    
+ 4.12311 m  75.9638°  16.4924 m⁴ rad⁻¹
+ 4.47214 m  63.4349°  22.3607 m⁴ rad⁻¹
+ 5.0 m      53.1301°  30.0 m⁴ rad⁻¹
+ 5.65685 m  45.0°     39.598 m⁴ rad⁻¹
+</code></pre><p>Please refer to the full syntax for each function <a href="#transforming_spectra_syntax">here</a>.</p><h3 id="integrating_spectra"><a class="docs-heading-anchor" href="#integrating_spectra">Integrating Spectra</a><a id="integrating_spectra-1"></a><a class="docs-heading-anchor-permalink" href="#integrating_spectra" title="Permalink"></a></h3><p>In order to enable some of the extended functionality, we needed to define integration rules for the <a href="../api/#WaveSpectra.Spectrum">Spectrum</a> and  <a href="../api/#WaveSpectra.OmnidirectionalSpectrum">OmnidirectionalSpectrum</a> objects. Due to restrictions from the default implementation of the integrate function from  <a href="https://docs.sciml.ai/Integrals/">Integrals.jl</a>, all spectra must be evenly spaced before calling the integrate functions. The rectangular rule for integration was also implemented as an alternative integration rule.</p><pre><code class="language-julia hljs">julia&gt; x_err = [1.0, 2.5, 3.1, 4.2, 5.22]*Hz
+5-element Vector{Quantity{Float64, 𝐓⁻¹, Unitful.FreeUnits{(Hz,), 𝐓⁻¹, nothing}}}:
+ 1.0 Hz
+ 2.5 Hz
+ 3.1 Hz
+ 4.2 Hz
+ 5.22 Hz
+
+julia&gt; S = OmnidirectionalSpectrum((1.0:5.0).*m^2/Hz, x_err)
+5-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 2.0
+ 3.0
+ 4.0
+ 5.0
+
+julia&gt; evenspacing(S)
+ERROR: ArgumentError: Vector `x` must be evenly spaced.
+
+julia&gt; S = OmnidirectionalSpectrum((1.0:5.0)*m^2/Hz, (1.0:5.0)*Hz)
+5-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 2.0
+ 3.0
+ 4.0
+ 5.0
+
+julia&gt; integrate(S)
+12.0 m²
+
+julia&gt; integrate(S, method=RectangularRule())
+15.0 m²</code></pre><p>Please refer to the full syntax for each function <a href="#integrating_spectra_syntax">here</a>.</p><h3 id="plotting_spectra"><a class="docs-heading-anchor" href="#plotting_spectra">Plotting Spectra</a><a id="plotting_spectra-1"></a><a class="docs-heading-anchor-permalink" href="#plotting_spectra" title="Permalink"></a></h3><p>The <a href="https://docs.juliaplots.org/stable/">Plots.jl</a> recipe for plotting omnidirectional  spectra is functional, and there is a helper function for plotting a polar spectra using <a href="https://docs.makie.org/stable/">Makie</a>. </p><pre><code class="language-julia hljs">julia&gt; f = (0.5:1:9.5) * Hz
+(0.5:1.0:9.5) Hz
+
+julia&gt; Sf = [0, 1, 5, 1, 0.3, 0.1, 0.05, 0.02, 0.001, 0]
+10-element Vector{Float64}:
+ 0.0
+ 1.0
+ 5.0
+ 1.0
+ 0.3
+ 0.1
+ 0.05
+ 0.02
+ 0.001
+ 0.0
+
+julia&gt; S = OmnidirectionalSpectrum(Sf, f)
+10-element OmnidirectionalSpectrum{1}{Hz}
+Spectral density of the quantity (Hz):
+  • Axis: Frequency (Hz)
+and data(1):
+ 0.0
+ 1.0
+ 5.0
+ 1.0
+ 0.3
+ 0.1
+ 0.05
+ 0.02
+ 0.001
+ 0.0
+
+julia&gt; plot(S)</code></pre><p><img src="../assets/simple_spectrum.png" alt="simple_spectrum_plot"/></p><pre><code class="language-julia hljs">julia&gt; f = (1.0:10.0) * Hz
+(1.0:10.0) Hz
+
+julia&gt; Θ = (0.0:20:360) * °
+Θ = (0.0:20:360) °
+
+julia&gt; S = Spectrum([x + y for x in 0:9, y in 1:19], f, Θ)
+10×19 Spectrum{1}{Hz}{°}
+Spectral density of the quantity (° Hz) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(1):
+  1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
+  2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20
+  3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21
+  4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22
+  5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23
+  6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24
+  7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25
+  8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26
+  9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27
+ 10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28
+
+julia&gt; plot_spectrum(S)</code></pre><p><img src="../assets/polar_spectra_plot.png" alt="polar_spectra"/></p><p>Please refer to the full syntax for each function <a href="#plotting_spectra_syntax">here</a>.</p><h3 id="utilities"><a class="docs-heading-anchor" href="#utilities">Utilities</a><a id="utilities-1"></a><a class="docs-heading-anchor-permalink" href="#utilities" title="Permalink"></a></h3><p>With both spectra, there are a few functionalities that were extended from their respective libraries. </p><pre><code class="language-julia hljs">julia&gt; f = (6:6:18) * Hz
+(6:6:18) Hz
+
+julia&gt; Θ = (120:120:360) * °
+(120:120:360)°
+
+julia&gt; S_dir = Spectrum(ones(Float64, (3, 3)) * m^2/Hz/°, f, Θ)
+3×3 Spectrum{m² °⁻¹ Hz⁻¹}{Hz}{°}
+Spectral density of the quantity (m²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m² °⁻¹ Hz⁻¹):
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+ 1.0  1.0  1.0
+
+julia&gt; axesinfo(S_dir)
+(((:temporal, :linear, :frequency), 𝐓⁻¹), ((:direction,), 𝐀))
+
+julia&gt; unit(S_dir)
+m² °⁻¹ Hz⁻¹
+
+julia&gt; uconvert(Unitful.cm^2, S_dir)
+3×3 Spectrum{cm² °⁻¹ Hz⁻¹}{Hz}{°}
+Spectral density of the quantity (cm²) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(cm² °⁻¹ Hz⁻¹):
+ 10000.0  10000.0  10000.0
+ 10000.0  10000.0  10000.0
+ 10000.0  10000.0  10000.0</code></pre><p>Please refer to the full syntax for each function <a href="#utilities_syntax">here</a>.</p><h2 id="Syntax"><a class="docs-heading-anchor" href="#Syntax">Syntax</a><a id="Syntax-1"></a><a class="docs-heading-anchor-permalink" href="#Syntax" title="Permalink"></a></h2><ul><li><a href="#directional_syntax">Directional Spectra</a></li><li><a href="#omnidirectional_syntax">Omnidirectional Spectra</a></li><li>Other Spectra Functions<ul><li><a href="#transforming_spectra_syntax">Transforming Spectra</a></li><li><a href="#integrating_spectra_syntax">Integrating Spectra</a></li><li><a href="#plotting_spectra_syntax">Plotting Spectra</a></li><li><a href="#utilities_syntax">Utilities</a></li></ul></li></ul><h3 id="directional_syntax"><a class="docs-heading-anchor" href="#directional_syntax">Directional Spectra</a><a id="directional_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#directional_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.Spectrum-Tuple{AxisArray}-basic_func"><a class="docstring-binding" href="#WaveSpectra.Spectrum-Tuple{AxisArray}-basic_func"><code>WaveSpectra.Spectrum</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">Spectrum(x::AxisArray)</code></pre><p>Construct a <code>Spectrum</code> from an <code>AxisArray</code>.</p><p>The input must have exactly two axes.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/spectrum.jl#L3-L9">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Spectrum-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, WaveSpectra.AbstractSpectrum}-basic_func"><a class="docstring-binding" href="#WaveSpectra.Spectrum-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, WaveSpectra.AbstractSpectrum}-basic_func"><code>WaveSpectra.Spectrum</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">Spectrum(omni::AbstractOmnidirectionalSpectrum, spread::AbstractSpectrum)</code></pre><p>Reconstruct a directional <code>Spectrum</code> by combining an omnidirectional spectrum with a directional spread function.</p><p><code>spread</code> must use polar coordinates and its first axis must match <code>omni.axis</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/spectrum.jl#L11-L18">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Spectrum-basic_func"><a class="docstring-binding" href="#WaveSpectra.Spectrum-basic_func"><code>WaveSpectra.Spectrum</code></a> — <span class="docstring-category">Type</span></summary><section><div><pre><code class="language-julia hljs">Spectrum(
+    data::AbstractMatrix,
+    axis1::AbstractVector{&lt;:Quantity},
+    axis2::AbstractVector{&lt;:Quantity}
+)</code></pre><p>Directional wave spectrum with physical-unit axes and data.</p><p>The <code>data</code> matrix must have size <code>(length(axis1), length(axis2))</code>. One axis must be a spectral variable and the other must be either a second spectral variable (cartesian spectrum) or direction (polar spectrum). There are 8 supported spectral-variable types: temporal/spatial, frequency/period, and linear/angular combinations. For polar spectra, the spectral-variable axis must be positive. The coordinate system is inferred from axis types and is either <code>:cartesian</code> or <code>:polar</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/spectrum.jl#L20-L36">source</a></section></details></article><h3 id="omnidirectional_syntax"><a class="docs-heading-anchor" href="#omnidirectional_syntax">Omnidirectional Spectra</a><a id="omnidirectional_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#omnidirectional_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.OmnidirectionalSpectrum-Tuple{AxisArray}-basic_func"><a class="docstring-binding" href="#WaveSpectra.OmnidirectionalSpectrum-Tuple{AxisArray}-basic_func"><code>WaveSpectra.OmnidirectionalSpectrum</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">OmnidirectionalSpectrum(x::AxisArray)</code></pre><p>Convert from an <code>AxisArray</code> to an <code>OmnidirectionalSpectrum</code>.</p><p>The input must have exactly one axis.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/omnidirectional.jl#L3-L9">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.OmnidirectionalSpectrum-Tuple{WaveSpectra.AbstractSpectrum}-basic_func"><a class="docstring-binding" href="#WaveSpectra.OmnidirectionalSpectrum-Tuple{WaveSpectra.AbstractSpectrum}-basic_func"><code>WaveSpectra.OmnidirectionalSpectrum</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">OmnidirectionalSpectrum(x::AbstractSpectrum)</code></pre><p>Calculate the omnidirectional spectrum of a given polar <code>Spectrum</code> by integrating over its directional axis.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/omnidirectional.jl#L11-L16">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.OmnidirectionalSpectrum-basic_func"><a class="docstring-binding" href="#WaveSpectra.OmnidirectionalSpectrum-basic_func"><code>WaveSpectra.OmnidirectionalSpectrum</code></a> — <span class="docstring-category">Type</span></summary><section><div><pre><code class="language-julia hljs">OmnidirectionalSpectrum(
+    data::AbstractVector,
+    axis::AbstractVector{&lt;:Quantity}
+)</code></pre><p>One-dimensional omnidirectional wave spectrum with a physical-unit axis.</p><p>The inputs <code>data</code> and <code>axis</code> must have equal length. The axis must be one of the 8 supported spectral-variable types and must be positive.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/omnidirectional.jl#L18-L28">source</a></section></details></article><h3 id="transforming_spectra_syntax"><a class="docs-heading-anchor" href="#transforming_spectra_syntax">Transforming Spectra</a><a id="transforming_spectra_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#transforming_spectra_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.spread_function-basic_func"><a class="docstring-binding" href="#WaveSpectra.spread_function-basic_func"><code>WaveSpectra.spread_function</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">spread_function(x::AbstractSpectrum)</code></pre><p>Directional spread function corresponding to the polar spectrum <code>x</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/splitspectrum.jl#L8-L12">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.split_spectrum-basic_func"><a class="docstring-binding" href="#WaveSpectra.split_spectrum-basic_func"><code>WaveSpectra.split_spectrum</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">split_spectrum(x::AbstractSpectrum)</code></pre><p>Split a polar spectrum into an omnidirectional spectrum and a directional spread function.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/splitspectrum.jl#L18-L22">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.isspread-basic_func"><a class="docstring-binding" href="#WaveSpectra.isspread-basic_func"><code>WaveSpectra.isspread</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">isspread(x::AbstractSpectrum)</code></pre><p>Check whether a <code>Spectrum</code> is a spread function.</p><p>It must be in polar form and integrate to 1 (dimensionless) over the direction axis at every spectral-variable sample.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/splitspectrum.jl#L34-L41">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.polar_to_cartesian-basic_func"><a class="docstring-binding" href="#WaveSpectra.polar_to_cartesian-basic_func"><code>WaveSpectra.polar_to_cartesian</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">polar_to_cartesian(x::AbstractSpectrum)</code></pre><p>Convert a polar spectrum to cartesian point coordinates.</p><p>The result is returned as a 3-column <code>AxisArray</code> with one row per sample point: <code>(axis_x, axis_y, spectrum)</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/conversion.jl#L166-L173">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.cartesian_to_polar-basic_func"><a class="docstring-binding" href="#WaveSpectra.cartesian_to_polar-basic_func"><code>WaveSpectra.cartesian_to_polar</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">cartesian_to_polar(x::AbstractSpectrum; angle_unit::Units = °)</code></pre><p>Convert a cartesian spectrum to polar point coordinates.</p><p>Both spectrum axes must have the same spectral-variable type. The result is returned as a 3-column <code>AxisArray</code> with one row per sample point: <code>(axis, direction, spectrum)</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/conversion.jl#L205-L213">source</a></section></details></article><h3 id="integrating_spectra_syntax"><a class="docs-heading-anchor" href="#integrating_spectra_syntax">Integrating Spectra</a><a id="integrating_spectra_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#integrating_spectra_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.evenspacing-basic_func"><a class="docstring-binding" href="#WaveSpectra.evenspacing-basic_func"><code>WaveSpectra.evenspacing</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">evenspacing(x::AbstractVector)
+evenspacing(x::AbstractSpectrum)
+evenspacing(x::AbstractOmnidirectionalSpectrum)</code></pre><p>Return evenly spaced axis parameters as tuples <code>(start, step, length)</code>.</p><p>For a <code>Spectrum</code> two such tuples are returned, one for each axis. Throws <code>ArgumentError</code> if the axis or axes are not evenly spaced.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/axes.jl#L93-L102">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.isevenlyspaced-basic_func"><a class="docstring-binding" href="#WaveSpectra.isevenlyspaced-basic_func"><code>WaveSpectra.isevenlyspaced</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">isevenlyspaced(x::AbstractVector)
+isevenlyspaced(x::AbstractOmnidirectionalSpectrum)
+isevenlyspaced(x::AbstractSpectrum)</code></pre><p>Return <code>true</code> when axis values are evenly spaced.</p><p>For <code>Spectrum</code> both axes are checked.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/axes.jl#L76-L84">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.integrate-basic_func"><a class="docstring-binding" href="#WaveSpectra.integrate-basic_func"><code>WaveSpectra.integrate</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">integrate(
+    x::AbstractSpectrum;
+    include_zero::Bool = false,
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)
+integrate(
+    x::AbstractSpectrum,
+    ax::Symbol;
+    include_zero::Bool = false,
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)
+integrate(
+    x::AbstractSpectrum,
+    ax::Symbol,
+    axrange::Tuple;
+    include_zero::Bool = false,
+    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+)
+integrate(
+    x::AbstractSpectrum,
+    axrange1::Tuple,
+    axrange2::Tuple;
+    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+)</code></pre><p>Integrate a 2D [<code>Spectrum</code>] along one axis.</p><p>The axis of integration <code>ax</code> can be <code>:axis1</code>, <code>:axis2</code>, or the corresponding entry in <code>x.axesnames</code>. For polar spectra, integrating over direction returns an <code>OmnidirectionalSpectrum</code>, while integrating over the spectral-variable axis returns an <code>AxisArray</code> indexed by direction. For cartesian spectra, integrating over a single axis returns an <code>AxisArray</code> describing a marginal spectrum. If no axis is specified a double integration, over both axis is performed returning a scalar quantity.</p><p>When provided, <code>axrange</code>, <code>axrange1</code>, and <code>axrange2</code> are <code>(start, stop)</code> tuples selecting the closed interval of the corresponding axis. The bounds can be integer indices or <code>Quantity</code>. If the bounds are quantities, the next value equal to or larger than <code>start</code>, and the next value equal to or smaller than <code>end</code> are used as the bounds of integration.</p><p>The option <code>include_zero</code> will add the point <code>(S(0,0) = 0)</code> before integrating, if the spectrum is in polar coordinates.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/integration.jl#L3-L48">source</a></section><section><div><pre><code class="language-julia hljs">integrate(
+    x::AxisArray;
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)
+integrate(
+    x::AxisArray,
+    axrange::Tuple;
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Integrate a 1D <code>AxisArray</code> and return a scalar quantity.</p><p>When provided, <code>axrange</code> is a <code>(start, stop)</code> tuple selecting the closed interval of the axis. The bounds can be integer indices or <code>Quantity</code>. If the bounds are quantities, the next value equal to or larger than <code>start</code>, and the next value equal to or smaller than <code>stop</code> are used as the bounds of integration.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/integration.jl#L90-L108">source</a></section><section><div><pre><code class="language-julia hljs">integrate(
+    x::AbstractOmnidirectionalSpectrum;
+    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+)
+
+integrate(
+    x::AbstractOmnidirectionalSpectrum,
+    axrange::Tuple;
+    method::AbstractSampledIntegralAlgorithm=TrapezoidalRule()
+)</code></pre><p>Integrate an <code>OmnidirectionalSpectrum</code> and return a scalar quantity.</p><p>When provided, <code>axrange</code> is a <code>(start, stop)</code> tuple selecting the closed interval of the axis.</p><p>Integer bounds are treated as indices; <code>Quantity</code> bounds are matched against the axis values.</p><p>When provided, <code>axrange</code>is a <code>(start, stop)</code> tuplee selecting the closed interval of the axis. The bounds can be integer indices or <code>Quantity</code>. If the bounds are quantities, the next value equal to or larger than <code>start</code>, and the next value equal to or smaller than <code>end</code> are used as the bounds of integration.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/integration.jl#L125-L150">source</a></section></details></article><h3 id="plotting_spectra_syntax"><a class="docs-heading-anchor" href="#plotting_spectra_syntax">Plotting Spectra</a><a id="plotting_spectra_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#plotting_spectra_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.plot_spectrum-basic_func"><a class="docstring-binding" href="#WaveSpectra.plot_spectrum-basic_func"><code>WaveSpectra.plot_spectrum</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">plot_spectrum(s::AbstractSpectrum; func! = contourf!, make_cyclic = true,
+              include_zero = false, ax_properties = Dict(),
+              colorbar_properties = Dict(), kwargs...)
+plot_spectrum(s::AbstractOmnidirectionalSpectrum; func! = lines!,
+              include_zero = false, ax_properties = Dict(), kwargs...)</code></pre><p>Create a new Makie figure and plot spectrum <code>s</code>.</p><p>For <code>AbstractSpectrum</code>, this creates a  plot with a colorbar. For <code>AbstractOmnidirectionalSpectrum</code>, this creates a line plot.</p><p>Keyword arguments:</p><ul><li><code>func!</code>: plotting function used internally. Default is <code>contourf!</code> for <code>AbstractSpectrum</code> and <code>lines!</code> for <code>AbstractOmnidirectionalSpectrum</code>.</li><li><code>make_cyclic</code>: when <code>true</code>, repeats the first angular bin at <code>2π</code> for seamless polar plots.</li><li><code>include_zero</code>: when <code>true</code>, prepends an implicit zero-valued spectral sample at the spectral-variable origin for polar and omnidirectional plots.</li><li><code>ax_properties</code>: dictionary of additional axis properties.</li><li><code>colorbar_properties</code>: dictionary of additional colorbar properties.</li><li><code>kwargs...</code>: additional plot properties passed to <code>func!</code>.</li></ul><p>See also <a href="../api/#WaveSpectra.plot_spectrum!-Tuple{Any, WaveSpectra.AbstractSpectrum}"><code>plot_spectrum!</code></a> to plot into an existing axis.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/plotting.jl#L141-L165">source</a></section></details></article><h3 id="utilities_syntax"><a class="docs-heading-anchor" href="#utilities_syntax">Utilities</a><a id="utilities_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#utilities_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.axesinfo-basic_func"><a class="docstring-binding" href="#WaveSpectra.axesinfo-basic_func"><code>WaveSpectra.axesinfo</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">axesinfo()
+axesinfo(s::Symbol)
+axesinfo(x::AbstractSpectrum)
+axesinfo(x::AbstractOmnidirectionalSpectrum)</code></pre><p>Query the axis type and its physical dimensions.</p><p>There are 8 supported spectral-variable types, formed from the combinations of spatial/temporal domain, linear/angular geometry, and frequency/period quantity. There&#39;s one direction type <code>:direction</code>, for a total of 9 possible axis types.</p><ul><li><code>axesinfo()</code> returns a dictionary with information for all 9 possible axis types.</li><li><code>axesinfo(s::Symbol)</code> returns information for a specific axis type, e.g. <code>axesinfo(:wavenumber)</code></li><li><code>axesinfo(x)</code> return the axis information for the axes of a spectrum x.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/axes.jl#L8-L24">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Unitful.uconvert-basic_func"><a class="docstring-binding" href="#Unitful.uconvert-basic_func"><code>Unitful.uconvert</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">uconvert(
+    uq::Units,
+    u1::Units,
+    u2::Units,
+    x::AbstractSpectrum,
+    dispersion::Dispersion = Dispersion()
+)
+uconvert(uq::Units, x::AbstractSpectrum)
+uconvert(
+    u::Units,
+    s::Symbol,
+    x::AbstractSpectrum,
+    dispersion::Dispersion = Dispersion()
+)</code></pre><p>Extend <code>Unitful.uconvert</code> for directional spectra.</p><p><code>uconvert(uq, u1, u2, x, dispersion)</code> converts the integral quantity and both axes of <code>x</code>, updating the spectral-density units so that the integrated quantity is preserved.</p><p><code>uconvert(uq, x)</code> converts only the integral quantity and keeps both axes in their current units.</p><p><code>uconvert(u, s, x, dispersion)</code> converts one component selected by <code>s</code>, where <code>s</code> can be <code>:axis1</code>, <code>:axis2</code> (or their axis names), or <code>:integral</code>. Passing <code>:spectrum</code> is not supported; the integral quantity and axes units must be specified explicitly.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/conversion.jl#L11-L39">source</a></section><section><div><pre><code class="language-julia hljs">uconvert(
+    uq::Units,
+    uax::Units,
+    x::AbstractOmnidirectionalSpectrum,
+    dispersion::Dispersion = Dispersion()
+)
+uconvert(uq::Units, x::AbstractOmnidirectionalSpectrum)
+uconvert(
+    u::Units,
+    s::Symbol,
+    x::AbstractOmnidirectionalSpectrum,
+    dispersion::Dispersion = Dispersion()
+)</code></pre><p>Extend <code>Unitful.uconvert</code> for omnidirectional spectra.</p><p><code>uconvert(uq, uax, x, dispersion)</code> converts the integral quantity and axis of <code>x</code>, updating the spectral-density units so that the integrated quantity is preserved.</p><p><code>uconvert(uq, x)</code> converts only the integral quantity and keeps the axis in its current units.</p><p><code>uconvert(u, s, x, dispersion)</code> converts one component selected by <code>s</code>, where <code>s</code> can be <code>:axis</code> (or its axis name), or <code>:integral</code>. Passing <code>:spectrum</code> is not supported; the integral quantity and axis units must be specified explicitly.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/conversion.jl#L93-L120">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Unitful.unit-basic_func"><a class="docstring-binding" href="#Unitful.unit-basic_func"><code>Unitful.unit</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">unit(x::AbstractSpectrum, quantity::Symbol)
+unit(x::AbstractSpectrum)</code></pre><p>Extend <code>Unitful.unit</code> for spectra.</p><p>The <code>quantity</code> can be <code>:axis1</code> (or the axis name), <code>axis2</code> (or the axis name), <code>:integral</code>, or <code>:spectrum</code>. These return the units of the axes, the integral quantity, and the spectral density (unit of integral quantity / units of axes), respectively. The default is <code>quantity=:spectrum</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/spectrum.jl#L195-L206">source</a></section><section><div><pre><code class="language-julia hljs">unit(x::AbstractOmnidirectionalSpectrum, quantity::Symbol)
+unit(x::AbstractOmnidirectionalSpectrum)</code></pre><p>Extend <code>Unitful.unit</code> for omnidirectional spectra.</p><p>The <code>quantity</code> can be <code>:axis</code> (or the axis name), <code>:integral</code>, or <code>:spectrum</code>. These return the units of the spectral-variable axis, the integral quantity, and the spectral density (unit of integral quantity / unit of axis), respectively. The default is <code>quantity=:spectrum</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/core/omnidirectional.jl#L168-L178">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../quickstart/">« Quickstart</a><a class="docs-footer-nextpage" href="../extended_func/">Extended Funcitonality »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 2 July 2026 14:09">Thursday 2 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Extended Funcitonality · WaveSpectra.jl</title><meta name="title" content="Extended Funcitonality · WaveSpectra.jl"/><meta property="og:title" content="Extended Funcitonality · WaveSpectra.jl"/><meta property="twitter:title" content="Extended Funcitonality · WaveSpectra.jl"/><meta name="description" content="Documentation for WaveSpectra.jl."/><meta property="og:description" content="Documentation for WaveSpectra.jl."/><meta property="twitter:description" content="Documentation for WaveSpectra.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/citations.css" rel="stylesheet" type="text/css"/><link href="../assets/images.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">WaveSpectra.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../quickstart/">Quickstart</a></li><li><a class="tocitem" href="../basic_func/">Basic Functionality</a></li><li class="is-active"><a class="tocitem" href>Extended Funcitonality</a><ul class="internal"><li><a class="tocitem" href="#Dispersion-Relations"><span>Dispersion Relations</span></a></li><li><a class="tocitem" href="#parametric_spectra"><span>Parametric Spectra</span></a></li><li><a class="tocitem" href="#moments"><span>Moments</span></a></li><li><a class="tocitem" href="#spectral_shapes"><span>Spectral Shapes</span></a></li><li><a class="tocitem" href="#References"><span>References</span></a></li><li><a class="tocitem" href="#Syntax"><span>Syntax</span></a></li></ul></li><li><a class="tocitem" href="../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Extended Funcitonality</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Extended Funcitonality</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/main/docs/src/extended_func.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Extended-Functionality"><a class="docs-heading-anchor" href="#Extended-Functionality">Extended Functionality</a><a id="Extended-Functionality-1"></a><a class="docs-heading-anchor-permalink" href="#Extended-Functionality" title="Permalink"></a></h1><h2 id="Dispersion-Relations"><a class="docs-heading-anchor" href="#Dispersion-Relations">Dispersion Relations</a><a id="Dispersion-Relations-1"></a><a class="docs-heading-anchor-permalink" href="#Dispersion-Relations" title="Permalink"></a></h2><p>The DispersionRelation.jl submodule contains the dispersion relations for linear interfacial waves. Currently only gravity wave dispersion relations are implemented.</p><div class="admonition is-info" id="Note-4ed50d4853951768"><header class="admonition-header">Note<a class="admonition-anchor" href="#Note-4ed50d4853951768" title="Permalink"></a></header><div class="admonition-body"><p>When building the struct to properly convert units we ask for the dispersion relation  (<span>$\Omega(k)$</span>), but this is simply preference over phase velocity (<span>$V_p$</span>) or group velocity (<span>$V_g$</span>)</p></div></div><p>See also <a href="https://en.wikipedia.org/wiki/Dispersion_(water_waves)">https://en.wikipedia.org/wiki/Dispersion_(water_waves)</a>  for more information on dispersion.</p><pre><code class="language-julia hljs">
+julia&gt; x = (1.0:3:10.0) * Hz;
+
+julia&gt; S = OmnidirectionalSpectrum(([1.0, 6.0, 3.0, 2.0])*m^2/Hz, x)
+4-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.0
+ 6.0
+ 3.0
+ 2.0
+
+julia&gt; uconvert(rad/m, :axis, S, WaveSpectra.DispersionRelations.gravitywaves_deepwater())
+4-element OmnidirectionalSpectrum{m³ rad⁻¹}{rad m⁻¹}
+Spectral density of the quantity (m²):
+  • Axis: Angular Wavenumber (rad m⁻¹)
+and data(m³ rad⁻¹):
+ 0.12420267319576646
+ 0.1863040097936497
+ 0.053229717083899904
+ 0.02484053463915329
+
+julia&gt; uconvert(rad/m, :axis, S, WaveSpectra.DispersionRelations.gravitywaves_shallowwater(3m))
+4-element OmnidirectionalSpectrum{m³ rad⁻¹}{rad m⁻¹}
+Spectral density of the quantity (m²):
+  • Axis: Angular Wavenumber (rad m⁻¹)
+and data(m³ rad⁻¹):
+ 0.863258964143784
+ 5.179553784862704
+ 2.589776892431352
+ 1.726517928287568
+
+julia&gt; uconvert(rad/m, :axis, S, WaveSpectra.DispersionRelations.gravitywaves(3m))
+4-element OmnidirectionalSpectrum{m³ rad⁻¹}{rad m⁻¹}
+Spectral density of the quantity (m²):
+  • Axis: Angular Wavenumber (rad m⁻¹)
+and data(m³ rad⁻¹):
+ 0.12420267338189336
+ 0.1863040097936497
+ 0.053229717083899904
+ 0.02484053463915329
+</code></pre><p>Please refer to the full syntax for each function <a href="#dispersion_relation_syntax">here</a>.</p><h2 id="parametric_spectra"><a class="docs-heading-anchor" href="#parametric_spectra">Parametric Spectra</a><a id="parametric_spectra-1"></a><a class="docs-heading-anchor-permalink" href="#parametric_spectra" title="Permalink"></a></h2><p>Brief description of parametric spectrum</p><p>[<a href="#pierson_moskowitz">1</a>] [<a href="#Hasselmann1973">2</a>]</p><pre><code class="language-julia hljs">julia&gt; f = (1.0:0.5:10.0) .* Hz;
+
+julia&gt; PM = WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz(f, 8.0 * m, 4.0 * Hz, peak_frequency=true)
+19-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.3423912370794646e-72
+ 4.849071845233627e-13
+ 0.001701611389553719
+ 0.335309891337633
+ 1.3421276585162367
+ 1.6633580565889663
+ ⋮
+ 0.08116740160851418
+ 0.0604917892588704
+ 0.045764352079589225
+ 0.035103816684478595
+ 0.02727015323859412
+</code></pre><pre><code class="language-julia hljs">julia&gt; f = (1.0:0.5:10.0) .* Hz;
+
+julia&gt; JS = WaveSpectra.ParametricSpectra.spectrum_jonswap(f, 8.0 * m, 4.0 * Hz, 3)
+19-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 1.9250099830902135e-88
+ 3.0924699228600333e-16
+ 0.00014581161763694455
+ 0.10965073255059529
+ 0.757687377655647
+ 2.989952938117487
+ 1.6476870418863625
+ 0.7639004421371922
+ 0.5256674689081673
+ 0.3629932785530433
+ 0.2513107958135555
+ 0.17605740404750989
+ 0.1252620883911322
+ 0.09060488782908652
+ 0.06661272946290435
+ 0.04973940996324117
+ 0.03768327349740816
+ 0.02893628972068863
+ 0.022497539992942253</code></pre><pre><code class="language-julia hljs">julia&gt; Θ = (0:15:90)*°; f = (1:1:10)*Hz;
+
+julia&gt; spread_func = WaveSpectra.ParametricSpectra.spread_cartwright(Θ, f, 10*°, 20*°);
+
+julia&gt; S_omni = OmnidirectionalSpectrum((1:10)*m, f);
+
+julia&gt; S = Spectrum(S_omni, spread_func)
+10×7 Spectrum{m °⁻¹}{Hz}{°}
+Spectral density of the quantity (Hz m) with polar coordinates:
+  • Axis 1: Frequency (Hz)
+  • Axis 2: Direction (°)
+and data(m °⁻¹):
+ 0.025494124746630847  0.027844248353181597  0.01788639292257555   0.006653152827856875  0.0013815841198168257  0.00015035145677660058  7.749226287575886e-6
+ 0.050988249493261695  0.055688496706363194  0.0357727858451511    0.01330630565571375   0.0027631682396336513  0.00030070291355320115  1.5498452575151773e-5
+ 0.07648237423989254   0.08353274505954479   0.053659178767726655  0.019959458483570624  0.004144752359450477   0.00045105437032980176  2.324767886272766e-5
+ 0.10197649898652339   0.11137699341272639   0.0715455716903022    0.0266126113114275    0.005526336479267303   0.0006014058271064023   3.0996905150303545e-5
+ 0.12747062373315424   0.139221241765908     0.08943196461287775   0.03326576413928437   0.006907920599084128   0.0007517572838830029   3.874613143787943e-5
+ 0.15296474847978508   0.16706549011908958   0.10731835753545331   0.03991891696714125   0.008289504718900954   0.0009021087406596035   4.649535772545532e-5
+ 0.17845887322641593   0.19490973847227117   0.12520475045802887   0.046572069794998124  0.00967108883871778    0.001052460197436204    5.4244584013031204e-5
+ 0.20395299797304678   0.22275398682545278   0.1430911433806044    0.053225222622855     0.011052672958534605   0.0012028116542128046   6.199381030060709e-5
+ 0.22944712271967763   0.2505982351786344    0.16097753630317996   0.059878375450711875  0.01243425707835143    0.0013531631109894053   6.974303658818298e-5
+ 0.2549412474663085    0.278442483531816     0.1788639292257555    0.06653152827856874   0.013815841198168257   0.0015035145677660057   7.749226287575886e-5</code></pre><p>Please refer to the full syntax for each function <a href="#parametric_spectra_syntax">here</a>.</p><h2 id="moments"><a class="docs-heading-anchor" href="#moments">Moments</a><a id="moments-1"></a><a class="docs-heading-anchor-permalink" href="#moments" title="Permalink"></a></h2><p>The following examples are different functions used in literature for characterizing wave spectra. </p><pre><code class="language-julia hljs">julia&gt; x = (1.0:3:10.0) * Hz; S = OmnidirectionalSpectrum(([1.0, 6.0, 3.0, 2.0])*m^2, x);
+
+julia&gt; WaveSpectra.Moments.moment(S, 0)
+31.5 m²
+
+julia&gt; WaveSpectra.Moments.energy_frequency(S)
+4.152542372881356 Hz
+
+julia&gt; WaveSpectra.Moments.mean_frequency(S)
+5.285714285714286 Hz
+
+julia&gt; WaveSpectra.Moments.mean_wavelength(S)
+0.09051335476420994 m
+
+julia&gt; WaveSpectra.Moments.significant_waveheight(S)
+22.44994432064365 m
+
+julia&gt; WaveSpectra.Moments.steepness(S)
+248.02908232852977
+
+julia&gt; WaveSpectra.Moments.zero_crossing_frequency(S)
+5.719640348333601 Hz
+</code></pre><p>Please refer to the full syntax for each function <a href="#moments_syntax">here</a>.</p><h2 id="spectral_shapes"><a class="docs-heading-anchor" href="#spectral_shapes">Spectral Shapes</a><a id="spectral_shapes-1"></a><a class="docs-heading-anchor-permalink" href="#spectral_shapes" title="Permalink"></a></h2><p>Spectral shape was described in Mackay[<a href="#MACKAY201617">3</a>] after normalizing  omnidirectional wave spectra to have a significant waveheight (<span>$H_S$</span>) and (<span>$T_e$</span>) of 1. These were leveraged in a different paper[<a href="#autoencoder2025">4</a>] that used normalized  spectra to train a neural network architecture.</p><pre><code class="language-julia hljs">julia&gt; S = [1.0, 2.0, 3.5, 1.0, 0.5]*m^2; f = (1.0:1.0:5.0)*Hz;
+
+julia&gt; S_omni = OmnidirectionalSpectrum(S, f);
+
+julia&gt; S_shape = WaveSpectra.Shapes.OmnidirectionalSpectrumShape(S_omni)
+5-element OmnidirectionalSpectrum{1}{}
+Spectral density of the quantity ():
+  • Axis: Ndfrequency ()
+and data(1):
+ 0.02106741573033708
+ 0.04213483146067416
+ 0.07373595505617979
+ 0.02106741573033708
+ 0.01053370786516854
+
+ julia&gt; S_omni_scaled = OmnidirectionalSpectrum(S_shape, 5m, 2Hz)
+5-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 0.2633426966292135
+ 0.526685393258427
+ 0.9216994382022473
+ 0.2633426966292135
+ 0.13167134831460675
+
+julia&gt; S_omni_scaled = WaveSpectra.Shapes.scale(S_omni, 5m, 2Hz)
+5-element OmnidirectionalSpectrum{m² Hz⁻¹}{Hz}
+Spectral density of the quantity (m²):
+  • Axis: Frequency (Hz)
+and data(m² Hz⁻¹):
+ 0.2633426966292135
+ 0.526685393258427
+ 0.9216994382022473
+ 0.2633426966292135
+ 0.13167134831460675</code></pre><p>Please refer to the full syntax for each function <a href="#spectral_shapes_syntax">here</a>.</p><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><div class="citation canonical"><dl><dt>[1]</dt><dd><div id="pierson_moskowitz">W. J. Pierson Jr. and L. Moskowitz. <a href="https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/JZ069i024p05181"><em>A proposed spectral form for fully developed wind seas based on the similarity theory of S. A. Kitaigorodskii</em></a>. <a href="https://doi.org/10.1029/JZ069i024p05181">Journal of Geophysical Research (1896-1977) <strong>69</strong>, 5181–5190</a> (1964), <a href="https://arxiv.org/abs/https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/JZ069i024p05181">arXiv:https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/JZ069i024p05181</a>.</div></dd><dt>[2]</dt><dd><div id="Hasselmann1973">K. Hasselmann, T. Barnett, E. Bouws, H. Carlson, D. Cartwright, K. Enke, J. Ewing, A. Gienapp, D. Hasselmann, P. Kruseman, A. Meerburg, P. Müller, D. Olbers, K. Richter, W. Sell and H. Walden. <em>Measurements of wind-wave growth and swell decay during the joint North Sea wave project (JONSWAP).</em> Ergänzungsheft zur Deutschen Hydrographischen Zeitschrift, Reihe A <strong>Nr. 12</strong> (1973).</div></dd><dt>[3]</dt><dd><div id="MACKAY201617">E. Mackay. <a href="https://www.sciencedirect.com/science/article/pii/S2214166916300273"><em>A unified model for unimodal and bimodal ocean wave spectra</em></a>. <a href="https://doi.org/10.1016/j.ijome.2016.04.015">International Journal of Marine Energy <strong>15</strong>, 17–40</a> (2016). Selected Papers from the European Wave and Tidal Energy Conference 2015, Nante, France.</div></dd><dt>[4]</dt><dd><div id="autoencoder2025">R. Baez Ramirez, E. J. Sloan and C. A. Michelén Ströfer. <a href="https://doi.org/10.1007/s40722-025-00447-0"><em>Site-specific parameterization of ocean spectra for power estimates of wave energy converters</em></a>. <a href="https://doi.org/10.1007/s40722-025-00447-0">Journal of Ocean Engineering and Marine Energy <strong>12</strong>, 573–588</a> (2026).</div></dd></dl></div><h2 id="Syntax"><a class="docs-heading-anchor" href="#Syntax">Syntax</a><a id="Syntax-1"></a><a class="docs-heading-anchor-permalink" href="#Syntax" title="Permalink"></a></h2><ul><li><a href="#dispersion_relation_syntax">Dispersion Relation</a></li><li><a href="#parametric_spectra_syntax">Parametric Spectra</a></li><li><a href="#moments_syntax">Moments</a></li><li><a href="#spectral_shapes_syntax">Spectral Shapes</a></li></ul><h3 id="dispersion_relation_syntax"><a class="docs-heading-anchor" href="#dispersion_relation_syntax">Dispersion Relation</a><a id="dispersion_relation_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#dispersion_relation_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.DispersionRelations.gravitywaves-Tuple{Any}-extended_func"><a class="docstring-binding" href="#WaveSpectra.DispersionRelations.gravitywaves-Tuple{Any}-extended_func"><code>WaveSpectra.DispersionRelations.gravitywaves</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">gravitywaves(waterdepth::Length)</code></pre><p>Finite-depth linear gravity-wave dispersion model based on the dispersion relation: <span>$ω(k) = √(g k tanh(k h))$</span>.</p><p>The <code>waterdepth</code> must have units of length. Assumes zero air density.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/DispersionRelations.jl#L47-L55">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.DispersionRelations.gravitywaves_deepwater-Tuple{}-extended_func"><a class="docstring-binding" href="#WaveSpectra.DispersionRelations.gravitywaves_deepwater-Tuple{}-extended_func"><code>WaveSpectra.DispersionRelations.gravitywaves_deepwater</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">gravitywaves_deepwater()</code></pre><p>Deep-water gravity-wave linear dispersion model based on the dispersion relation: <span>$ω(k) = √(g k)$</span>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/DispersionRelations.jl#L17-L22">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.DispersionRelations.gravitywaves_shallowwater-Tuple{Any}-extended_func"><a class="docstring-binding" href="#WaveSpectra.DispersionRelations.gravitywaves_shallowwater-Tuple{Any}-extended_func"><code>WaveSpectra.DispersionRelations.gravitywaves_shallowwater</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">gravitywaves_shallowwater(waterdepth::Length)</code></pre><p>Shallow-water gravity-wave linear dispersion model based on the dispersion relation: <span>$ω(k) = k √(g h)$</span>.</p><p>The <code>waterdepth</code> must have units of length. Assumes zero air density.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/DispersionRelations.jl#L30-L38">source</a></section></details></article><h3 id="parametric_spectra_syntax"><a class="docs-heading-anchor" href="#parametric_spectra_syntax">Parametric Spectra</a><a id="parametric_spectra_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#parametric_spectra_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.ParametricSpectra.spectrum_jonswap-Tuple{AbstractVector{&lt;:Quantity}, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity, Union{Nothing, Number}}-extended_func"><a class="docstring-binding" href="#WaveSpectra.ParametricSpectra.spectrum_jonswap-Tuple{AbstractVector{&lt;:Quantity}, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity, Union{Nothing, Number}}-extended_func"><code>WaveSpectra.ParametricSpectra.spectrum_jonswap</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">spectrum_jonswap(
+    frequencies::AbstractVector{&lt;:Quantity},
+    significant_waveheight::Length,
+    energy_frequency::Quantity,
+    gamma::Union{Number, Nothing};
+    dispersion::Dispersion=Dispersion(),
+    peak_frequency::Bool=false
+)</code></pre><p>Omnidirectional JONSWAP spectrum for the provided frequency axis.</p><p>The <code>frequencies</code> and <code>energy_frequency</code> can be of any frequency type (e.g., period, wavenumber, etc) and are converted to frequency (Hz). The spectrum is created using the frequency formulation and then converted to the frequency type of the inputs.</p><p>You can provide the peak frequency instead of the energy frequency by passing <code>peak_frequency=true</code>. The peak frequency is defined as the peak of <code>S(f)</code> where <code>f</code> is the frequency (e.g. in Hz), regardless of the dimensions of <code>frequencies</code>. See documentation for more details.</p><p>When peak frequency is used, <code>gamma</code> can be set to <code>gamma=nothing</code> in which case it will be calculated based on the standard formulation.</p><p>Based on IEC TS 62600-2 ED2 Annex C.2 (2019). Peak frequency and energy frequency relationship from ITTC Specialist Committee on Waves (2002).</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/ParametricSpectra.jl#L69-L98">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz-Tuple{AbstractVector{&lt;:Quantity}, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity}-extended_func"><a class="docstring-binding" href="#WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz-Tuple{AbstractVector{&lt;:Quantity}, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity}-extended_func"><code>WaveSpectra.ParametricSpectra.spectrum_pierson_moskowitz</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">spectrum_pierson_moskowitz(
+    frequencies::AbstractVector{&lt;:Quantity},
+    significant_waveheight::Length,
+    energy_frequency::Quantity;
+    dispersion::Dispersion=Dispersion(),
+    peak_frequency::Bool=false
+)</code></pre><p>Omnidirectional Pierson-Moskowitz spectrum for the provided frequency array.</p><p>The <code>frequencies</code> and <code>energy_frequency</code> can be of any frequency type (e.g., period, wavenumber, etc) and are converted to frequency (Hz). The spectrum is created using the frequency formulation and then converted to the frequency type of the inputs.</p><p>You can provide the peak frequency instead of the energy frequency by passing <code>peak_frequency=true</code>. The peak frequency is defined as the peak of <code>S(f)</code> where <code>f</code> is the frequency (e.g. in Hz), regardless of the dimensions of <code>frequencies</code>. See documentation for more details.</p><p>Based on IEC TS 62600-2 ED2 Annex C.2 (2019). Peak frequency and energy frequency relationship from ITTC Specialist Committee on Waves (2002).</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/ParametricSpectra.jl#L17-L42">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.ParametricSpectra.spread_cartwright-Tuple{AbstractVector{&lt;:Union{Quantity{T, 𝐀, U}, Level{L, S, Quantity{T, 𝐀, U}} where {L, S}} where {T, U}}, AbstractVector{&lt;:Quantity}, Union{Quantity{T, 𝐀, U}, Level{L, S, Quantity{T, 𝐀, U}} where {L, S}} where {T, U}, Union{Quantity{T, 𝐀, U}, Level{L, S, Quantity{T, 𝐀, U}} where {L, S}} where {T, U}}-extended_func"><a class="docstring-binding" href="#WaveSpectra.ParametricSpectra.spread_cartwright-Tuple{AbstractVector{&lt;:Union{Quantity{T, 𝐀, U}, Level{L, S, Quantity{T, 𝐀, U}} where {L, S}} where {T, U}}, AbstractVector{&lt;:Quantity}, Union{Quantity{T, 𝐀, U}, Level{L, S, Quantity{T, 𝐀, U}} where {L, S}} where {T, U}, Union{Quantity{T, 𝐀, U}, Level{L, S, Quantity{T, 𝐀, U}} where {L, S}} where {T, U}}-extended_func"><code>WaveSpectra.ParametricSpectra.spread_cartwright</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">spread_cartwright(
+    directions::AbstractVector{&lt;:Angle},
+    frequencies::AbstractVector{&lt;:Quantity},
+    mean_direction::Angle,
+    spread::Angle;
+    under90::Bool=false
+)</code></pre><p>Cosine-squared directional spread function of Cartwright (1963).</p><p>If <code>under90=true</code>, values outside ±90° from <code>mean_direction</code> are set to zero before normalization. This spread function does not depend on the spectral variable.</p><p>Code adapted from the <code>wavespectra</code> Python package.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/ParametricSpectra.jl#L154-L170">source</a></section></details></article><h3 id="moments_syntax"><a class="docs-heading-anchor" href="#moments_syntax">Moments</a><a id="moments_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#moments_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.energy_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.energy_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><code>WaveSpectra.Moments.energy_frequency</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">energy_frequency(
+    x::AbstractOmnidirectionalSpectrum;
+    dispersion::Dispersion = Dispersion(),
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Energy frequency of the omnidirectional spectrum <code>x</code>, computed as <span>$m_0 / m_{-1}$</span> for <code>S(f)</code>.</p><p>The energy period can be obtained as <span>$1/energy_frequency(x)$</span>. The provided spectrum is first converted to the temporal-linear-frequency representation <code>S(f)</code>, using <code>dispersion</code> if the spectral variable is spatial.</p><p>See also: <a href="../api/#WaveSpectra.Moments.moment-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, Integer}"><code>moment</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L58-L73">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.mean_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.mean_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><code>WaveSpectra.Moments.mean_frequency</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">mean_frequency(
+    x::AbstractOmnidirectionalSpectrum;
+    dispersion::Dispersion = Dispersion(),
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Mean frequency of the omnidirectional spectrum <code>x</code>, computed as <span>$m_1 / m_0$</span> for <code>S(f)</code>.</p><p>The mean period can be obtained as <span>$1/mean_frequency(x)$</span>. The provided spectrum is first converted to the temporal-linear-frequency representation <code>S(f)</code>, using <code>dispersion</code> if the spectral variable is spatial.</p><p>See also: <a href="../api/#WaveSpectra.Moments.moment-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, Integer}"><code>moment</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L82-L97">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.mean_wavelength-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.mean_wavelength-extended_func"><code>WaveSpectra.Moments.mean_wavelength</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">mean_wavelength(
+    x::AbstractOmnidirectionalSpectrum,
+    mean_frequency_function::Function = energy_frequency,
+    dispersion::Dispersion = gravitywaves_deepwater();
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Mean wavelength of the omnidirectional spectrum <code>x</code>.</p><p>By default, the characteristic spectral variable used is the energy frequency and the dispersion relation is the deep-water gravity wave dispersion.</p><p>See also: <a href="../api/#WaveSpectra.Moments.energy_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>energy_frequency</code></a>, <a href="../api/#WaveSpectra.Moments.mean_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>mean_frequency</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L130-L144">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.moment-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, Integer}-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.moment-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, Integer}-extended_func"><code>WaveSpectra.Moments.moment</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">moment(
+    x::AbstractOmnidirectionalSpectrum,
+    n::Integer;
+    include_zero::Bool = false,
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Spectral moment of order <code>n</code> for the omnidirectional spectrum <code>x</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L18-L27">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.significant_waveheight-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.significant_waveheight-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><code>WaveSpectra.Moments.significant_waveheight</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">significant_waveheight(
+    x::AbstractOmnidirectionalSpectrum;
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Significant wave height of the omnidirectional spectrum <code>x</code>, computed as <span>$4 \sqrt{m_0}$</span>.</p><p>See also: <a href="../api/#WaveSpectra.Moments.moment-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, Integer}"><code>moment</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L41-L51">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.steepness-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.steepness-extended_func"><code>WaveSpectra.Moments.steepness</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">steepness(
+    x::AbstractOmnidirectionalSpectrum,
+    mean_frequency_function::Function = energy_frequency,
+    dispersion::Dispersion = gravitywaves_deepwater();
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Characteristic wave steepness of the omnidirectional spectrum <code>x</code>.</p><p>This is computed as <span>$H_s / \lambda$</span> where <code>H_s</code> is the significant wave height and <code>\lambda</code> is a caharacteristic wavelength. The characteristic wavelength is defined by the characteristic spectral variable and the dispersion relation. By default, the characteristic spectral variable is the energy frequency and the dispersion relation is the deep-water gravity wave dispersion.</p><p>See also: <a href="../api/#WaveSpectra.Moments.significant_waveheight-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>significant_waveheight</code></a>, <a href="../api/#WaveSpectra.Moments.mean_wavelength"><code>mean_wavelength</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L159-L177">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Moments.zero_crossing_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><a class="docstring-binding" href="#WaveSpectra.Moments.zero_crossing_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}-extended_func"><code>WaveSpectra.Moments.zero_crossing_frequency</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">zero_crossing_frequency(
+    x::AbstractOmnidirectionalSpectrum;
+    dispersion::Dispersion = Dispersion(),
+    method::AbstractSampledIntegralAlgorithm = TrapezoidalRule()
+)</code></pre><p>Zero-crossing frequency of the omnidirectional spectrum <code>x</code>, computed as <span>$\sqrt{m_2 / m_0}$</span> for <code>S(f)</code>.</p><p>The zero-crossing period can be obtained as <span>$1/zero_crossing_frequency(x)$</span>. The provided spectrum is first converted to the temporal-linear-frequency representation <code>S(f)</code>, using <code>dispersion</code> if the spectral variable is spatial.</p><p>See also: <a href="../api/#WaveSpectra.Moments.moment-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum, Integer}"><code>moment</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Moments.jl#L106-L121">source</a></section></details></article><h3 id="spectral_shapes_syntax"><a class="docs-heading-anchor" href="#spectral_shapes_syntax">Spectral Shape</a><a id="spectral_shapes_syntax-1"></a><a class="docs-heading-anchor-permalink" href="#spectral_shapes_syntax" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="WaveSpectra.Shapes.scale-Tuple{OmnidirectionalSpectrum, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity}-extended_func"><a class="docstring-binding" href="#WaveSpectra.Shapes.scale-Tuple{OmnidirectionalSpectrum, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity}-extended_func"><code>WaveSpectra.Shapes.scale</code></a> — <span class="docstring-category">Method</span></summary><section><div><p>Scale a spectrum to have a specified significant wave height and energy frequency while preserving its shape.</p><p>Returns an <code>OmnidirectionalSpectrum</code>.</p><p>See also: <a href="../api/#WaveSpectra.Moments.significant_waveheight-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>significant_waveheight</code></a>, <a href="../api/#WaveSpectra.Moments.energy_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>energy_frequency</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Shapes.jl#L104-L111">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.OmnidirectionalSpectrum-Tuple{WaveSpectra.Shapes.OmnidirectionalSpectrumShape, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity}-extended_func"><a class="docstring-binding" href="#WaveSpectra.OmnidirectionalSpectrum-Tuple{WaveSpectra.Shapes.OmnidirectionalSpectrumShape, Union{Quantity{T, 𝐋, U}, Level{L, S, Quantity{T, 𝐋, U}} where {L, S}} where {T, U}, Quantity}-extended_func"><code>WaveSpectra.OmnidirectionalSpectrum</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">OmnidirectionalSpectrum(
+        x::OmnidirectionalSpectrumShape,
+        waveheight::Length,
+        frequency::Quantity;
+        dispersion::Dispersion = Dispersion()
+)</code></pre><p>Scale a spectral shape to have a specified significant wave height and energy frequency.</p><p>Returns an <code>OmnidirectionalSpectrum</code>.</p><p>See also: <a href="../api/#WaveSpectra.Shapes.OmnidirectionalSpectrumShape"><code>OmnidirectionalSpectrumShape</code></a>, <a href="../api/#WaveSpectra.Moments.significant_waveheight-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>significant_waveheight</code></a>, <a href="../api/#WaveSpectra.Moments.energy_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>energy_frequency</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Shapes.jl#L75-L89">source</a></section></details></article><article><details class="docstring" open="true"><summary id="WaveSpectra.Shapes.OmnidirectionalSpectrumShape-extended_func"><a class="docstring-binding" href="#WaveSpectra.Shapes.OmnidirectionalSpectrumShape-extended_func"><code>WaveSpectra.Shapes.OmnidirectionalSpectrumShape</code></a> — <span class="docstring-category">Type</span></summary><section><div><pre><code class="language-julia hljs">OmnidirectionalSpectrumShape(
+    x::AbstractOmnidirectionalSpectrum;
+    dispersion::Dispersion = Dispersion()
+)
+OmnidirectionalSpectrumShape(
+    data::AbstractVector,
+    axis::AbstractVector
+)</code></pre><p>Spectral shape of an omnidirectional wave spectrum.</p><p>The spectral shape is normalized to have a unit significant wave height and unit energy period. The data and its axis are dimensionless.</p><p>See also: <a href="../api/#WaveSpectra.OmnidirectionalSpectrum"><code>OmnidirectionalSpectrum</code></a>, <a href="../api/#WaveSpectra.Moments.significant_waveheight-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>significant_waveheight</code></a>, <a href="../api/#WaveSpectra.Moments.energy_frequency-Tuple{WaveSpectra.AbstractOmnidirectionalSpectrum}"><code>energy_frequency</code></a>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaOceanWaves/WaveSpectra.jl/blob/e3cf190a8bc7bc8bb9cea5365cef433aa1b9020c/src/submodules/Shapes.jl#L19-L37">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../basic_func/">« Basic Functionality</a><a class="docs-footer-nextpage" href="../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 2 July 2026 14:09">Thursday 2 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
