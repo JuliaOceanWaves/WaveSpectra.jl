@@ -8,7 +8,7 @@ module Moments
 
 using ..WaveSpectra: AbstractSampledIntegralAlgorithm, AbstractOmnidirectionalSpectrum,
                      AbstractSpectrum, Dispersion, TrapezoidalRule,
-                     integrate, uconvert, _rebuild_spectrum, °
+                     integrate, uconvert, rebuild_superposition, °
 using ..WaveSpectra.DispersionRelations: gravitywaves_deepwater
 using Unitful: Hz, gn as g, m
 
@@ -32,7 +32,7 @@ function moment(x::AbstractOmnidirectionalSpectrum, n::Integer;
         throw(ArgumentError(
             "Including the zero spectral value is not supported for negative moments."))
     return integrate(
-        _rebuild_spectrum(x, x.data .* (x.axis .^ n), x.axis);
+        rebuild_superposition(x, x.data .* (x.axis .^ n), x.axis);
         method,
         include_zero
     )
@@ -190,8 +190,8 @@ end
 function mean_direction(
         x::AbstractSpectrum;
         method::AbstractSampledIntegralAlgorithm = TrapezoidalRule())
-    y = integrate(_rebuild_spectrum(x, x.data .* sin.(x.axis2)', x.axis1, x.axis2); method)
-    z = integrate(_rebuild_spectrum(x, x.data .* cos.(x.axis2)', x.axis1, x.axis2); method)
+    y = integrate(rebuild_superposition(x, x.data .* sin.(x.axis2)', x.axis1, x.axis2); method)
+    z = integrate(rebuild_superposition(x, x.data .* cos.(x.axis2)', x.axis1, x.axis2); method)
     return atan(°, y, z)
 end
 

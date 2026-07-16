@@ -57,17 +57,17 @@ end
 s_11 = S[1, 1]
 @test s_11 == S.data[1, 1]
 s_named = S[frequency = 3, direction = 4]
-@test s_named isa AxisArray
+@test s_named isa Spectrum
 @test size(s_named) == (1, 1)
 @test axisvalues(s_named) == (f[3:3], θ[4:4])
 s_range = S[f[3] .. f[5], θ[4] .. θ[6]]
-@test s_range isa AxisArray
+@test s_range isa Spectrum
 @test size(s_range) == (3, 3)
 @test axisvalues(s_range) == (f[3:5], θ[4:6])
-s_range_spec = Spectrum(s_range)
+s_range_spec = Spectrum(WaveSpectra.AxisArray(s_range))
 @test s_range_spec.data == s_range.data
-@test s_range_spec.axis1 == axisvalues(s_range)[1]
-@test s_range_spec.axis2 == axisvalues(s_range)[2]
+@test s_range_spec.axis1 == s_range.axis1
+@test s_range_spec.axis2 == s_range.axis2
 
 # Copy/similar.
 S_copy = copy(S)
@@ -130,10 +130,8 @@ omni_le = omni .<= (sum(omni.data) / length(omni.data))
 # Show methods.
 @test occursin("Spectrum", sprint(show, S))
 @test occursin("OmnidirectionalSpectrum", sprint(show, omni))
-@test occursin("Spectral density", sprint(show, MIME"text/plain"(), S))
-@test occursin("Spectral density", sprint(show, MIME"text/plain"(), omni))
-@test occursin("<strong>", sprint(show, MIME"text/html"(), S))
-@test occursin("<strong>", sprint(show, MIME"text/html"(), omni))
+@test occursin("with polar coordinates and axes", sprint(show, MIME"text/plain"(), S))
+@test occursin("with axis", sprint(show, MIME"text/plain"(), omni))
 
 # Cartesian spectra with spatial frequencies:
 # repeat some of the same tests above for this case.
@@ -168,16 +166,16 @@ sxy_ordered = Spectrum(data_k, kx, ky)
 @test sxy_ordered.axis2 == ky
 @test sxy_ordered.data == data_k
 sxy_named = Sxy[angular_wavenumber_1 = 2, angular_wavenumber_2 = 3]
-@test sxy_named isa AxisArray
+@test sxy_named isa Spectrum
 @test size(sxy_named) == (1, 1)
 @test axisvalues(sxy_named) == (kx[2:2], ky[3:3])
 sxy_point = Sxy[kx[3], ky[4]]
-@test sxy_point isa AxisArray
+@test sxy_point isa Spectrum
 @test size(sxy_point) == (1, 1)
 @test axisvalues(sxy_point) == (kx[3:3], ky[4:4])
 @test Sxy[1, 1] == Sxy.data[1, 1]
 sxy_range = Sxy[kx[3] .. kx[5], ky[2] .. ky[4]]
-@test sxy_range isa AxisArray
+@test sxy_range isa Spectrum
 @test size(sxy_range) == (3, 3)
 @test axisvalues(sxy_range) == (kx[3:5], ky[2:4])
 @test Spectrum(WaveSpectra.AxisArray(Sxy)) == Sxy

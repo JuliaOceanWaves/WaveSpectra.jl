@@ -9,16 +9,18 @@ This avoids common mistakes when working with spectral data.
 module WaveSpectra
 
 # using
-using Unitful: Dimensions, FreeUnits, NoDims, Quantity, Units, dimension, gn as g, Hz, kg,
-               m, s, ustrip, 𝐋, 𝐓
-using DimensionfulAngles: Dispersion, turnᵃ as τ, θ₀, 𝐀
+using Unitful: Dimensions, Quantity, Units, dimension, gn as g, Hz, kg, m, s, 𝐋, 𝐓
+using DimensionfulAngles: Dispersion, θ₀, 𝐀
 using DimensionfulAngles.DefaultSymbols: rad, °
 using Integrals: AbstractSampledIntegralAlgorithm, SampledIntegralProblem, TrapezoidalRule,
                  UniformWeights, solve
+using SpectralSuperpositions: AbstractSuperposition, AbstractSuperposition1D, axesinfo,
+                              axesnames, axestypes, coordinates, isangular, iscartesian,
+                              isdirection, isfrequency, islinear, isperiod, ispolar,
+                              isspatial, isspectralvariable, istemporal, isevenlyspaced,
+                              evenspacing, validate_superposition, validate_superposition1d,
+                              rebuild_superposition
 using AxisArrays: Axis, ClosedInterval, axisvalues, (..)
-using Plots: mm as plots_mm, text, @recipe
-using PrettyTables: HtmlTableStyle, pretty_table
-using Makie: Axis as MAxis, Colorbar, Figure, PolarAxis, contourf!, lines!, plot!
 
 # imports to overload
 import Base  # BroadcastStyle, copy, eltype, getindex, isapprox, setindex!, show, similar,
@@ -27,24 +29,24 @@ import Unitful: uconvert, unit
 import AxisArrays: AxisArrays, AxisArray # axes # in the future, do `import AxisArrays: axes as AAaxes`
 const axes = Base.axes # name conflict will be fixed by AxisArrays in the future
 import Integrals: find_weights
+import SpectralSuperpositions: superposition_unit_aliases
+
+function plot_spectrum end
+function plot_spectrum! end
 
 # export
 export DispersionRelations, Moments, ParametricSpectra, Shapes # modules
 export OmnidirectionalSpectrum, RectangularRule, Spectrum # structs
-export axesinfo, evenspacing, integrate, isevenlyspaced, isspectralvariable,  # functions
-       isspread, plot_spectrum, plot_spectrum!, polar_to_cartesian, cartesian_to_polar,
-       split_spectrum, spread_function
+export integrate, isspread, plot_spectrum, plot_spectrum!, polar_to_cartesian, # functions
+       cartesian_to_polar, split_spectrum, spread_function
 export g, Hz, kg, m, periodic, rad, s, uconvert, unit, # reexport from other packages
        °, (..)
-# axesnames, axestypes, coordinates, isangular, iscartesian, isdirection, isfrequency,
-# islinear, isperiod, ispolar, isspatial, istemporal
 
 # include
 include("core.jl")
 include("splitspectrum.jl")
 include("integration.jl")
 include("conversion.jl")
-include("plotting.jl")
 include("submodules/DispersionRelations.jl")
 include("submodules/ParametricSpectra.jl")
 include("submodules/Moments.jl")
